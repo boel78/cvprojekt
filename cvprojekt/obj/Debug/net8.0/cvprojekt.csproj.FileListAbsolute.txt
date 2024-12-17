@@ -1,0 +1,7 @@
+X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.GeneratedMSBuildEditorConfig.editorconfig
+X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.AssemblyInfoInputs.cache
+X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.AssemblyInfo.cs
+X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.csproj.CoreCompileInputs.cache
+X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.MvcApplicationPartsAssemblyInfo.cache
+X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.RazorAssemblyInfo.cache
+X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.RazorAssemblyInfo.cs
