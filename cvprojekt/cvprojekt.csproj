@@ -6,4 +6,30 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="._Program.cs" />
+    <Compile Remove="Controllers\._HomeController.cs" />
+    <Compile Remove="Data\._ApplicationDbContext.cs" />
+    <Compile Remove="Models\._User.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="._appsettings.Development.json" />
+    <Content Remove="._appsettings.json" />
+    <Content Remove="Views\Home\._Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="._Data" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>
