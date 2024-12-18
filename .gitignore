@@ -123,3 +123,9 @@ src/.vs/config/applicationhost.config
 # JetBrains Rider's auto generated files
 .idea/
 cvprojekt/appsettings.json
+cvprojekt/obj/Debug/net8.0/cvprojekt.GeneratedMSBuildEditorConfig.editorconfig
+cvprojekt/obj/Debug/net8.0/cvprojekt.AssemblyInfo.cs
+cvprojekt/obj/Debug/net8.0/cvprojekt.AssemblyInfoInputs.cache
+cvprojekt/obj/Debug/net8.0/cvprojekt.GlobalUsings.g.cs
+cvprojekt/obj/Debug/net8.0/cvprojekt.RazorAssemblyInfo.cache
+cvprojekt/obj/Debug/net8.0/cvprojekt.RazorAssemblyInfo.cs
