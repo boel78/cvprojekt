@@ -65,3 +65,7 @@ CREATE TABLE [dbo].[CvViews] (
     PRIMARY KEY CLUSTERED ([CVID] ASC),
     FOREIGN KEY ([CVID]) REFERENCES [dbo].[CV] ([CVID])
 );
+
+
+INSERT INTO Users (Name, Email, Password)
+	VALUES('Jonas Moll', 'Jonas.moll@oru.se', 'password');
