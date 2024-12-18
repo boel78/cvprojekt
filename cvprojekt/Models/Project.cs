@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace cvprojekt.Models;
 
@@ -13,7 +14,8 @@ public partial class Project
 
     public int CreatedBy { get; set; }
 
-    public virtual User CreatedByNavigation { get; set; } = null!;
+    [ForeignKey(nameof(CreatedBy))]
+    public virtual User User { get; set; }
 
     public virtual ICollection<Cv> Cvs { get; set; } = new List<Cv>();
 
