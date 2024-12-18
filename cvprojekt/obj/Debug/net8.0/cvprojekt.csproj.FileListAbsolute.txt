@@ -170,4 +170,3 @@ X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.pdb
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.genruntimeconfig.cache
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\ref\cvprojekt.dll
-X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
