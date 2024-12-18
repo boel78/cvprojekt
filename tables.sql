@@ -18,7 +18,7 @@ CREATE TABLE [dbo].[Users] (
     [IsPrivate]      BIT            DEFAULT ((0)) NOT NULL,
     [IsActive]       BIT            DEFAULT ((1)) NOT NULL,
     [CreatedDate]    DATETIME       DEFAULT (getdate()) NOT NULL,
-    [ProfilePicture] NVARCHAR (100) NULL,
+    [ProfilePicture] NVARCHAR (100) DEFAULT ('ProfilePictureURL') NULL,
     PRIMARY KEY CLUSTERED ([UserID] ASC),
     UNIQUE NONCLUSTERED ([Email] ASC)
 );
@@ -71,3 +71,5 @@ CREATE TABLE [dbo].[CvViews] (
 
 INSERT INTO Users (Name, Email, Password)
 	VALUES('Jonas Moll', 'Jonas.moll@oru.se', 'password');
+
+
