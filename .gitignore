@@ -8,6 +8,9 @@ Logs/
 #bajsfiler
 ._*
 
+#sensitive
+appsettings.json
+
 # Generated files
 project.lock.json
 .vs/
