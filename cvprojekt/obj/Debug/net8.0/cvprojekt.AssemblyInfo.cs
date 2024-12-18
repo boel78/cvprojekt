@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("cvprojekt")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b86ceacecde824ca91bc51a35e47ddc7947249f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8c1d22eb4b32253f217a9d7b8628c9fddeee10f4")]
 [assembly: System.Reflection.AssemblyProductAttribute("cvprojekt")]
 [assembly: System.Reflection.AssemblyTitleAttribute("cvprojekt")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
