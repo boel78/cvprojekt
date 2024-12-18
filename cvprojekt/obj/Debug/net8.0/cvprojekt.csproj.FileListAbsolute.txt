@@ -164,10 +164,10 @@ X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.cvprojekt.props
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.cvprojekt.props
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\staticwebassets.pack.json
-X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.csproj.Up2Date
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.dll
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\refint\cvprojekt.dll
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.pdb
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\cvprojekt.genruntimeconfig.cache
 X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\ref\cvprojekt.dll
+X:\Programmering\GithubRepos\C#\CV-projekt\cvprojekt\cvprojekt\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

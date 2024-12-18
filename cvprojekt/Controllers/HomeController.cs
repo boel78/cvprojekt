@@ -17,11 +17,11 @@ namespace cvprojekt.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        /*public async Task<IActionResult> Index()
         {
             var users = await _context.Users.ToListAsync();
             return View(users);
-        }
+        }*/
 
         public IActionResult Privacy()
         {
