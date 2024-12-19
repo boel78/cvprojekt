@@ -1,0 +1,17 @@
+﻿@{
+}
+
+@model RegisterViewModel
+
+<form method="post" asp-action="Register">
+	<label>Användarnamn: </label>
+	<input asp-for="UserName" />
+	<br />
+	<label>Lösenord: </label>
+	<input type="password" asp-for="Password" />
+	<br />
+	<label>Bekräfta Lösenord</label>
+	<input type="password" asp-for="ConfirmPassword" />
+	<br />
+	<button type="submit">Login</button>
+</form>
