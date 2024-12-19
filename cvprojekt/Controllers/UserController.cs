@@ -1,5 +1,6 @@
 ﻿using cvprojekt.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace cvprojekt.Controllers
@@ -43,7 +44,8 @@ namespace cvprojekt.Controllers
         public IActionResult Search(string searchWord)
         {
             Debug.WriteLine("sök: " + searchWord);
-            List<User> users = (from user in _ctx.Users where user.Name.Contains(searchWord) select user).ToList();
+            List<User> users = (from user in _ctx.Users where user.Name.Contains(searchWord) select user).Include(u => u.Cvs).ThenInclude(c => c.Projects).ToList();
+
             return View(users);
         }
 

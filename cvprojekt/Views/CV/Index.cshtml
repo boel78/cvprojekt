@@ -1,0 +1,10 @@
+﻿@{
+}
+
+@model List<cvprojekt.Models.Cv>
+
+@foreach (var cv in Model){
+	<p>
+		@cv.Description
+	</p>
+}
