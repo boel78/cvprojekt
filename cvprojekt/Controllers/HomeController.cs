@@ -9,19 +9,19 @@ namespace cvprojekt.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _context;
+        private readonly CvDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, CvDbContext context)
         {
             _logger = logger;
             _context = context;
         }
 
-        /*public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             var users = await _context.Users.ToListAsync();
             return View(users);
-        }*/
+        }
 
         public IActionResult Privacy()
         {
