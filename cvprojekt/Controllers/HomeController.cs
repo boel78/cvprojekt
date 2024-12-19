@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using cvprojekt.Data;
 using cvprojekt.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

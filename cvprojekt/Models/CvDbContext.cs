@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace cvprojekt.Models;
 
-public partial class CvDbContext : DbContext
+public partial class CvDbContext : IdentityDbContext<Userr>
 {
     public CvDbContext()
     {
@@ -35,6 +36,9 @@ public partial class CvDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Cv>(entity =>
         {
             entity.HasKey(e => e.Cvid).HasName("PK__CV__A04CFC43EF4B5070");
