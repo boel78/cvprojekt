@@ -3,6 +3,9 @@
 
 @model RegisterViewModel
 
+<div asp-validation-summary="All"></div>
+
+
 <form method="post" asp-action="Register">
 	<label>Användarnamn: </label>
 	<input asp-for="UserName" />

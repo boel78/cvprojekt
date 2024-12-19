@@ -50,12 +50,20 @@ namespace cvprojekt.Controllers
             {
                 Userr user = new Userr();
                 user.UserName = rm.UserName;
-                var result = userManager.CreateAsync(user, rm.Password);
+                var result = await userManager.CreateAsync(user, rm.Password);
 
-                if (result.IsCompletedSuccessfully)
+                if (result.Succeeded)
                 {
                     await signInManager.SignInAsync(user, isPersistent: true);
                     return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    // Om det inte lyckades, lägg till felmeddelanden till ModelState
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
             return View(rm);
