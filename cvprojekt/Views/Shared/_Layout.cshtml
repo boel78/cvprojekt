@@ -27,6 +27,13 @@
                         </li>
                     </ul>
                 </div>
+                <div>
+                    <form asp-action="Search" asp-controller="User" method="get">
+                        <input name="searchWord"/>
+                        <button type="submit">Sök</button>
+                    </form>
+                    
+                </div>
             </div>
         </nav>
     </header>

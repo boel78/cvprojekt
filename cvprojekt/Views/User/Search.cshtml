@@ -1,0 +1,16 @@
+﻿@{
+	ViewData["Title"] = "Sökning";
+}
+
+@model List<cvprojekt.Models.User>
+
+<div>
+
+	@foreach (var user in Model){
+		<div>
+			<p>@user.Name</p>
+			<p>@user.Email</p>
+		</div>
+	}
+
+</div>

@@ -5,6 +5,16 @@
 @model List<cvprojekt.Models.User>;
 
 
+<form asp-action="Index" method="get">
+    <label>Filtrera användare utifrån om deras profil är aktiv?</label>
+    <input type="checkbox"
+    @if ((bool)ViewData["ShowOnlyActive"]){<text>checked</text>}
+    onchange="this.form.submit()"
+    name="showOnlyActive"
+    value="true"/>
+</form>
+
+
 <div class="text-center">
     @foreach (var user in Model){
         <p>@user.Name</p>

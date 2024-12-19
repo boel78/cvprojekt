@@ -34,6 +34,8 @@ CREATE TABLE [dbo].[Projects] (
 );
 
 
+
+
 CREATE TABLE [dbo].[UserProjects] (
     [UserID]    INT NOT NULL,
     [ProjectID] INT NOT NULL,
@@ -67,6 +69,20 @@ CREATE TABLE [dbo].[CvViews] (
     PRIMARY KEY CLUSTERED ([CVID] ASC),
     FOREIGN KEY ([CVID]) REFERENCES [dbo].[CV] ([CVID])
 );
+
+CREATE TABLE [dbo].[Skills] (
+	[SID] INT IDENTITY (1, 1) NOT NULL,
+	[Name] NVARCHAR(100) UNIQUE NOT NULL,
+	PRIMARY KEY CLUSTERED ([SID] ASC)
+)
+
+CREATE TABLE [dbo].[CvSkills] (
+	[SID] INT NOT NULL,
+	[CVID] INT NOT NULL,
+	PRIMARY KEY CLUSTERED ([CVID] ASC, [SID] ASC),
+	FOREIGN KEY ([CVID]) REFERENCES [dbo].[CV] ([CVID]),
+	FOREIGN KEY ([SID]) REFERENCES [dbo].[Skills] ([SID])
+)
 
 
 INSERT INTO Users (Name, Email, Password)

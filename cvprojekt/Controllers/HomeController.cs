@@ -17,10 +17,19 @@ namespace cvprojekt.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool showOnlyActive)
         {
-            var users = await _context.Users.ToListAsync();
-            return View(users);
+            IQueryable<User> userList = from user in _context.Users select user;
+            if (showOnlyActive)
+            {
+                userList = userList.Where(x => x.IsActive);
+            }
+            else
+            {
+                userList = userList.Where(x => !x.IsActive);
+            }
+            ViewData["ShowOnlyActive"] = showOnlyActive;
+            return View(userList.ToList());
         }
 
         public IActionResult Privacy()
