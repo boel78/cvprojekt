@@ -9,7 +9,7 @@ public partial class Cv
 
     public string Description { get; set; } = null!;
 
-    public int Owner { get; set; }
+    public string Owner { get; set; }
 
     public virtual CvView? CvView { get; set; }
 

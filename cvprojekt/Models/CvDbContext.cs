@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace cvprojekt.Models;
 
-public partial class CvDbContext : IdentityDbContext<Userr>
+public partial class CvDbContext : IdentityDbContext<User>
 {
     public CvDbContext()
     {
@@ -30,7 +30,6 @@ public partial class CvDbContext : IdentityDbContext<Userr>
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<Userr> Userrs { get; set; }
 
     /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -167,18 +166,18 @@ public partial class CvDbContext : IdentityDbContext<Userr>
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCAC2E013538");
+            entity.HasKey(e => e.Id).HasName("PK__Users__1788CCAC2E013538");
 
             entity.HasIndex(e => e.Email, "UQ__Users__A9D10534D5022A46").IsUnique();
 
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.Id).HasColumnName("Id");
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.Password).HasMaxLength(100);
+            entity.Property(e => e.PasswordHash).HasMaxLength(100);
             entity.Property(e => e.ProfilePicture)
                 .HasMaxLength(100)
                 .HasDefaultValue("ProfilePictureURL");

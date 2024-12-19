@@ -11,7 +11,7 @@ public partial class Project
 
     public string Description { get; set; } = null!;
 
-    public int CreatedBy { get; set; }
+    public string CreatedBy { get; set; }
 
     public virtual User CreatedByNavigation { get; set; } = null!;
 

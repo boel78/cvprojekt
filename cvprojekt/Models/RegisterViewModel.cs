@@ -19,5 +19,8 @@ namespace cvprojekt.Models
         [DataType(DataType.Password)]
         [Display(Name = "Bekräfta lösenordet")]
         public string ConfirmPassword { get; set; }
+
+        public string Name { get; set; }
+
     }
 }

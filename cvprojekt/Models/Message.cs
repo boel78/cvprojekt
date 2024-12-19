@@ -7,9 +7,9 @@ public partial class Message
 {
     public int Mid { get; set; }
 
-    public int Sender { get; set; }
+    public string Sender { get; set; }
 
-    public int Reciever { get; set; }
+    public string Reciever { get; set; }
 
     public string? Content { get; set; }
 

@@ -32,7 +32,7 @@ namespace cvprojekt.Controllers
 
             oldUser.Name = newUser.Name;
             oldUser.Email = newUser.Email;
-            oldUser.Password = newUser.Password;
+            //oldUser.Password = newUser.Password;
             oldUser.IsPrivate = newUser.IsPrivate;
             oldUser.IsActive = newUser.IsActive;
 

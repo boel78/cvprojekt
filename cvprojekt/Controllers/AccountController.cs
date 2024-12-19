@@ -7,10 +7,10 @@ namespace cvprojekt.Controllers
 {
     public class AccountController : Controller
     {
-        private UserManager<Userr> userManager;
-        private SignInManager<Userr> signInManager;
+        private UserManager<User> userManager;
+        private SignInManager<User> signInManager;
 
-        public AccountController(UserManager<Userr> userManager, SignInManager<Userr> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -48,7 +48,7 @@ namespace cvprojekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                Userr user = new Userr();
+                User user = new User();
                 user.UserName = rm.UserName;
                 var result = await userManager.CreateAsync(user, rm.Password);
 
