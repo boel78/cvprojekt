@@ -4,7 +4,7 @@ namespace cvprojekt.Models
 {
     public class User:IdentityUser
     {
-        public string Name { get; set; } = null!;
+        public string Name { get; set; }
 
         public bool IsPrivate { get; set; }
 

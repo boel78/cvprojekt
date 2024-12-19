@@ -182,24 +182,6 @@ public partial class CvDbContext : IdentityDbContext<User>
                 .HasMaxLength(100)
                 .HasDefaultValue("ProfilePictureURL");
 
-            entity.HasMany(d => d.ProjectsNavigation).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UserProject",
-                    r => r.HasOne<Project>().WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__UserProje__Proje__4222D4EF"),
-                    l => l.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__UserProje__UserI__412EB0B6"),
-                    j =>
-                    {
-                        j.HasKey("UserId", "ProjectId").HasName("PK__UserProj__00E967412FB07CD5");
-                        j.ToTable("UserProjects");
-                        j.IndexerProperty<int>("UserId").HasColumnName("UserID");
-                        j.IndexerProperty<int>("ProjectId").HasColumnName("ProjectID");
-                    });
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -9,7 +9,8 @@ namespace cvprojekt.Controllers
     {
         private readonly CvDbContext _ctx;
 
-        public UserController(CvDbContext ctx) {
+        public UserController(CvDbContext ctx)
+        {
             _ctx = ctx;
         }
 
