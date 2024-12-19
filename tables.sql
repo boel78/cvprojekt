@@ -34,6 +34,8 @@ CREATE TABLE [dbo].[Projects] (
 );
 
 
+
+
 CREATE TABLE [dbo].[UserProjects] (
     [UserID]    INT NOT NULL,
     [ProjectID] INT NOT NULL,
@@ -68,8 +70,53 @@ CREATE TABLE [dbo].[CvViews] (
     FOREIGN KEY ([CVID]) REFERENCES [dbo].[CV] ([CVID])
 );
 
+CREATE TABLE [dbo].[Skills] (
+	[SID] INT IDENTITY (1, 1) NOT NULL,
+	[Name] NVARCHAR(100) UNIQUE NOT NULL,
+	PRIMARY KEY CLUSTERED ([SID] ASC)
+)
+
+CREATE TABLE [dbo].[Education](
+	[EID] INT IDENTITY(1,1) NOT NULL,
+	[Title] NVARCHAR(100) NOT NULL,
+	[Description] NVARCHAR(200) NOT NULL,
+	[CVID] INT NOT NULL,
+	PRIMARY KEY CLUSTERED ([EID] ASC),
+	FOREIGN KEY ([CVID]) REFERENCES [dbo].[CV] ([CVID]),
+)
+
+CREATE TABLE [dbo].[EducationSkills] (
+	[SID] INT NOT NULL,
+	[EID] INT NOT NULL,
+	PRIMARY KEY CLUSTERED ([EID] ASC, [SID] ASC),
+	FOREIGN KEY ([EID]) REFERENCES [dbo].[Education] ([EID]),
+	FOREIGN KEY ([SID]) REFERENCES [dbo].[Skills] ([SID])
+)
+
+
+CREATE TABLE [dbo].[Messages](
+	[MID] INT IDENTITY (1,1) NOT NULL,
+	[Sender] INT NOT NULL,
+	[Reciever] INT NOT NULL,
+	[Content] Nvarchar(300),
+	[IsRead] bit,
+	[TimeSent] date,
+	PRIMARY KEY CLUSTERED ([MID] ASC),
+	FOREIGN KEY ([Sender]) REFERENCES [dbo].[Users] ([UserID]),
+	FOREIGN KEY ([Reciever]) REFERENCES [dbo].[Users] ([UserID])
+)
+
 
 INSERT INTO Users (Name, Email, Password)
 	VALUES('Jonas Moll', 'Jonas.moll@oru.se', 'password');
-
+INSERT INTO Users (Name, Email, Password)VALUES('Ask', 'ask@oru.com', '123');
+INSERT INTO CV VALUES('Hej mitt cv är bra', 1);
+INSERT INTO Projects VALUES('Projekt', 'Ett projekt', 1);
+INSERT INTO CvProjects VALUES(1,1);
+INSERT INTO CvViews VALUES(1, 100);
+INSERT INTO UserProjects VALUES(1,1);
+INSERT INTO Skills VALUES('dotnet');
+INSERT INTO Education VALUES('Universitetet', 'pluggade på uni', 1);
+INSERT INTO EducationSkills VALUES(1,1);
+INSERT INTO Messages VALUES(1,2,'Hej Ask', 0, getdate());
 
