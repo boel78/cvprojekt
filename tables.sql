@@ -76,12 +76,34 @@ CREATE TABLE [dbo].[Skills] (
 	PRIMARY KEY CLUSTERED ([SID] ASC)
 )
 
-CREATE TABLE [dbo].[CvSkills] (
-	[SID] INT NOT NULL,
+CREATE TABLE [dbo].[Education](
+	[EID] INT IDENTITY(1,1) NOT NULL,
+	[Title] NVARCHAR(100) NOT NULL,
+	[Description] NVARCHAR(200) NOT NULL,
 	[CVID] INT NOT NULL,
-	PRIMARY KEY CLUSTERED ([CVID] ASC, [SID] ASC),
+	PRIMARY KEY CLUSTERED ([EID] ASC),
 	FOREIGN KEY ([CVID]) REFERENCES [dbo].[CV] ([CVID]),
+)
+
+CREATE TABLE [dbo].[EducationSkills] (
+	[SID] INT NOT NULL,
+	[EID] INT NOT NULL,
+	PRIMARY KEY CLUSTERED ([EID] ASC, [SID] ASC),
+	FOREIGN KEY ([EID]) REFERENCES [dbo].[Education] ([EID]),
 	FOREIGN KEY ([SID]) REFERENCES [dbo].[Skills] ([SID])
+)
+
+
+CREATE TABLE [dbo].[Messages](
+	[MID] INT IDENTITY (1,1) NOT NULL,
+	[Sender] INT NOT NULL,
+	[Reciever] INT NOT NULL,
+	[Content] Nvarchar(300),
+	[IsRead] bit,
+	[TimeSent] date,
+	PRIMARY KEY CLUSTERED ([MID] ASC),
+	FOREIGN KEY ([Sender]) REFERENCES [dbo].[Users] ([UserID]),
+	FOREIGN KEY ([Reciever]) REFERENCES [dbo].[Users] ([UserID])
 )
 
 
