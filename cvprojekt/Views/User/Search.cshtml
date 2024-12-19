@@ -7,16 +7,18 @@
 <div>
 
 	@foreach (var user in Model){
-		<div>
-			<p>@user.Name</p>
-			<p>@user.Email</p>
-			@foreach (var cv in user.Cvs){
-				foreach(var education in cv.Educations){
-					foreach(var skill in education.Sids){
-						<p>Skills: @skill.Name</p>
+		<div class="card" style="width: 18rem;">
+			<div class="card-body">
+				<p>@user.Name</p>
+				<p>@user.Email</p>
+				@foreach (var cv in user.Cvs){
+					foreach(var education in cv.Educations){
+						foreach(var skill in education.Sids){
+							<p>Skills: @skill.Name</p>
+						}
 					}
 				}
-			}
+			</div>
 		</div>
 	}
 
