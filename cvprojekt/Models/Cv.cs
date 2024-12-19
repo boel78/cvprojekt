@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace cvprojekt.Models;
 
@@ -14,8 +13,9 @@ public partial class Cv
 
     public virtual CvView? CvView { get; set; }
 
-    [ForeignKey(nameof(Owner))]
-    public virtual User User { get; set; }
+    public virtual ICollection<Education> Educations { get; set; } = new List<Education>();
+
+    public virtual User OwnerNavigation { get; set; } = null!;
 
     public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
 }
