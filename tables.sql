@@ -109,5 +109,14 @@ CREATE TABLE [dbo].[Messages](
 
 INSERT INTO Users (Name, Email, Password)
 	VALUES('Jonas Moll', 'Jonas.moll@oru.se', 'password');
-
+INSERT INTO Users (Name, Email, Password)VALUES('Ask', 'ask@oru.com', '123');
+INSERT INTO CV VALUES('Hej mitt cv är bra', 1);
+INSERT INTO Projects VALUES('Projekt', 'Ett projekt', 1);
+INSERT INTO CvProjects VALUES(1,1);
+INSERT INTO CvViews VALUES(1, 100);
+INSERT INTO UserProjects VALUES(1,1);
+INSERT INTO Skills VALUES('dotnet');
+INSERT INTO Education VALUES('Universitetet', 'pluggade på uni', 1);
+INSERT INTO EducationSkills VALUES(1,1);
+INSERT INTO Messages VALUES(1,2,'Hej Ask', 0, getdate());
 
