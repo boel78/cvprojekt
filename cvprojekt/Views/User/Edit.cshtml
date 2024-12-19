@@ -1,0 +1,25 @@
+﻿@{
+	ViewData["Title"] = "Edit User";
+}
+
+@model cvprojekt.Models.User
+
+<form asp-action="Edit" method="post">
+	<label>Namn: </label>
+	<input type="text" asp-for="Name" value=@Model.Name />
+	<br />
+	<label>Email: </label>
+	<input type="text" asp-for="Email" value=@Model.Email/>
+	<br />
+	<label>Lösenord: </label>
+	<input type="password" asp-for="Password" />
+	<br />
+	<label title="Aktivera/Av Aktivera Ditt Konto">Aktivt konto: </label>
+	<input type="checkbox" asp-for="IsActive" title="Aktivera/Av Aktivera Ditt Konto"/>
+	<br />
+	<label for="IsPrivate" title="Ställ in om ditt konto ska vara privat" >Privat konto: </label>
+	<input type="checkbox" name="IsPrivate" asp-for="IsPrivate" title="Ställ in om ditt konto ska vara privat" />
+	<br />
+	<button type="submit">Ändra</button>
+
+</form>
