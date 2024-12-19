@@ -43,14 +43,20 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public IActionResult Search(string searchWord)
         {
-            string[] searchWords = searchWord.Split(' ');
-            List<User> users = (from user in _ctx.Users where searchWords.Contains(user.Name) select user).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Sids).ToList();
-            List<User> users2 = (from user in _ctx.Users select user).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Sids).Where(user => user.Cvs
-        .Any(cv => cv.Educations
-            .Any(edu => edu.Sids
-                .Any(sid => searchWords.Any(word => sid.Name.Contains(word)))))).ToList();
-            users.AddRange(users2);
-
+            List<User> users = _ctx.Users.ToList();
+            if (!string.IsNullOrEmpty(searchWord))
+            {
+                //Delar upp söksträngen sedan skapar den två listor, en för namn och en för skills. Sedan läggs dom ihop i en lista. Är det ingen sök så hämtas alla
+                string[] searchWords = searchWord.Split(' ');
+                users = (from user in _ctx.Users where searchWords.Any(word => user.Name.Contains(word)) select user).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Sids).ToList();
+                List<User> usersSkills = (from user in _ctx.Users select user).Include(u => u.Cvs)
+                    .ThenInclude(c => c.Educations).ThenInclude(e => e.Sids)
+                        .Where(user => user.Cvs
+                            .Any(cv => cv.Educations
+                                .Any(edu => edu.Sids
+                                    .Any(sid => searchWords.Any(word => sid.Name.Contains(word)))))).ToList();
+                users.AddRange(usersSkills);
+            }
             return View(users);
         }
 

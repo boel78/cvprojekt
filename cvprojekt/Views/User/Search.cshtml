@@ -11,8 +11,10 @@
 			<p>@user.Name</p>
 			<p>@user.Email</p>
 			@foreach (var cv in user.Cvs){
-				foreach(var project in cv.Projects){
-					<p>@project.Description</p>
+				foreach(var education in cv.Educations){
+					foreach(var skill in education.Sids){
+						<p>Skills: @skill.Name</p>
+					}
 				}
 			}
 		</div>
