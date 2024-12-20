@@ -1,29 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity;
 
-namespace cvprojekt.Models;
-
-public partial class User
+namespace cvprojekt.Models
 {
-    public int UserId { get; set; }
+    public class User:IdentityUser
+    {
+        public string Name { get; set; }
 
-    public string Name { get; set; } = null!;
+        public bool IsPrivate { get; set; }
 
-    public string Email { get; set; } = null!;
+        public bool IsActive { get; set; }
 
-    public string Password { get; set; } = null!;
+        public DateTime CreatedDate { get; set; }
 
-    public bool IsPrivate { get; set; }
+        public string? ProfilePicture { get; set; }
 
-    public bool IsActive { get; set; }
+        public virtual ICollection<Cv> Cvs { get; set; } = new List<Cv>();
 
-    public DateTime CreatedDate { get; set; }
+        public virtual ICollection<Message> MessageRecieverNavigations { get; set; } = new List<Message>();
 
-    public string? ProfilePicture { get; set; }
+        public virtual ICollection<Message> MessageSenderNavigations { get; set; } = new List<Message>();
 
-    public virtual ICollection<Cv> Cvs { get; set; } = new List<Cv>();
+        public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
 
-    public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
-
-    public virtual ICollection<Project> ProjectsNavigation { get; set; } = new List<Project>();
+        public virtual ICollection<Project> ProjectsNavigation { get; set; } = new List<Project>();
+    }
 }

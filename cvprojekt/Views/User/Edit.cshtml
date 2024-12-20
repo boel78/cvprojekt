@@ -1,0 +1,39 @@
+﻿@{
+	ViewData["Title"] = "Edit User";
+}
+
+@model cvprojekt.Models.EditUserViewModel
+
+
+<div asp-validation-summary="All"></div>
+
+<form asp-action="Edit" method="post">
+	<label>Namn: </label>
+	<input type="text" asp-for="Name" value=@Model.Name />
+	<br />
+	<label>Email: </label>
+	<input type="text" asp-for="Email" value=@Model.Email/>
+	<br />
+	<label>Nuvarande Lösenord: </label>
+	<input type="password" asp-for="CurrentPassword"/>
+	<br />
+	<label>Nytt Lösenord:</label>
+	<input type="password" asp-for="NewPassword"/>
+	<br />
+	<label>Bekfräfta Nytt Lösenord:</label>
+	<input type="password" asp-for="ConfirmNewPassword"/>
+	<br />
+	<label title="Aktivera/Av Aktivera Ditt Konto">Aktivt konto: </label>
+	<input type="checkbox" asp-for="IsActive" title="Aktivera/Av Aktivera Ditt Konto"/>
+	<br />
+	<label for="IsPrivate" title="Ställ in om ditt konto ska vara privat" >Privat konto: </label>
+	<input type="checkbox" name="IsPrivate" asp-for="IsPrivate" title="Ställ in om ditt konto ska vara privat" />
+	<br />
+	<button type="submit">Ändra</button>
+</form>
+
+
+<form asp-action="Logout" asp-controller="Account" method="post">
+	<button>Logga ut</button>
+</form>
+ 

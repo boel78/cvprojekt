@@ -1,0 +1,28 @@
+﻿@{
+	ViewData["Title"] = "Sökning";
+}
+
+@model List<cvprojekt.Models.User>
+
+<div>
+
+	@foreach (var user in Model){
+		<div class="card">
+			<p>@user.Name</p>
+			<p>@user.Email</p>
+			<div class="card">
+				<h3 class="card-header">Skills</h3>
+				<div class="card-body">
+					@foreach (var cv in user.Cvs){
+						foreach(var education in cv.Educations){
+							foreach(var skill in education.Sids){
+								<p>@skill.Name</p>
+							}					
+						}				
+					}
+				</div>
+			</div>
+		</div>
+	}
+
+</div>

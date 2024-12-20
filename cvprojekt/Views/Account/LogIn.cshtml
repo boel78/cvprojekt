@@ -1,0 +1,20 @@
+﻿@{
+}
+
+@model LoginViewModel
+
+<form method="post" asp-action="LogIn">
+	<label>Användarnamn: </label>
+	<input asp-for="UserName"/>
+	<br />
+	<label>Lösenord: </label>
+	<input type="password" asp-for="Password"/>
+	<br />
+	<label>Kom ihåg mig</label>
+	<input type="checkbox" title="Remember me" asp-for="RememberMe"/>
+	<br />
+	<button type="submit">Login</button>
+	<br />
+	<label>Har du inget konto?</label>
+	<a asp-action="Register">Registera dig</a>
+</form>
