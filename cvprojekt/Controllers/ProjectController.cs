@@ -46,7 +46,7 @@ namespace cvprojekt.Controllers
             Project project = _context.Projects.Find(id);
             _context.Projects.Remove(project);
             _context.SaveChanges();
-            return View();
+            return RedirectToAction("Index", "Project");
 
         }
     }

@@ -10,18 +10,26 @@
     <thead>
         <td>Titel</td>
         <td>ProjektID</td>
+        <td>Beskrivning</td>
         <td>Skapad av</td>
     </thead>
     <tbody>
-        <tr>
+        
             @foreach (var project in Model)
             {
+            <tr>
                 <td>@project.Title</td>
                 <td>@project.ProjectId</td>
-                <td>@project.CreatedByNavigation.Name</td>
-                <td><a asp-controller="Remove" asp-route-id="@project.ProjectId">Radera</a></td>
+                <td>@project.Description</td>
+                <td>@project.CreatedByNavigation?.Name ?? "Okänd användare"</td>
+                <td><a asp-controller="Project" asp-action="Remove" asp-route-id="@project.ProjectId">Radera</a></td>
+            </tr>
             }
-        </tr>
+        
     </tbody>
 </table>
 
+<div>
+    <a asp-controller="Project" asp-action="Create" class="btn btn-primary">Skapa nytt projekt</a>
+
+</div>
