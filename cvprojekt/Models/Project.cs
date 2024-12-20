@@ -11,6 +11,8 @@ public partial class Project
 
     public string Description { get; set; } = null!;
 
+    public DateTime CreatedDate { get; set; }
+
     public string? CreatedBy { get; set; }
 
     public virtual User? CreatedByNavigation { get; set; }

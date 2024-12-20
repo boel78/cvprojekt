@@ -20,7 +20,7 @@ namespace cvprojekt.Controllers
         public async Task<IActionResult> Index()
         {
 
-
+            //Kod för att dölja icke aktiva
             //IQueryable<User> userList = from user in _context.Users select user;
             //if (showOnlyActive)
             //{
@@ -34,10 +34,20 @@ namespace cvprojekt.Controllers
 
             //ViewData["ShowOnlyActive"] = showOnlyActive;
 
+
+            IndexViewModel im = new IndexViewModel();
+
+
             IQueryable<Cv> cvList = (from Cv in _context.Cvs select Cv).Include(c => c.Educations)
                 .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
-            return View(cvList);
+            IQueryable<Project> projectList = (from Project in _context.Projects select Project)
+                .OrderBy(p => p.CreatedDate).Take(3);
+
+            im.projects = projectList;
+            im.cvs = cvList;
+
+            return View(im);
         }
 
         public IActionResult Privacy()

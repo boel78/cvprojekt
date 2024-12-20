@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 
-@model IQueryable<cvprojekt.Models.Cv>;
+@model IndexViewModel;
 
 
 
@@ -12,12 +12,12 @@
     @if ((bool)ViewData["ShowOnlyActive"]){<text>checked</text>}
     onchange="this.form.submit()"
     name="showOnlyActive"
-    value="true"/>
+    value="true"/>do
 </form> *@
 
 
 <div class="text-center">
-    @foreach (var cv in Model){
+    @foreach (var cv in Model.cvs){
         <div class="card">
             <a class="card-header" asp-controller="User">@cv.OwnerNavigation</a>
             <h3>CV</h3>
@@ -36,4 +36,16 @@
             </div>
         </div>
     }
+</div>
+
+
+<div>
+    <h3>Senaste projekt</h3>
+    @foreach (var project in Model.projects){
+        <div>
+            <h4>@project.Title</h4>
+            <p>@project.Description</p>
+        </div>
+    }
+    
 </div>
