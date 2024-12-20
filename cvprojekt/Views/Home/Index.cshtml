@@ -42,10 +42,13 @@
 <div>
     <h3>Senaste projekt</h3>
     @foreach (var project in Model.projects){
-        <div>
-            <h4>@project.Title</h4>
-            <p>@project.Description</p>
-        </div>
+        <a asp-controller="Cv" asp-action="Index" asp-route-projectid="@project.ProjectId" class=" text-decoration-none link-opacity-75-hover">
+            <div>
+                <h4>@project.Title</h4>
+                <p>@project.Description</p>
+            </div>
+        </a>
+
     }
     
 </div>
