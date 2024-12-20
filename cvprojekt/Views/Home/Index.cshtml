@@ -20,7 +20,20 @@
     @foreach (var cv in Model){
         <div class="card">
             <a class="card-header" asp-controller="User">@cv.OwnerNavigation</a>
+            <h3>CV</h3>
             <p>@cv.Description</p>
+            <div>
+                <h3>Erfarenheter</h3>
+                @foreach (var education in cv.Educations){
+                    <p>
+                        @education.Description
+                    </p>
+                    <h3>Kompetenser</h3>
+                    @foreach (var skill in education.Skills){
+                        <p>@skill.Name</p>
+                    }
+                }
+            </div>
         </div>
     }
 </div>
