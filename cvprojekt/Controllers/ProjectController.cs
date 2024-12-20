@@ -16,9 +16,8 @@ namespace cvprojekt.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var projects = await _context.Projects
-                .Include(p => p.CreatedByNavigation)
-                .ToListAsync();
+            IQueryable<Project> projects =  (from project in _context.Projects
+                                            select project).Include(p => p.CreatedByNavigation);
 
             return View(projects);
         }
@@ -35,8 +34,16 @@ namespace cvprojekt.Controllers
                 _context.Add(project);
                 _context.SaveChanges();
                 return RedirectToAction("Index", "Project");
-            
-           
+        }
+
+        [HttpGet]
+        public IActionResult Remove(int id)
+        {
+            Project project = _context.Projects.Find(id);
+            _context.Projects.Remove(project);
+            _context.SaveChanges();
+            return View();
+
         }
     }
 }

@@ -3,7 +3,7 @@
 	ViewData["Title"] = "Projekt";
 }
 
-@model List<cvprojekt.Models.Project>
+@model IQueryable<cvprojekt.Models.Project>
 <h2>Projektlista</h2>
 
 <table class="table">
@@ -14,11 +14,12 @@
     </thead>
     <tbody>
         <tr>
-            @foreach (var user in Model)
+            @foreach (var project in Model)
             {
-                <td>@user.Title</td>
-                <td>@user.ProjectId</td>
-                <td>@user.CreatedBy</td>
+                <td>@project.Title</td>
+                <td>@project.ProjectId</td>
+                <td>@project.CreatedBy</td>
+                <td><a asp-controller="Remove" asp-route-id="@project.ProjectId">Radera</a></td>
             }
         </tr>
     </tbody>

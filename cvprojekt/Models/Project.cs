@@ -13,7 +13,7 @@ public partial class Project
 
     public string? CreatedBy { get; set; }
 
-    public virtual User CreatedByNavigation { get; set; }
+    public virtual User? CreatedByNavigation { get; set; }
 
     public virtual ICollection<Cv> Cvs { get; set; } = new List<Cv>();
 }
