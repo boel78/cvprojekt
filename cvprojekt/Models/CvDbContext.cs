@@ -103,7 +103,7 @@ public partial class CvDbContext : IdentityDbContext<User>
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Education__CVID__52593CB8");
 
-            entity.HasMany(d => d.Sids).WithMany(p => p.Eids)
+            entity.HasMany(d => d.Skills).WithMany(p => p.Eids)
                 .UsingEntity<Dictionary<string, object>>(
                     "EducationSkill",
                     r => r.HasOne<Skill>().WithMany()

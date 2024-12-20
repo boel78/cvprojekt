@@ -17,19 +17,27 @@ namespace cvprojekt.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(bool showOnlyActive)
+        public async Task<IActionResult> Index()
         {
-            IQueryable<User> userList = from user in _context.Users select user;
-            if (showOnlyActive)
-            {
-                userList = userList.Where(x => x.IsActive);
-            }
-            else
-            {
-                userList = userList.Where(x => !x.IsActive);
-            }
-            ViewData["ShowOnlyActive"] = showOnlyActive;
-            return View(userList.ToList());
+
+
+            //IQueryable<User> userList = from user in _context.Users select user;
+            //if (showOnlyActive)
+            //{
+            //    userList = userList.Where(x => x.IsActive);
+            //}
+            //else
+            //{
+            //    userList = userList.Where(x => !x.IsActive);
+            //}
+
+
+            //ViewData["ShowOnlyActive"] = showOnlyActive;
+
+            IQueryable<Cv> cvList = (from Cv in _context.Cvs select Cv).Include(c => c.Educations)
+                .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
+
+            return View(cvList);
         }
 
         public IActionResult Privacy()

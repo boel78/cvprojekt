@@ -36,8 +36,8 @@ namespace cvprojekt.Controllers
             {
                 Name = user.Name,
                 Email = user.Email,
-                IsActive = user.IsActive,
                 IsPrivate = user.IsPrivate,
+                IsActive = user.IsActive,
             };
                 
 
@@ -79,12 +79,12 @@ namespace cvprojekt.Controllers
         {
             List<User> users = (from user in _ctx.Users select user).Include(u => u.Cvs)
                 .ThenInclude(c => c.Educations)
-                    .ThenInclude(e => e.Sids).ToList();
+                    .ThenInclude(e => e.Skills).ToList();
             if (!searchWord.IsNullOrEmpty())
             {
                 string[] searchWords = searchWord.Split(' ');
                 users = users.Where(u => searchWords.Contains(u.Name) || u.Cvs.Any(cv => cv.Educations
-                .Any(edu => edu.Sids
+                .Any(edu => edu.Skills
                     .Any(sid => searchWords.Any(word => sid.Name.Contains(word)))))).ToList();
             }
             
