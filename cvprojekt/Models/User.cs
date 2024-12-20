@@ -20,7 +20,6 @@ namespace cvprojekt.Models
 
         public virtual ICollection<Message> MessageSenderNavigations { get; set; } = new List<Message>();
 
-        public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
 
         public virtual ICollection<Project> ProjectsNavigation { get; set; } = new List<Project>();
     }
