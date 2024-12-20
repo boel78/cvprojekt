@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace cvprojekt.Controllers
 {
+    [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
         private UserManager<User> userManager;

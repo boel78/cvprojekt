@@ -1,18 +1,23 @@
 ﻿using cvprojekt.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace cvprojekt.Controllers
 {
     public class UserController : Controller
     {
         private readonly CvDbContext _ctx;
+        private readonly UserManager<User> _userManager;
 
-        public UserController(CvDbContext ctx)
+        public UserController(CvDbContext ctx, UserManager<User> userManager)
         {
             _ctx = ctx;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -20,26 +25,53 @@ namespace cvprojekt.Controllers
             return View();
         }
 
+        [Authorize]
         [HttpGet]
-        public IActionResult Edit(int id)
+        public IActionResult Edit()
         {
-            User user = _ctx.Users.Find(id);
-            return View(user);
+            string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            User user = _ctx.Users.Find(userid);
+
+            var model = new EditUserViewModel
+            {
+                Name = user.Name,
+                Email = user.Email,
+                IsActive = user.IsActive,
+                IsPrivate = user.IsPrivate,
+            };
+                
+
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult Edit(int id, User newUser)
+        public async Task<IActionResult> Edit(EditUserViewModel evm)
         {
-            User oldUser = _ctx.Users.Find(id);
+            if (!ModelState.IsValid)
+            {
+                return View(evm);
+            }
+            var user = await _userManager.GetUserAsync(User);
 
-            oldUser.Name = newUser.Name;
-            oldUser.Email = newUser.Email;
-            //oldUser.Password = newUser.Password;
-            oldUser.IsPrivate = newUser.IsPrivate;
-            oldUser.IsActive = newUser.IsActive;
+            var result = await _userManager.ChangePasswordAsync(user, evm.CurrentPassword, evm.NewPassword);
 
+            user.Name = evm.Name;
+            user.Email = evm.Email;
+            user.IsPrivate = evm.IsPrivate;
+            user.IsActive = evm.IsActive;
             _ctx.SaveChanges();
-            return RedirectToAction("Index", "Home");
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return View(evm);
         }
 
         [HttpGet]

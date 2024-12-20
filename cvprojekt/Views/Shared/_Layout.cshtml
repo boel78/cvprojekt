@@ -31,9 +31,14 @@
                     <form asp-action="Search" asp-controller="User" method="get">
                         <input name="searchWord"/>
                         <button type="submit">Sök</button>
-                    </form>
-                    
+                    </form>                   
                 </div>
+                <form asp-action="Edit" asp-controller="User" method="get">
+                    <button type="submit">
+                        Profil
+                    </button>
+                </form>
+
             </div>
         </nav>
     </header>
