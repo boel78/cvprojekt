@@ -17,7 +17,7 @@ namespace cvprojekt.Controllers
         public async Task<IActionResult> Index()
         {
             var projects = await _context.Projects
-                .Include(p => p.CreatedBy)
+                .Include(p => p.CreatedByNavigation)
                 .ToListAsync();
 
             return View(projects);
