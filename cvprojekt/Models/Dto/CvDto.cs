@@ -1,13 +1,15 @@
 ﻿using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace cvprojekt.Models.Dto
 {
-    [DataContract]
+    [XmlRoot("Cv")]
     public class CvDto
     {
         [DataMember]
         public string Description { get; set; }
-        [DataMember]
+        [XmlArray("Educations")]
+        [XmlArrayItem("Education")]
         public List<EducationDto> Educations { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace cvprojekt.Models.Dto
 {
@@ -12,9 +13,11 @@ namespace cvprojekt.Models.Dto
         [DataMember]
         public string Name { get; set; }
         
-        [DataMember]
+        [XmlArray("Cvs")]
+        [XmlArrayItem("Cv")]
         public List<CvDto> Cvs { get; set; }
-        [DataMember]
+        [XmlArray("Projects")]
+        [XmlArrayItem("Project")]
         public List<ProjectDto> Projects { get; set; }
         
 

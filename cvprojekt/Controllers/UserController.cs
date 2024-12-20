@@ -215,10 +215,9 @@ namespace cvprojekt.Controllers
                 xmlSerializer.Serialize(stream, userDto);
                 stream.Position = 0;
 
-                var serializedXml = new StreamReader(stream).ReadToEnd();
-                return Content(serializedXml, "application/xml");
+                
+                return File(stream.ToArray(), "application/xml", "user_info.xml");
             }
-            return View();
         }
 
     }
