@@ -18,7 +18,7 @@
             {
                 <td>@project.Title</td>
                 <td>@project.ProjectId</td>
-                <td>@project.CreatedBy</td>
+                <td>@project.CreatedByNavigation.Name</td>
                 <td><a asp-controller="Remove" asp-route-id="@project.ProjectId">Radera</a></td>
             }
         </tr>
