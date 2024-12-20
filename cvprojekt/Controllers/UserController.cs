@@ -121,5 +121,39 @@ namespace cvprojekt.Controllers
             return View(users);
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Image()
+        {
+            User user = await _userManager.GetUserAsync(User);
+            return View(user);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Image(IFormFile image)
+        {
+            User user = await _userManager.GetUserAsync(User);
+            if (image != null)
+            {
+                if (image.Length > 0)
+                {
+                    Debug.WriteLine("HEJHEJHEJ");
+                    byte[] p1 = null;
+                    using (var fs1 = image.OpenReadStream())
+                    using (var msa1 = new MemoryStream())
+                    { 
+                        fs1.CopyTo(msa1);
+                        p1 = msa1.ToArray();
+                    }
+
+                    user.ProfilePicture = p1;
+
+                }
+            }
+            _ctx.SaveChanges();
+
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }

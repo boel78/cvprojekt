@@ -179,8 +179,7 @@ public partial class CvDbContext : IdentityDbContext<User>
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.PasswordHash).HasMaxLength(100);
             entity.Property(e => e.ProfilePicture)
-                .HasMaxLength(100)
-                .HasDefaultValue("ProfilePictureURL");
+                .HasMaxLength(100);
 
         });
 

@@ -12,7 +12,7 @@ namespace cvprojekt.Models
 
         public DateTime CreatedDate { get; set; }
 
-        public string? ProfilePicture { get; set; }
+        public byte[] ProfilePicture { get; set; }
 
         public virtual ICollection<Cv> Cvs { get; set; } = new List<Cv>();
 
