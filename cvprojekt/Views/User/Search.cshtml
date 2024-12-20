@@ -15,7 +15,7 @@
 				<div class="card-body">
 					@foreach (var cv in user.Cvs){
 						foreach(var education in cv.Educations){
-							foreach(var skill in education.Sids){
+							foreach(var skill in education.Skills){
 								<p>@skill.Name</p>
 							}					
 						}				

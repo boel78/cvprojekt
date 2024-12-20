@@ -49,8 +49,14 @@ namespace cvprojekt.Controllers
         {
             if (ModelState.IsValid)
             {
+                Debug.WriteLine("pass: " + rm.Password);
                 User user = new User();
                 user.UserName = rm.UserName;
+                user.Name = rm.Name;
+                user.IsPrivate = false;
+                user.ProfilePicture = "";
+                user.Email = rm.Email;
+                user.CreatedDate = DateTime.Now;
                 var result = await userManager.CreateAsync(user, rm.Password);
 
                 if (result.Succeeded)
@@ -65,6 +71,13 @@ namespace cvprojekt.Controllers
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
+                }
+            }
+            else
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Debug.WriteLine("FEL " + error.ErrorMessage);
                 }
             }
             return View(rm);

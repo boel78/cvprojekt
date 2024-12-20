@@ -12,7 +12,6 @@ namespace cvprojekt.Models
         [Required(ErrorMessage = "Vänligen skriv ett lösenord.")]
         [DataType(DataType.Password)]
         [Compare("ConfirmPassword")]
-
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Vänligen skriv ett lösenord.")]
@@ -21,6 +20,9 @@ namespace cvprojekt.Models
         public string ConfirmPassword { get; set; }
 
         public string Name { get; set; }
+
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
 
     }
 }

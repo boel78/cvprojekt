@@ -15,5 +15,5 @@ public partial class Education
 
     public virtual Cv Cv { get; set; } = null!;
 
-    public virtual ICollection<Skill> Sids { get; set; } = new List<Skill>();
+    public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
 }
