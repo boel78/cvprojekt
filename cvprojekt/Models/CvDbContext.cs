@@ -148,7 +148,7 @@ public partial class CvDbContext : IdentityDbContext<User>
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
             entity.Property(e => e.Title).HasMaxLength(100);
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Projects)
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ProjectsNavigation)
                 .HasForeignKey(d => d.CreatedBy)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Projects__Create__3E52440B");
