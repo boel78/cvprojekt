@@ -77,17 +77,46 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public IActionResult Search(string searchWord)
         {
-            List<User> users = (from user in _ctx.Users select user).Include(u => u.Cvs)
+            List<User> users = new List<User>();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                users = (from user in _ctx.Users select user).Include(u => u.Cvs)
                 .ThenInclude(c => c.Educations)
                     .ThenInclude(e => e.Skills).ToList();
-            if (!searchWord.IsNullOrEmpty())
-            {
-                string[] searchWords = searchWord.Split(' ');
-                users = users.Where(u => searchWords.Contains(u.Name) || u.Cvs.Any(cv => cv.Educations
-                .Any(edu => edu.Skills
-                    .Any(sid => searchWords.Any(word => sid.Name.Contains(word)))))).ToList();
+
+                if (!searchWord.IsNullOrEmpty())
+                {
+                    string[] searchWords = searchWord.Split(' ');
+                    users = users.Where(u => searchWords.Any(word => u.Name.Trim().ToLower().Contains(word.Trim().ToLower())
+                          || u.Cvs.Any(cv => cv.Educations
+                     .Any(edu => edu.Skills
+                         .Any(sid => searchWords.Any(word => sid.Name.Contains(word))))))).ToList();
+                }
             }
-            
+            else
+            {
+                
+                users = (from user in _ctx.Users where user.IsPrivate == false select user).Include(u => u.Cvs)
+                .ThenInclude(c => c.Educations)
+                    .ThenInclude(e => e.Skills)
+                        .ToList();
+
+                if (!searchWord.IsNullOrEmpty())
+                {
+                    string[] searchWords = searchWord.Split(' ');
+                    
+                    foreach (string word in searchWords)
+                    {
+                        Debug.WriteLine(word);
+                    }
+                    users = users.Where(u => searchWords.Any(word => u.Name.Trim().ToLower().Contains(word.Trim().ToLower())
+                         || u.Cvs.Any(cv => cv.Educations
+                    .Any(edu => edu.Skills
+                        .Any(sid => searchWords.Any(word => sid.Name.Contains(word))))))).ToList();
+                }
+
+            }
 
             return View(users);
         }
