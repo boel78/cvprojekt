@@ -1,0 +1,22 @@
+﻿
+@{
+	ViewData["Title"] = "Redigera Projekt";
+}
+
+@model cvprojekt.Models.Project
+
+<h1>Redigera Projekt</h1>
+
+<form asp-action="Edit" method="post">
+	<div>
+		<label for="Title">Titel</label>
+		<input asp-for="Title" id="Title"/>
+	</div>
+	<div>
+		<label for="Description">Beskrivning</label>
+		<textarea asp-for="Description" id="Description"></textarea>
+	</div>
+	<input type="hidden" asp-for="ProjectId" />
+	<button type="submit" class="btn btn-primary">Spara</button>
+
+</form>

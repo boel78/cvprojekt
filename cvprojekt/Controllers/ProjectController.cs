@@ -49,5 +49,25 @@ namespace cvprojekt.Controllers
             return RedirectToAction("Index", "Project");
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var project = _context.Projects.FirstOrDefault(p => p.ProjectId == id);
+            var user = await _usermanager.GetUserAsync(User);
+            if (project.CreatedBy != user.Id) 
+            {
+                return Forbid();
+            }
+            return View(project);
+        }
+
+        [HttpPost]
+        public IActionResult Edit() 
+        {
+            string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        } 
+            
     }
 }
