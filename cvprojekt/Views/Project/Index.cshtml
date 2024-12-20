@@ -1,0 +1,26 @@
+﻿
+@{
+	ViewData["Title"] = "Projekt";
+}
+
+@model List<cvprojekt.Models.Project>
+<h2>Projektlista</h2>
+
+<table class="table">
+    <thead>
+        <td>Titel</td>
+        <td>ProjektID</td>
+        <td>Skapad av</td>
+    </thead>
+    <tbody>
+        <tr>
+            @foreach (var user in Model)
+            {
+                <td>@user.Title</td>
+                <td>@user.ProjectId</td>
+                <td>@user.CreatedBy</td>
+            }
+        </tr>
+    </tbody>
+</table>
+

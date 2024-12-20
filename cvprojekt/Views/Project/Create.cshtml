@@ -1,0 +1,20 @@
+﻿
+@{
+}
+
+@model cvprojekt.Models.Project
+
+<h1>Skapa nytt projekt</h1>
+
+<form asp-action="Create" method="post">
+	<div>
+		<label for="Title">Titel</label>
+		<input asp-for="Title" />
+	</div>
+	<div>
+		<label for="Beskrivning">Beskrivning</label>
+		<textarea asp-for="Description"></textarea>
+	</div>
+	<button type="submit" class="btn btn-success">Spara</button>
+
+</form>

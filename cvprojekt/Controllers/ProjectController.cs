@@ -1,4 +1,4 @@
-﻿using cvprojekt.Data;
+﻿
 using cvprojekt.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +7,9 @@ namespace cvprojekt.Controllers
 {
     public class ProjectController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly CvDbContext _context;
 
-        public ProjectController(ApplicationDbContext context)
+        public ProjectController(CvDbContext context)
         {
             _context = context;
         }
@@ -31,13 +31,12 @@ namespace cvprojekt.Controllers
         [HttpPost]
         public IActionResult Create(Project project)
         {
-            if (ModelState.IsValid)
-            {
+            
                 _context.Add(project);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
-            }
-            return View();
+                return RedirectToAction("Index", "Project");
+            
+           
         }
     }
 }
