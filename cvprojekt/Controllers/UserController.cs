@@ -81,7 +81,7 @@ namespace cvprojekt.Controllers
 
             if (User.Identity.IsAuthenticated)
             {
-                users = (from user in _ctx.Users select user).Include(u => u.Cvs)
+                users = (from user in _ctx.Users where user.IsActive == true select user).Include(u => u.Cvs)
                 .ThenInclude(c => c.Educations)
                     .ThenInclude(e => e.Skills).ToList();
 
@@ -97,7 +97,7 @@ namespace cvprojekt.Controllers
             else
             {
                 
-                users = (from user in _ctx.Users where user.IsPrivate == false select user).Include(u => u.Cvs)
+                users = (from user in _ctx.Users where user.IsPrivate == false where user.IsActive == true select user).Include(u => u.Cvs)
                 .ThenInclude(c => c.Educations)
                     .ThenInclude(e => e.Skills)
                         .ToList();
