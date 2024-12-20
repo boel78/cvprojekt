@@ -1,6 +1,7 @@
 ﻿using cvprojekt.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
 
@@ -28,6 +29,9 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public IActionResult AddEducation()
         {
+            List<SelectListItem> skills = _dbContext.Skills.Select(x => new SelectListItem { Text = x.Name, Value = x.Sid.ToString() }).ToList();
+
+            ViewBag.options = skills;
             return View();
         }
 
