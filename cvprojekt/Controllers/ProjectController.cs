@@ -1,17 +1,20 @@
 ﻿
 using cvprojekt.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace cvprojekt.Controllers
 {
     public class ProjectController : Controller
     {
         private readonly CvDbContext _context;
-
-        public ProjectController(CvDbContext context)
+        private readonly UserManager<User> _usermanager;
+        public ProjectController(CvDbContext context, UserManager<User> usermanager)
         {
             _context = context;
+            _usermanager = usermanager; 
         }
 
         public async Task<IActionResult> Index()
@@ -30,7 +33,8 @@ namespace cvprojekt.Controllers
         [HttpPost]
         public IActionResult Create(Project project)
         {
-            
+                string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                project.CreatedBy = userid;
                 _context.Add(project);
                 _context.SaveChanges();
                 return RedirectToAction("Index", "Project");
