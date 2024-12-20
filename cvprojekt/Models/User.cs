@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Runtime.Serialization;
 
 namespace cvprojekt.Models
 {
     public class User:IdentityUser
     {
+        [DataMember]
         public string Name { get; set; }
 
         public bool IsPrivate { get; set; }

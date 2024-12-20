@@ -1,11 +1,16 @@
 ﻿using cvprojekt.Models;
+using cvprojekt.Models.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Claims;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace cvprojekt.Controllers
 {
@@ -153,6 +158,67 @@ namespace cvprojekt.Controllers
             _ctx.SaveChanges();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult SerializeProfile()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SerializeProfile(string path)
+        {
+            //path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "output.xml");
+            //XmlSerializer xml = new XmlSerializer(typeof(XmlContainer));
+            //FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
+
+            //XmlContainer container = new XmlContainer();
+
+            //xml.Serialize(fileStream, container);
+            //fileStream.Close();
+
+            var user = await _userManager.Users
+        .Include(u => u.Cvs)
+        .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Include(u => u.ProjectsNavigation) // Ladda relaterade Project
+        .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+
+            var userDto = new UserDto
+            {
+                UserName = user.UserName,
+                Name = user.Name,
+                Email = user.Email,
+                Cvs = user.Cvs.Select(cv => new CvDto
+                {
+                    Description = cv.Description,
+                    Educations = cv.Educations.Select(e => new EducationDto
+                    {
+                        Title = e.Title,
+                        Description = e.Description,
+                        Skills = e.Skills.Select(s => new SkillDto
+                        {
+                            Name = s.Name
+                        }).ToList()
+                    }).ToList()
+                }).ToList(),
+                Projects = user.ProjectsNavigation.Select(p => new ProjectDto
+                {
+                    Title = p.Title,
+                    Description = p.Description,
+                }).ToList()
+            };
+
+            var xmlSerializer = new XmlSerializer(typeof(UserDto));
+
+            using (var stream = new MemoryStream())
+            {
+                xmlSerializer.Serialize(stream, userDto);
+                stream.Position = 0;
+
+                var serializedXml = new StreamReader(stream).ReadToEnd();
+                return Content(serializedXml, "application/xml");
+            }
+            return View();
         }
 
     }
