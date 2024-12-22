@@ -1,4 +1,5 @@
-﻿using cvprojekt.Models;
+﻿using System.Diagnostics;
+using cvprojekt.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -37,17 +38,51 @@ namespace cvprojekt.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddEducation(Education education)
+        public async Task<IActionResult> AddEducation(EducationSkillViewModel viewmodel)
         {
-            string userid = _userManager.GetUserId(User);
-
-            var user = _dbContext.Users.Where(u => u.Id == userid).Include(u => u.Cvs).FirstOrDefault();
-
+            string revampedstring = viewmodel.Skills.Replace("\"", "").Replace("[", "").Replace("]", "");
+            string[] skillnames = revampedstring.Split(',');
             
+            
+            foreach (var skill in skillnames)
+            {
+                Console.WriteLine("Skill " + skill);
+            }
+            Education education = new Education()
+            {
+                Title = viewmodel.Title,
+                Description = viewmodel.Description,
+            };
+            IQueryable<Skill> skills = _dbContext.Skills;
+            foreach (var skill in skills)
+            {
+                foreach (var skillinput in skillnames)
+                {
+                    if (!skill.Name.Equals(skillinput))
+                    {
+                        AddSkill(new Skill { Name = skillinput });
+                    }
+                }
+                
+            }
+            IQueryable<Skill> skillsToAdd = from s in skills
+                where skillnames.Contains(s.Name)
+                select s;
+            
+            string userid = _userManager.GetUserId(User);
+    
+            var user = _dbContext.Users.Where(u => u.Id == userid).Include(u => u.Cvs).FirstOrDefault();
+            education.Skills = skillsToAdd.ToList();
             education.Cvid = user.Cvs.FirstOrDefault().Cvid;
             _dbContext.Educations.Add(education);
-            _dbContext.SaveChanges();
-            return RedirectToAction("Index");
+            _dbContext.SaveChangesAsync();
+            return RedirectToAction("Index", "Home");
+        }
+        
+        public async void AddSkill(Skill skill)
+        {
+            _dbContext.Skills.Add(skill);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
