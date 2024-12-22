@@ -20,7 +20,7 @@ namespace cvprojekt.Controllers
         public async Task<IActionResult> Index()
         {
 
-            //Kod för att dölja icke aktiva
+            //Kod fï¿½r att dï¿½lja icke aktiva
             //IQueryable<User> userList = from user in _context.Users select user;
             //if (showOnlyActive)
             //{
@@ -37,16 +37,31 @@ namespace cvprojekt.Controllers
 
             IndexViewModel im = new IndexViewModel();
 
+            if (User.Identity.IsAuthenticated)
+            {
+                IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == true select Cv).Include(c => c.Educations)
+                    .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
-            IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == false select Cv).Include(c => c.Educations)
-                .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
+                IQueryable<Project> projectList = (from Project in _context.Projects select Project)
+                    .OrderBy(p => p.CreatedDate).Take(3);
 
-            IQueryable<Project> projectList = (from Project in _context.Projects select Project)
-                .OrderBy(p => p.CreatedDate).Take(3);
+                im.projects = projectList;
+                im.cvs = cvList;
+            }
+            else
+            {
+                IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive 
+                                                where Cv.OwnerNavigation.IsPrivate == false select Cv)
+                                                    .Include(c => c.Educations)
+                                                        .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
-            im.projects = projectList;
-            im.cvs = cvList;
+                IQueryable<Project> projectList = (from Project in _context.Projects select Project)
+                    .OrderBy(p => p.CreatedDate).Take(3);
 
+                im.projects = projectList;
+                im.cvs = cvList;
+            }
+            
             return View(im);
         }
 
