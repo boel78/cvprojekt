@@ -10,6 +10,70 @@
 	<label>Beskrivning: </label>
 	<input name="Description"/>
 	<br />
-	<select asp-items="@ViewBag.options"></select>
+	<select asp-items="@ViewBag.options" id="selector"></select>
+	<div id="skillList">
+		<h3>Kompetenser</h3>
+	</div>
+	<div id="newSkill" style="display:none;">
+		<label>Ny kompetens: </label>
+		<input name="Skill" id="newSkillInput"/>
+	</div>
+	<br/>
 	<button type="submit">Lägg till</button>
 </form>
+
+<script>
+	document.getElementById('selector').addEventListener('change', function (){
+		const value = this.value
+		const thediv = document.getElementById('newSkill')
+		const skillList = document.getElementById('skillList')
+		
+		if(value === 'NewSkill'){
+			thediv.style.display = 'block'
+			this.style.display = 'none'
+		}
+		else{
+			thediv.style.display = 'none'
+			if(value){
+				var newSkillDiv = document.createElement('div')
+				var newSkillText = document.createElement('p')
+				var newSkillDelete = document.createElement('button')
+				newSkillDiv.style.border = '2px solid black'
+				newSkillDelete.textContent = 'Ta bort'
+				newSkillDelete.id = 'skillDelete'
+				newSkillDelete.addEventListener('click', function (){
+					newSkillDiv.remove()
+				})
+				newSkillText.textContent = value
+				newSkillDiv.appendChild(newSkillText)
+				newSkillDiv.appendChild(newSkillDelete)
+				skillList.appendChild(newSkillDiv)
+			}
+		}
+		
+	})
+	
+	document.getElementById('newSkillInput').addEventListener('blur', function (){
+		const skillListSelector = document.getElementById('selector')
+		const value = this.value
+		const newSkilldiv = document.getElementById('newSkill')
+		skillListSelector.style.display = 'block'
+		newSkilldiv.style.display = 'none'
+		if(value){
+			var newSkillDiv = document.createElement('div')
+			var newSkillText = document.createElement('p')
+			var newSkillDelete = document.createElement('button')
+			newSkillDiv.style.border = '2px solid black'
+			newSkillDelete.textContent = 'Ta bort'
+			newSkillDelete.id = 'skillDelete'
+			newSkillDelete.addEventListener('click', function (){
+				newSkillDiv.remove()
+			})
+			newSkillText.textContent = value
+			newSkillDiv.appendChild(newSkillText)
+			newSkillDiv.appendChild(newSkillDelete)
+			skillList.appendChild(newSkillDiv)
+		}
+	})
+
+</script>

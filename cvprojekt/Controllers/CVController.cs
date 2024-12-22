@@ -29,8 +29,9 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public IActionResult AddEducation()
         {
-            List<SelectListItem> skills = _dbContext.Skills.Select(x => new SelectListItem { Text = x.Name, Value = x.Sid.ToString() }).ToList();
-
+            List<SelectListItem> skills = _dbContext.Skills.Select(x => new SelectListItem { Text = x.Name, Value = x.Name}).ToList();
+            SelectListItem newSkill = new SelectListItem { Text = "Lägg till en ny kompetens..", Value = "NewSkill" };
+            skills.Insert(skills.Count, newSkill);
             ViewBag.options = skills;
             return View();
         }
