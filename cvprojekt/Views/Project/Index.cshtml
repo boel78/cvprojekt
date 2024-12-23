@@ -3,6 +3,8 @@
 	ViewData["Title"] = "Projekt";
 }
 
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model IQueryable<cvprojekt.Models.Project>
 <h2>Projektlista</h2>
 
@@ -22,13 +24,14 @@
                 <td>@project.ProjectId</td>
                 <td>@project.Description</td>
                 <td>@project.CreatedByNavigation?.Name</td>
-                <td>
-                    if(@project.CreatedBy == User.FindFirstValue(ClaimTypes.NameIdentifyer)) 
+                
+                    @if(project.CreatedBy == User.FindFirstValue(ClaimTypes.NameIdentifier)) 
                     {
+                        <td>
                         <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Redigera</a>
-
+                        </td>
                     }
-                </td>
+                
                 <td><a asp-controller="Project" asp-action="Remove" asp-route-id="@project.ProjectId">Radera</a></td>
             </tr>
             }
