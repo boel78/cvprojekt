@@ -15,7 +15,7 @@ public partial class Cv
 
     public virtual ICollection<Education> Educations { get; set; } = new List<Education>();
 
-    public virtual AspNetUser? OwnerNavigation { get; set; }
+    public virtual User? OwnerNavigation { get; set; }
 
     public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
 }

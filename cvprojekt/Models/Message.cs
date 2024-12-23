@@ -17,7 +17,7 @@ public partial class Message
 
     public string? Reciever { get; set; }
 
-    public virtual AspNetUser? RecieverNavigation { get; set; }
+    public virtual User? RecieverNavigation { get; set; }
 
-    public virtual AspNetUser? SenderNavigation { get; set; }
+    public virtual User? SenderNavigation { get; set; }
 }

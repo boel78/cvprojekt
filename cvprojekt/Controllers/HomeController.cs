@@ -1,54 +1,54 @@
-//using System.Diagnostics;
+using System.Diagnostics;
 
-//using cvprojekt.Models;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+using cvprojekt.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-//namespace cvprojekt.Controllers
-//{
-//    public class HomeController : Controller
-//    {
-//        private readonly ILogger<HomeController> _logger;
-//        private readonly CvDbContext _context;
+namespace cvprojekt.Controllers
+{
+    public class HomeController : Controller
+    {
+        private readonly ILogger<HomeController> _logger;
+        private readonly CvDbContext _context;
 
-//        public HomeController(ILogger<HomeController> logger, CvDbContext context)
-//        {
-//            _logger = logger;
-//            _context = context;
-//        }
+        public HomeController(ILogger<HomeController> logger, CvDbContext context)
+        {
+            _logger = logger;
+            _context = context;
+        }
 
-//        public async Task<IActionResult> Index()
-//        {
-
-
-//            //IQueryable<User> userList = from user in _context.Users select user;
-//            //if (showOnlyActive)
-//            //{
-//            //    userList = userList.Where(x => x.IsActive);
-//            //}
-//            //else
-//            //{
-//            //    userList = userList.Where(x => !x.IsActive);
-//            //}
+        public async Task<IActionResult> Index()
+        {
 
 
-//            //ViewData["ShowOnlyActive"] = showOnlyActive;
+            //IQueryable<User> userList = from user in _context.Users select user;
+            //if (showOnlyActive)
+            //{
+            //    userList = userList.Where(x => x.IsActive);
+            //}
+            //else
+            //{
+            //    userList = userList.Where(x => !x.IsActive);
+            //}
 
-//            IQueryable<Cv> cvList = (from Cv in _context.Cvs select Cv).Include(c => c.Educations)
-//                .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
-//            return View(cvList);
-//        }
+            //ViewData["ShowOnlyActive"] = showOnlyActive;
 
-//        public IActionResult Privacy()
-//        {
-//            return View();
-//        }
+            IQueryable<Cv> cvList = (from Cv in _context.Cvs select Cv).Include(c => c.Educations)
+                .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
-//        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-//        public IActionResult Error()
-//        {
-//            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-//        }
-//    }
-//}
+            return View(cvList);
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+    }
+}

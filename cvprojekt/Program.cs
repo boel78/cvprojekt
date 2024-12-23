@@ -8,11 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//builder.Services.AddDbContext<CvDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<CvDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//builder.Services.AddIdentity<User, IdentityRole>()
-//    .AddEntityFrameworkStores<CvDbContext>()
-//        .AddDefaultTokenProviders();
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<CvDbContext>()
+        .AddDefaultTokenProviders();
 
 var app = builder.Build();
 

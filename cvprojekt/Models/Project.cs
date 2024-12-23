@@ -15,9 +15,9 @@ public partial class Project
 
     public DateTime? CreatedDate { get; set; }
 
-    public virtual AspNetUser? CreatedByNavigation { get; set; }
+    public virtual User? CreatedByNavigation { get; set; }
 
     public virtual ICollection<Cv> Cvs { get; set; } = new List<Cv>();
 
-    public virtual ICollection<AspNetUser> Users { get; set; } = new List<AspNetUser>();
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
