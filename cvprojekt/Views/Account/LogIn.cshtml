@@ -1,4 +1,4 @@
-﻿@{
+﻿@* @{
 }
 
 @model LoginViewModel
@@ -8,7 +8,7 @@
 	<input asp-for="UserName"/>
 	<br />
 	<label>Lösenord: </label>
-	<input type="password" asp-for="Password"/>
+	<input type="password" asp-for="Password"/>+
 	<br />
 	<label>Kom ihåg mig</label>
 	<input type="checkbox" title="Remember me" asp-for="RememberMe"/>
@@ -18,3 +18,4 @@
 	<label>Har du inget konto?</label>
 	<a asp-action="Register">Registera dig</a>
 </form>
+ *@
