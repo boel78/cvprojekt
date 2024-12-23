@@ -25,10 +25,11 @@
             <div>
                 <h3>Erfarenheter</h3>
                 @foreach (var education in cv.Educations){
+                    <h3>@education.Title</h3>
                     <p>
                         @education.Description
                     </p>
-                    <h3>Kompetenser</h3>
+                    <h4>Kompetenser</h4>
                     @foreach (var skill in education.Skills){
                         <p>@skill.Name</p>
                     }

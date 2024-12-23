@@ -50,7 +50,7 @@ namespace cvprojekt.Controllers
             }
             else
             {
-                IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive 
+                IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == true 
                                                 where Cv.OwnerNavigation.IsPrivate == false select Cv)
                                                     .Include(c => c.Educations)
                                                         .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);

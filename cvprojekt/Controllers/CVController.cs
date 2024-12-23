@@ -60,7 +60,7 @@ namespace cvprojekt.Controllers
                 {
                     if (!skill.Name.Equals(skillinput))
                     {
-                        AddSkill(new Skill { Name = skillinput });
+                        await AddSkill(new Skill { Name = skillinput });
                     }
                 }
                 
@@ -75,14 +75,14 @@ namespace cvprojekt.Controllers
             education.Skills = skillsToAdd.ToList();
             education.Cvid = user.Cvs.FirstOrDefault().Cvid;
             _dbContext.Educations.Add(education);
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction("Index", "Home");
         }
         
-        public async void AddSkill(Skill skill)
+        public async Task AddSkill(Skill skill)
         {
             _dbContext.Skills.Add(skill);
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChangesAsync();
         }
     }
 }
