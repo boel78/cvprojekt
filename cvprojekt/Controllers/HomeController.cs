@@ -24,6 +24,7 @@ namespace cvprojekt.Controllers
         public async Task<IActionResult> Index()
         {
             
+
             //Kod f�r att d�lja icke aktiva
             //IQueryable<User> userList = from user in _context.Users select user;
             //if (showOnlyActive)
@@ -54,6 +55,31 @@ namespace cvprojekt.Controllers
             
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
+            if (User.Identity.IsAuthenticated)
+            {
+                IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == true select Cv).Include(c => c.Educations)
+                    .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
+
+                IQueryable<Project> projectList = (from Project in _context.Projects select Project)
+                    .OrderBy(p => p.CreatedDate).Take(3);
+
+                im.projects = projectList;
+                im.cvs = cvList;
+            }
+            else
+            {
+                IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == true 
+                                                where Cv.OwnerNavigation.IsPrivate == false select Cv)
+                                                    .Include(c => c.Educations)
+                                                        .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
+
+                IQueryable<Project> projectList = (from Project in _context.Projects select Project)
+                    .OrderBy(p => p.CreatedDate).Take(3);
+
+                im.projects = projectList;
+                im.cvs = cvList;
+            }
+            
             return View(im);
         }
 
