@@ -6,17 +6,17 @@
 
 
 
-@* <form asp-action="Index" method="get">
+@*  <form asp-action="Index" method="get">
     <label>Filtrera användare utifrån om deras profil är aktiv?</label>
     <input type="checkbox"
     @if ((bool)ViewData["ShowOnlyActive"]){<text>checked</text>}
     onchange="this.form.submit()"
     name="showOnlyActive"
     value="true"/>
-</form> *@
+</form>  *@
 
 
-<div class="text-center">
+@* <div class="text-center">
     @foreach (var cv in Model){
         <div class="card">
             <a class="card-header" asp-controller="User">@cv.OwnerNavigation</a>
@@ -36,4 +36,5 @@
             </div>
         </div>
     }
-</div>
+</div> *@
+ 

@@ -39,7 +39,7 @@ namespace cvprojekt.Controllers
                 IsPrivate = user.IsPrivate,
                 IsActive = user.IsActive,
             };
-                
+
 
             return View(model);
         }
@@ -87,7 +87,7 @@ namespace cvprojekt.Controllers
                 .Any(edu => edu.Skills
                     .Any(sid => searchWords.Any(word => sid.Name.Contains(word)))))).ToList();
             }
-            
+
 
             return View(users);
         }

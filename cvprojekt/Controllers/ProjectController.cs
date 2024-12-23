@@ -14,12 +14,12 @@ namespace cvprojekt.Controllers
         public ProjectController(CvDbContext context, UserManager<User> usermanager)
         {
             _context = context;
-            _usermanager = usermanager; 
+            _usermanager = usermanager;
         }
 
         public async Task<IActionResult> Index()
         {
-            IQueryable<Project> projects =  (from project in _context.Projects
+            IQueryable<Project> projects = (from project in _context.Projects
                                             select project).Include(p => p.CreatedByNavigation);
 
             return View(projects);
@@ -33,11 +33,11 @@ namespace cvprojekt.Controllers
         [HttpPost]
         public IActionResult Create(Project project)
         {
-                string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                project.CreatedBy = userid;
-                _context.Add(project);
-                _context.SaveChanges();
-                return RedirectToAction("Index", "Project");
+            string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            project.CreatedBy = userid;
+            _context.Add(project);
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Project");
         }
 
         [HttpGet]
@@ -55,7 +55,7 @@ namespace cvprojekt.Controllers
         {
             var project = _context.Projects.FirstOrDefault(p => p.ProjectId == id);
             var user = await _usermanager.GetUserAsync(User);
-            if (project.CreatedBy != user.Id) 
+            if (project.CreatedBy != user.Id)
             {
                 return Forbid();
             }
@@ -63,11 +63,11 @@ namespace cvprojekt.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Project updatedProject) 
+        public IActionResult Edit(Project updatedProject)
         {
             var project = _context.Projects.FirstOrDefault(p => p.ProjectId == updatedProject.ProjectId);
             string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+
             project.Title = updatedProject.Title;
             project.Description = updatedProject.Description;
             _context.SaveChanges();
@@ -75,24 +75,24 @@ namespace cvprojekt.Controllers
 
         }
 
-        [HttpPost]
-        public IActionResult AddUserToProject(int projectId, string userId)
-        {
-            var project = _context.Projects.Find(projectId);
-            var user = _context.Users.Find(userId);
-            if (_context.UserProjects.AsQueryable().Any(up => up.UserID == userId && up.ProjectID == projectId))
-            {
-                return BadRequest("Användaren är redan kopplad till projektet.");
-            }
+        //[HttpPost]
+        //public IActionResult AddUserToProject(int projectId, string userId)
+        //{
+        //    var project = _context.Projects.Find(projectId);
+        //    var user = _context.Users.Find(userId);
+        //    if (_context.UserProjects.AsQueryable().Any(up => up.UserID == userId && up.ProjectID == projectId))
+        //    {
+        //        return BadRequest("Användaren är redan kopplad till projektet.");
+        //    }
 
-            var userProject = new UserProject
-            {
-                UserID = userId,
-                ProjectID = projectId
-            };
-            _context.UserProjects.Add(userProject);
-            _context.SaveChanges();
-            return RedirectToAction("Index", "Project");
-        }
+        //    var userProject = new UserProject
+        //    {
+        //        UserID = userId,
+        //        ProjectID = projectId
+        //    };
+        //    _context.UserProjects.Add(userProject);
+        //    _context.SaveChanges();
+        //    return RedirectToAction("Index", "Project");
+        //}
     }
 }

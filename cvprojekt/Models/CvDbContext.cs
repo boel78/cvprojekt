@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace cvprojekt.Models;
 
-public partial class CvDbContext : IdentityDbContext<User>
+public partial class CvDbContext : DbContext
 {
     public CvDbContext()
     {
@@ -15,6 +14,7 @@ public partial class CvDbContext : IdentityDbContext<User>
         : base(options)
     {
     }
+
 
     public virtual DbSet<Cv> Cvs { get; set; }
 
@@ -29,17 +29,52 @@ public partial class CvDbContext : IdentityDbContext<User>
     public virtual DbSet<Skill> Skills { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-    public virtual DbSet<UserProject> UserProjects { get; set; }
 
-
-    /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("DefaultConnection");*/
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-DF3QFIP;Initial Catalog=CV_DB;Integrated Security=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
 
-        base.OnModelCreating(modelBuilder);
+            entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
+                .IsUnique()
+                .HasFilter("([NormalizedUserName] IS NOT NULL)");
+
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.Name).HasMaxLength(100);
+            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+            entity.Property(e => e.UserName).HasMaxLength(256);
+
+            entity.HasMany(d => d.ProjectsNavigation).WithMany(p => p.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "UserProject",
+                    r => r.HasOne<Project>().WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__UserProje__Proje__3D2915A8"),
+                    l => l.HasOne<User>().WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__UserProje__UserI__3C34F16F"),
+                    j =>
+                    {
+                        j.HasKey("UserId", "ProjectId").HasName("PK__UserProj__00E9674173AFB3B7");
+                        j.ToTable("UserProjects");
+                        j.IndexerProperty<string>("UserId").HasColumnName("UserID");
+                        j.IndexerProperty<int>("ProjectId").HasColumnName("ProjectID");
+                    });
+
+           
+        });
+
+       
+
+       
 
         modelBuilder.Entity<Cv>(entity =>
         {
@@ -48,11 +83,11 @@ public partial class CvDbContext : IdentityDbContext<User>
             entity.ToTable("CV");
 
             entity.Property(e => e.Cvid).HasColumnName("CVID");
+            entity.Property(e => e.Owner).HasMaxLength(450);
 
             entity.HasOne(d => d.OwnerNavigation).WithMany(p => p.Cvs)
                 .HasForeignKey(d => d.Owner)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CV__Owner__44FF419A");
+                .HasConstraintName("FK__CV__Owner__14270015");
 
             entity.HasMany(d => d.Projects).WithMany(p => p.Cvs)
                 .UsingEntity<Dictionary<string, object>>(
@@ -130,16 +165,16 @@ public partial class CvDbContext : IdentityDbContext<User>
 
             entity.Property(e => e.Mid).HasColumnName("MID");
             entity.Property(e => e.Content).HasMaxLength(300);
+            entity.Property(e => e.Reciever).HasMaxLength(450);
+            entity.Property(e => e.Sender).HasMaxLength(450);
 
             entity.HasOne(d => d.RecieverNavigation).WithMany(p => p.MessageRecieverNavigations)
                 .HasForeignKey(d => d.Reciever)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Messages__Reciev__59FA5E80");
+                .HasConstraintName("FK__Messages__Reciev__160F4887");
 
             entity.HasOne(d => d.SenderNavigation).WithMany(p => p.MessageSenderNavigations)
                 .HasForeignKey(d => d.Sender)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Messages__Sender__59063A47");
+                .HasConstraintName("FK__Messages__Sender__151B244E");
         });
 
         modelBuilder.Entity<Project>(entity =>
@@ -147,12 +182,12 @@ public partial class CvDbContext : IdentityDbContext<User>
             entity.HasKey(e => e.ProjectId).HasName("PK__Projects__761ABED001D3C2A6");
 
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
+            entity.Property(e => e.CreatedBy).HasMaxLength(450);
             entity.Property(e => e.Title).HasMaxLength(100);
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ProjectsNavigation)
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Projects)
                 .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Projects__Create__3E52440B");
+                .HasConstraintName("FK__Projects__Create__17036CC0");
         });
 
         modelBuilder.Entity<Skill>(entity =>
@@ -164,29 +199,6 @@ public partial class CvDbContext : IdentityDbContext<User>
             entity.Property(e => e.Sid).HasColumnName("SID");
             entity.Property(e => e.Name).HasMaxLength(100);
         });
-
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__Users__1788CCAC2E013538");
-
-            entity.HasIndex(e => e.Email, "UQ__Users__A9D10534D5022A46").IsUnique();
-
-            entity.Property(e => e.Id).HasColumnName("Id");
-            entity.Property(e => e.CreatedDate)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-            entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.PasswordHash).HasMaxLength(100);
-            entity.Property(e => e.ProfilePicture)
-                .HasMaxLength(100)
-                .HasDefaultValue("ProfilePictureURL");
-
-        });
-        
-        modelBuilder.Entity<UserProject>()
-            .HasKey(up => new { up.UserID, up.ProjectID });
 
         OnModelCreatingPartial(modelBuilder);
     }

@@ -54,7 +54,7 @@ namespace cvprojekt.Controllers
                 user.UserName = rm.UserName;
                 user.Name = rm.Name;
                 user.IsPrivate = false;
-                user.ProfilePicture = "";
+                //user.ProfilePicture = ;
                 user.Email = rm.Email;
                 user.CreatedDate = DateTime.Now;
                 var result = await userManager.CreateAsync(user, rm.Password);

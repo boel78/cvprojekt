@@ -13,9 +13,11 @@ public partial class Project
 
     public string? CreatedBy { get; set; }
 
+    public DateTime? CreatedDate { get; set; }
+
     public virtual User? CreatedByNavigation { get; set; }
 
     public virtual ICollection<Cv> Cvs { get; set; } = new List<Cv>();
-    
-    public virtual ICollection<UserProject> UserProjects { get; set; } = new List<UserProject>();
+
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
