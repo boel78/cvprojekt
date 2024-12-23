@@ -7,7 +7,7 @@
 
 <h1>Redigera Projekt</h1>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" onsubmit="return confirm('Bekräfta ändringar');">
 	<div>
 		<label for="Title">Titel</label>
 		<input asp-for="Title" id="Title"/>

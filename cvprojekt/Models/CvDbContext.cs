@@ -29,6 +29,7 @@ public partial class CvDbContext : IdentityDbContext<User>
     public virtual DbSet<Skill> Skills { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<UserProject> UserProjects { get; set; }
 
 
     /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -183,6 +184,9 @@ public partial class CvDbContext : IdentityDbContext<User>
                 .HasDefaultValue("ProfilePictureURL");
 
         });
+        
+        modelBuilder.Entity<UserProject>()
+            .HasKey(up => new { up.UserID, up.ProjectID });
 
         OnModelCreatingPartial(modelBuilder);
     }

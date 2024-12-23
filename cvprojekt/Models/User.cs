@@ -22,5 +22,7 @@ namespace cvprojekt.Models
 
 
         public virtual ICollection<Project> ProjectsNavigation { get; set; } = new List<Project>();
+        
+        public virtual ICollection<UserProject> UserProjects { get; set; } = new List<UserProject>();
     }
 }

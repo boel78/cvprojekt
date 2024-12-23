@@ -1,4 +1,4 @@
-﻿
+﻿using System.Linq;
 using cvprojekt.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -63,11 +63,36 @@ namespace cvprojekt.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit() 
+        public IActionResult Edit(Project updatedProject) 
         {
+            var project = _context.Projects.FirstOrDefault(p => p.ProjectId == updatedProject.ProjectId);
             string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        } 
             
+            project.Title = updatedProject.Title;
+            project.Description = updatedProject.Description;
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Project");
+
+        }
+
+        [HttpPost]
+        public IActionResult AddUserToProject(int projectId, string userId)
+        {
+            var project = _context.Projects.Find(projectId);
+            var user = _context.Users.Find(userId);
+            if (_context.UserProjects.AsQueryable().Any(up => up.UserID == userId && up.ProjectID == projectId))
+            {
+                return BadRequest("Användaren är redan kopplad till projektet.");
+            }
+
+            var userProject = new UserProject
+            {
+                UserID = userId,
+                ProjectID = projectId
+            };
+            _context.UserProjects.Add(userProject);
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Project");
+        }
     }
 }

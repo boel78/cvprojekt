@@ -21,7 +21,7 @@
                 <td>@project.Title</td>
                 <td>@project.ProjectId</td>
                 <td>@project.Description</td>
-                <td>@project.CreatedByNavigation?.Name ?? "Okänd användare"</td>
+                <td>@project.CreatedByNavigation?.Name</td>
                 <td>
                     if(@project.CreatedBy == User.FindFirstValue(ClaimTypes.NameIdentifyer)) 
                     {
