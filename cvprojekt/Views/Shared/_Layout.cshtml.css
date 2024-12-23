@@ -46,3 +46,18 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+.notifications {
+  position: relative;
+  display: inline-block;
+}
+
+.notifications .badge {
+  position: absolute;
+  top: -8px;
+  left: -12px;
+  background-color: red;
+  color: white;
+  border-radius: 70%;
+  padding: 5px 10px;
+  font-size: 8px;
+}

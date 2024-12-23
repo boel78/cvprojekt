@@ -2,9 +2,10 @@
 }
 
 @model List<cvprojekt.Models.Cv>
+	<h2>Dina CV:n</h2>
 
-@foreach (var cv in Model){
-	<p>
-		@cv.Description
-	</p>
-}
+		@foreach (var cv in Model)
+		{
+			<p>@cv.Description</p>
+		}
+	

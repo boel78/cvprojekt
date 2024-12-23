@@ -16,6 +16,7 @@ namespace cvprojekt.Controllers
 
         public IActionResult Index(string projekt)
         {
+            
             List<Cv> cvs = _dbContext.Cvs.Where(c => c.Projects.Any(p => p.Title.Contains(projekt))).ToList();
 
             return View(cvs);
