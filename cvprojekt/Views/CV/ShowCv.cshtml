@@ -1,0 +1,60 @@
+@model ShowCvViewModel
+
+@{
+    
+}
+
+@if (Model.User.Cvs == null || Model.User.Cvs.Count == 0)
+{
+    <h2>Det finns ingen användare som har det användarnamnet, eller så finns det inget cv på denna användare.</h2>
+}
+else
+{
+    <div class="row">
+        <div class="col-8">
+            <h2>@Model.User.Name</h2>
+            <p>@Model.User.Email</p>
+        </div>
+        <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.User.ProfilePicture)" class="col-2"/>
+    </div>
+    
+    <h2>Cv</h2>
+    @foreach (var cv in Model.User.Cvs)
+    {
+        <p>@cv.Description</p>
+        <div class="card">
+            <h3 class="card-header">Erfarenheter</h3>
+            <div class="card-body">
+            @foreach (var education in cv.Educations)
+            {
+                <h3>@education.Title</h3>
+                <p>@education.Description</p>
+                <h3>Kompetenser</h3>
+                @foreach (var skill in education.Skills)
+                {
+                    <p>@skill.Name</p>
+                }
+            }
+            </div>
+        </div>
+    }
+}
+
+<h2>Andra användare med liknande kompetenser</h2>
+
+<div class="card">
+    @foreach (var user in Model.UsersMatch)
+    {
+        <h3>@user.Name</h3>
+        @foreach (var cv in user.Cvs)
+        {
+            @foreach (var education in cv.Educations)
+            {
+                @foreach (var skill in education.Skills)
+                {
+                    <p>@skill.Name</p>
+                }
+            }
+        }
+    }
+</div>

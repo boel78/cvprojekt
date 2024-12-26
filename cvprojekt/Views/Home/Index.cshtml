@@ -20,7 +20,7 @@
 <div class="text-center">
     @foreach (var cv in Model.cvs){
         <div class="card">
-            <a class="card-header" asp-controller="User">@cv.OwnerNavigation</a>
+            <a class="card-header" asp-controller="Cv" asp-action="ShowCv" asp-route-username=@cv.OwnerNavigation>@cv.OwnerNavigation</a>
             <h3>CV</h3>
             <p>@cv.Description</p>
             <div>

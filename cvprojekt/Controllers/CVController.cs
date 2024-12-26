@@ -85,5 +85,52 @@ namespace cvprojekt.Controllers
             _dbContext.Skills.Add(skill);
             _dbContext.SaveChangesAsync();
         }
+
+        //Tar username eftersom det är en get och är känsligt med id
+        [HttpGet]
+        public async Task<IActionResult> ShowCv(string username)
+        {
+            ShowCvViewModel vm = new ShowCvViewModel();
+            
+            //Väljer rätt user
+            List<User> users = await _dbContext.Users.ToListAsync();
+            vm.User = new User();
+            if (!string.IsNullOrEmpty(username))
+            {
+                foreach (var theuser in users)
+                {
+                    vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
+                }
+                
+                //Hämtar matchningar
+                //Kan bytas ut om man vill ta en annan user
+                var userId = vm.User.Id;
+
+                var user = await _dbContext.Users
+                    .Include(u => u.Cvs)
+                    .ThenInclude(cv => cv.Educations)
+                    .ThenInclude(edu => edu.Skills)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+            
+                List<string> skills = user.Cvs
+                    .SelectMany(cv => cv.Educations)
+                    .SelectMany(edu => edu.Skills)
+                    .Select(skill => skill.Name)
+                    .ToList();
+                Console.WriteLine("skillS: " + skills.Count());
+                foreach (var skill in skills)
+                {
+                    Console.WriteLine(skill);
+                }
+
+                vm.UsersMatch = _dbContext.Users.Include(u => u.Cvs)
+                    .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
+                    .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills).Any(skill => skills.Contains(skill.Name)));
+                
+                
+            }
+ 
+        return View(vm);
+        }
     }
 }
