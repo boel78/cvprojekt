@@ -3,12 +3,24 @@
 
 @model IQueryable<User>
 
-
+<h2>Matchningar baserat på dina kompetenser</h2>
+<div class="card">
 @foreach (var user in Model)
 {
-    <p>@user.Name</p>
+    <h2 class="card-header">@user.Name</h2>
+    <h3>Kompetenser</h3>
+    @foreach (var cv in user.Cvs)
+    {
+        @foreach (var education in cv.Educations)
+        {
+            @foreach (var skill in education.Skills)
+            {
+                <p>@skill.Name</p>
+            }
+        }
+    }
 }
-
+</div>
 
 <!DOCTYPE html>
 
