@@ -15,7 +15,13 @@ else
             <h2>@Model.User.Name</h2>
             <p>@Model.User.Email</p>
         </div>
-        <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.User.ProfilePicture)" class="col-2"/>
+        <div class="col-2">
+            <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.User.ProfilePicture)" class="img-thumbnail"/>
+            @if (Model.IsWriter)
+            {
+                <p>Såhär många har sett ditt CV: @Model.ViewCount</p>
+            }
+        </div>
     </div>
     
     <h2>Cv</h2>
