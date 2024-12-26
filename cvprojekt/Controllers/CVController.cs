@@ -102,6 +102,17 @@ namespace cvprojekt.Controllers
                     vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
                 }
                 
+                //Plussar på 1 varje gång sidan laddas
+                if (vm.User.Cvs.Count > 0)
+                {
+                    Cv cv = vm.User.Cvs.FirstOrDefault();
+                    CvView cvv = _dbContext.CvViews.Where(cvv => cvv.Cvid == cv.Cvid).FirstOrDefault();
+                    cvv.ViewCount = cvv.ViewCount + 1;
+                    _dbContext.SaveChanges();
+                }
+                
+                
+                
                 //Hämtar matchningar
                 //Kan bytas ut om man vill ta en annan user
                 var userId = vm.User.Id;
