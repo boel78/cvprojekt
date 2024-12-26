@@ -220,5 +220,36 @@ namespace cvprojekt.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Match()
+        {
+            //Kan bytas ut om man vill ta en annan user
+            var userId = (await _userManager.GetUserAsync(User)).Id;
+
+            var user = await _ctx.Users
+                .Include(u => u.Cvs)
+                .ThenInclude(cv => cv.Educations)
+                .ThenInclude(edu => edu.Skills)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            
+            List<string> skills = user.Cvs
+                .SelectMany(cv => cv.Educations)
+                .SelectMany(edu => edu.Skills)
+                .Select(skill => skill.Name)
+                .ToList();
+            Console.WriteLine("skillS: " + skills.Count());
+            foreach (var skill in skills)
+            {
+                Console.WriteLine(skill);
+            }
+
+            IQueryable<User> matches = _ctx.Users.Include(u => u.Cvs)
+                .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
+                .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills).Any(skill => skills.Contains(skill.Name)));
+            Console.WriteLine("Mathces: " + matches.Count());
+            return View(matches);
+        }
+
     }
 }
