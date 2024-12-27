@@ -7,9 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\**" />
+    <Content Remove="Data\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <None Remove="Data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="._Program.cs" />
     <Compile Remove="Controllers\._HomeController.cs" />
-    <Compile Remove="Data\._ApplicationDbContext.cs" />
     <Compile Remove="Models\._User.cs" />
   </ItemGroup>
 
@@ -39,7 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

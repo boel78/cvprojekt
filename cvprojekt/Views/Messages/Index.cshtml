@@ -1,0 +1,76 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<cvprojekt.Models.Message>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<h2>Dina mottagna meddelanden</h2>
+
+@if (!Model.Any())
+{
+    <p>Du har inga mottagna meddelanden.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Avsändare</th>
+            <th>Meddelande</th>
+            <th>Skickat</th>
+            <th>Åtgärder</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var message in Model)
+        {
+            <tr class="@((bool)!message.IsRead ? "table-warning" : "")">
+                <td>@message.SenderNavigation?.UserName</td>
+                <td>@message.Content</td>
+                <td>@message.TimeSent?.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <form asp-action="MarkAsRead" method="post">
+                        <input type="hidden" name="mid" value="@message.Mid" />
+                        @if ((bool)!message.IsRead)
+                        {
+                            <button type="submit" class="btn btn-success btn-sm">Markera som läst</button>
+                        }
+                    </form>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                            data-message-id="@message.Mid">
+                        Ta bort
+                    </button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Bekräfta borttagning</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Är du säker på att du vill ta bort detta meddelande? Denna åtgärd kan inte ångras.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                    <form id="deleteForm" method="post" asp-action="DeleteMessage">
+                        <input type="hidden" name="mid" id="deleteMid" />
+                        <button type="submit" class="btn btn-danger">Ta bort</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <script>
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Knappen som öppnade modalen
+        const messageId = button.getAttribute('data-message-id'); // Hämta message-id från data-attributet
+        const deleteInput = document.getElementById('deleteMid'); // Hitta hidden input i modalen
+        deleteInput.value = messageId; // Sätt meddelande-id i input
+    });
+</script>
+}

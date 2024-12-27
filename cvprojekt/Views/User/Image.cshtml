@@ -1,0 +1,13 @@
+﻿@{
+}
+
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model cvprojekt.Models.User
+
+
+<img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.ProfilePicture)"/>
+
+<form asp-action="Image" method="post" enctype="multipart/form-data">
+	<input type="file" name="image" />
+	<button type="submit">Ladda upp bild</button>
+</form>

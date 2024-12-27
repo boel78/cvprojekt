@@ -2,7 +2,8 @@
     ViewData["Title"] = "Home Page";
 }
 
-@model IQueryable<cvprojekt.Models.Cv>;
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IndexViewModel;
 
 
 
@@ -12,12 +13,12 @@
     @if ((bool)ViewData["ShowOnlyActive"]){<text>checked</text>}
     onchange="this.form.submit()"
     name="showOnlyActive"
-    value="true"/>
-</form>  *@
+    value="true"/>do
+</form> *@
 
 
-@* <div class="text-center">
-    @foreach (var cv in Model){
+<div class="text-center">
+    @foreach (var cv in Model.cvs){
         <div class="card">
             <a class="card-header" asp-controller="User">@cv.OwnerNavigation</a>
             <h3>CV</h3>
@@ -25,10 +26,11 @@
             <div>
                 <h3>Erfarenheter</h3>
                 @foreach (var education in cv.Educations){
+                    <h3>@education.Title</h3>
                     <p>
                         @education.Description
                     </p>
-                    <h3>Kompetenser</h3>
+                    <h4>Kompetenser</h4>
                     @foreach (var skill in education.Skills){
                         <p>@skill.Name</p>
                     }
@@ -36,6 +38,60 @@
             </div>
         </div>
     }
-</div> *@
+</div>
 
- 
+
+<div>
+    <h3>Senaste projekt</h3>
+    @foreach (var project in Model.projects){
+        <a asp-controller="Cv" asp-action="Index" asp-route-projectid="@project.ProjectId" class=" text-decoration-none link-opacity-75-hover">
+            <div>
+                <h4>@project.Title</h4>
+                <p>@project.Description</p>
+            </div>
+        </a>
+
+    }
+    
+</div>
+
+<div class="text-center">
+    @foreach (var cv in Model.cvs)
+    {
+        <div class="card">
+            <a class="card-header" asp-controller="User">@cv.OwnerNavigation</a>
+            <h3>CV</h3>
+            <p>@cv.Description</p>
+            <div>
+                <h3>Erfarenheter</h3>
+                @foreach (var education in cv.Educations)
+                {
+                    <p>@education.Description</p>
+                    <h3>Kompetenser</h3>
+                    @foreach (var skill in education.Skills)
+                    {
+                        <p>@skill.Name</p>
+                    }
+                }
+            </div>
+            <hr />
+            <h3>Skicka meddelande</h3>
+            <form asp-controller="Messages" asp-action="SendMessage" method="post">
+                <input type="hidden" name="reciever" value="@cv.OwnerNavigation.Id" />
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <p>Avsändare: @User.Identity.Name</p>
+                }
+                else
+                {
+                    <label for="senderName">Ditt namn:</label>
+                    <input type="text" name="senderName" required />
+                }
+                <label for="content">Meddelande:</label>
+                <textarea name="content" rows="3" required></textarea>
+                <button type="submit" class="btn btn-primary">Skicka</button>
+            </form>
+        </div>
+    }
+</div>
+

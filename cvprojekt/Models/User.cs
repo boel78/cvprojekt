@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace cvprojekt.Models;
 
 public partial class User : IdentityUser
 {
-    public string? Name { get; set; }
+    public class User:IdentityUser
+    {
+        [DataMember]
+        public string Name { get; set; }
 
     public bool IsPrivate { get; set; }
 
@@ -15,7 +16,7 @@ public partial class User : IdentityUser
 
     public DateTime CreatedDate { get; set; }
 
-    public byte[]? ProfilePicture { get; set; }
+        public byte[] ProfilePicture { get; set; }
 
     public virtual ICollection<Cv> Cvs { get; set; } = new List<Cv>();
 

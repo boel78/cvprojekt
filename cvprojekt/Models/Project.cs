@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace cvprojekt.Models;
 
@@ -10,6 +11,8 @@ public partial class Project
     public string Title { get; set; } = null!;
 
     public string Description { get; set; } = null!;
+
+    public DateTime CreatedDate { get; set; }
 
     public string? CreatedBy { get; set; }
 

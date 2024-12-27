@@ -2,6 +2,7 @@
 	ViewData["Title"] = "Edit User";
 }
 
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model cvprojekt.Models.EditUserViewModel
 
 
@@ -23,7 +24,7 @@
 	<label>Bekfräfta Nytt Lösenord:</label>
 	<input type="password" asp-for="ConfirmNewPassword"/>
 	<br />
-	<label title="Aktivera/Av Aktivera Ditt Konto">Aktivt konto: </label>
+	<label title="Aktivt konto">Avaktivera konto: </label>
 	<input type="checkbox" asp-for="IsActive" title="Aktivera/Av Aktivera Ditt Konto"/>
 	<br />
 	<label for="IsPrivate" title="Ställ in om ditt konto ska vara privat" >Privat konto: </label>
