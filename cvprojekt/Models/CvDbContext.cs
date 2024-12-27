@@ -36,46 +36,7 @@ public partial class CvDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
-
-            entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex")
-                .IsUnique()
-                .HasFilter("([NormalizedUserName] IS NOT NULL)");
-
-            entity.Property(e => e.Email).HasMaxLength(256);
-            entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
-            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
-            entity.Property(e => e.UserName).HasMaxLength(256);
-
-            entity.HasMany(d => d.ProjectsNavigation).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UserProject",
-                    r => r.HasOne<Project>().WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__UserProje__Proje__3D2915A8"),
-                    l => l.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__UserProje__UserI__3C34F16F"),
-                    j =>
-                    {
-                        j.HasKey("UserId", "ProjectId").HasName("PK__UserProj__00E9674173AFB3B7");
-                        j.ToTable("UserProjects");
-                        j.IndexerProperty<string>("UserId").HasColumnName("UserID");
-                        j.IndexerProperty<int>("ProjectId").HasColumnName("ProjectID");
-                    });
-
-           
-        });
-
-       
-
-       
-
+   
         modelBuilder.Entity<Cv>(entity =>
         {
             entity.HasKey(e => e.Cvid).HasName("PK__CV__A04CFC43EF4B5070");

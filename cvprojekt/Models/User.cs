@@ -3,12 +3,11 @@ using System.Runtime.Serialization;
 
 namespace cvprojekt.Models;
 
-public partial class User : IdentityUser
+public  class User : IdentityUser
 {
-    public class User:IdentityUser
-    {
-        [DataMember]
-        public string Name { get; set; }
+    
+    [DataMember] 
+    public string Name { get; set; }
 
     public bool IsPrivate { get; set; }
 
