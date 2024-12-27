@@ -1,4 +1,3 @@
-@model string
 @{
     
 }
@@ -7,7 +6,10 @@
 
 <form asp-controller="Messages" asp-action="SendMessage" method="post">
     <label>Skicka meddelande till:</label>
-    <input name="reciever"/>
+    <input name="reciever" @if(ViewData["Username"] != null){<text>
+                                                                 value="@ViewData["Username"]"
+                                                                 readonly
+                                                             </text>} />
     <br/>
     <label for="content">Meddelande:</label>
     <textarea name="content" rows="3" required></textarea>

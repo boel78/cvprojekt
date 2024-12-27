@@ -50,6 +50,11 @@ else
     <input type="hidden" name="username" value=@Model.User.UserName/>
     <button type="submit">Skriv ut profil</button>
 </form>
+<p>@Model.User.UserName</p>
+<form asp-controller="Messages" asp-action="SendMessage" method="get">
+    <input type="hidden" name="username" value=@Model.User.UserName/>
+    <button type="submit">Skicka meddelande</button>
+</form>
 
 <h2>Andra användare med liknande kompetenser</h2>
 

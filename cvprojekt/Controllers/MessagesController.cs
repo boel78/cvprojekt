@@ -33,8 +33,14 @@ public class MessagesController : Controller
     }
 
     [HttpGet]
-    public IActionResult SendMessage()
+    public IActionResult SendMessage(string username)
     {
+        Console.WriteLine("user " + username);
+        if (username != null)
+        {
+            ViewData["Username"] = username.Replace("/", "");
+            
+        }
         return View();
     }
 
@@ -73,6 +79,7 @@ public class MessagesController : Controller
 
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
+            
         }
 
         return View();
