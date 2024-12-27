@@ -20,6 +20,8 @@
         
             @foreach (var project in Model)
             {
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier); // hämtar användarid från inlogg
+                bool isUserInProject = project.Users.Any(u => u.Id == currentUserId); // kollar om användaren är kopplad till projekt
             <tr>
                 <td>@project.Title</td>
                 <td>@project.CreatedDate</td>
@@ -41,7 +43,7 @@
                             <a asp-controller="Project" asp-action="Remove" asp-route-id="@project.ProjectId" class="btn btn-danger">Radera</a>
                         
                     }
-                    else
+                    else if (!isUserInProject)
                     {
                         <form asp-action="AddUserToProject" method="post" style="display: inline" onsubmit="return confirmAddToProject()">
                             <input type="hidden" name="ProjectId" value="@project.ProjectId"/>
