@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace cvprojekt.Models;
 
-public partial class CvDbContext : DbContext
+public partial class CvDbContext : IdentityDbContext<User>
 {
     public CvDbContext()
     {
@@ -14,7 +15,6 @@ public partial class CvDbContext : DbContext
         : base(options)
     {
     }
-
 
     public virtual DbSet<Cv> Cvs { get; set; }
 
@@ -30,13 +30,16 @@ public partial class CvDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-   /* protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+
+    /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("DefaultConnection");*/
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-   
+
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Cv>(entity =>
         {
             entity.HasKey(e => e.Cvid).HasName("PK__CV__A04CFC43EF4B5070");
@@ -44,11 +47,11 @@ public partial class CvDbContext : DbContext
             entity.ToTable("CV");
 
             entity.Property(e => e.Cvid).HasColumnName("CVID");
-            entity.Property(e => e.Owner).HasMaxLength(450);
 
             entity.HasOne(d => d.OwnerNavigation).WithMany(p => p.Cvs)
                 .HasForeignKey(d => d.Owner)
-                .HasConstraintName("FK__CV__Owner__14270015");
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CV__Owner__44FF419A");
 
             entity.HasMany(d => d.Projects).WithMany(p => p.Cvs)
                 .UsingEntity<Dictionary<string, object>>(
@@ -126,16 +129,16 @@ public partial class CvDbContext : DbContext
 
             entity.Property(e => e.Mid).HasColumnName("MID");
             entity.Property(e => e.Content).HasMaxLength(300);
-            entity.Property(e => e.Reciever).HasMaxLength(450);
-            entity.Property(e => e.Sender).HasMaxLength(450);
 
             entity.HasOne(d => d.RecieverNavigation).WithMany(p => p.MessageRecieverNavigations)
                 .HasForeignKey(d => d.Reciever)
-                .HasConstraintName("FK__Messages__Reciev__160F4887");
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Messages__Reciev__59FA5E80");
 
             entity.HasOne(d => d.SenderNavigation).WithMany(p => p.MessageSenderNavigations)
                 .HasForeignKey(d => d.Sender)
-                .HasConstraintName("FK__Messages__Sender__151B244E");
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Messages__Sender__59063A47");
         });
 
         modelBuilder.Entity<Project>(entity =>
@@ -143,12 +146,12 @@ public partial class CvDbContext : DbContext
             entity.HasKey(e => e.ProjectId).HasName("PK__Projects__761ABED001D3C2A6");
 
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
-            entity.Property(e => e.CreatedBy).HasMaxLength(450);
             entity.Property(e => e.Title).HasMaxLength(100);
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Projects)
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ProjectsNavigation)
                 .HasForeignKey(d => d.CreatedBy)
-                .HasConstraintName("FK__Projects__Create__17036CC0");
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Projects__Create__3E52440B");
         });
 
         modelBuilder.Entity<Skill>(entity =>
