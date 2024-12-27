@@ -75,24 +75,20 @@ namespace cvprojekt.Controllers
 
         }
 
-        //[HttpPost]
-        //public IActionResult AddUserToProject(int projectId, string userId)
-        //{
-        //    var project = _context.Projects.Find(projectId);
-        //    var user = _context.Users.Find(userId);
-        //    if (_context.UserProjects.AsQueryable().Any(up => up.UserID == userId && up.ProjectID == projectId))
-        //    {
-        //        return BadRequest("Användaren är redan kopplad till projektet.");
-        //    }
-
-        //    var userProject = new UserProject
-        //    {
-        //        UserID = userId,
-        //        ProjectID = projectId
-        //    };
-        //    _context.UserProjects.Add(userProject);
-        //    _context.SaveChanges();
-        //    return RedirectToAction("Index", "Project");
-        //}
+        [HttpPost]
+        public IActionResult AddUserToProject(int projectId, string userId)
+        {
+            var project = _context.Projects.Include(p => p.Users)
+                                           .FirstOrDefault(p => p.ProjectId == projectId);
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            
+            if (project.Users.Any(u => u.Id == user.Id))
+            {
+                return BadRequest("Användaren är redan kopplad till projektet.");
+            }
+            project.Users.Add(user);
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Project");
+        }
     }
 }
