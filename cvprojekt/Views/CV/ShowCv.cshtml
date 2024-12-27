@@ -50,7 +50,6 @@ else
     <input type="hidden" name="username" value=@Model.User.UserName/>
     <button type="submit">Skriv ut profil</button>
 </form>
-<p>@Model.User.UserName</p>
 <form asp-controller="Messages" asp-action="SendMessage" method="get">
     <input type="hidden" name="username" value=@Model.User.UserName/>
     <button type="submit">Skicka meddelande</button>
@@ -58,7 +57,12 @@ else
 
 <h2>Andra användare med liknande kompetenser</h2>
 
+
 <div class="card">
+    @if (Model.UsersMatch.Count() == 0)
+    {
+        <h3>Det finns inga matchningar</h3>
+    }
     @foreach (var user in Model.UsersMatch)
     {
         <h3>@user.Name</h3>

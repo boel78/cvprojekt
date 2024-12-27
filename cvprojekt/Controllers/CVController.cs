@@ -138,19 +138,23 @@ namespace cvprojekt.Controllers
                     .SelectMany(edu => edu.Skills)
                     .Select(skill => skill.Name)
                     .ToList();
-                Console.WriteLine("skillS: " + skills.Count());
-                foreach (var skill in skills)
+
+                if (User.Identity.IsAuthenticated)
                 {
-                    Console.WriteLine(skill);
+                    vm.UsersMatch = _dbContext.Users.Where(u => u.IsActive == true).Include(u => u.Cvs)
+                        .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
+                        .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
+                            .Any(skill => skills.Contains(skill.Name)));
+                }
+                else
+                {
+                    vm.UsersMatch = _dbContext.Users.Where(u => u.IsPrivate == false).Where(u => u.IsActive == true).Include(u => u.Cvs)
+                        .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
+                        .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
+                            .Any(skill => skills.Contains(skill.Name)));
                 }
 
-                vm.UsersMatch = _dbContext.Users.Include(u => u.Cvs)
-                    .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
-                    .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills).Any(skill => skills.Contains(skill.Name)));
-                
-                
             }
- 
         return View(vm);
         }
     }
