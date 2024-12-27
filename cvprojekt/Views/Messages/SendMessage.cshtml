@@ -11,6 +11,15 @@
                                                                  readonly
                                                              </text>} />
     <br/>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <p>Avsändare: @User.Identity.Name</p>
+    }
+    else
+    {
+        <label for="senderName">Ditt namn:</label>
+        <input type="text" name="senderName" required />
+    }
     <label for="content">Meddelande:</label>
     <textarea name="content" rows="3" required></textarea>
     <br/>
