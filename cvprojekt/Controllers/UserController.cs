@@ -147,7 +147,6 @@ namespace cvprojekt.Controllers
             {
                 if (image.Length > 0)
                 {
-                    Debug.WriteLine("HEJHEJHEJ");
                     byte[] p1 = null;
                     using (var fs1 = image.OpenReadStream())
                     using (var msa1 = new MemoryStream())
@@ -172,8 +171,9 @@ namespace cvprojekt.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SerializeProfile(string path)
+        public async Task<IActionResult> SerializeProfile(string username)
         {
+            Console.WriteLine("user" + username);
             //path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "output.xml");
             //XmlSerializer xml = new XmlSerializer(typeof(XmlContainer));
             //FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
@@ -186,8 +186,8 @@ namespace cvprojekt.Controllers
             var user = await _userManager.Users
                 .Include(u => u.Cvs)
                 .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills)
-                .Include(u => u.ProjectsNavigation) // Ladda relaterade Project
-                .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                .Include(u => u.ProjectsNavigation)
+                .FirstOrDefaultAsync(u => u.UserName == username.Replace("/", ""));
 
             var userDto = new UserDto
             {
