@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace cvprojekt.Controllers;
 
-[Authorize]
+
 public class MessagesController : Controller
 {
     private readonly CvDbContext _context;
@@ -46,7 +46,7 @@ public class MessagesController : Controller
 
 
     [HttpPost]
-    public async Task<IActionResult> SendMessage(string reciever, string content)
+    public async Task<IActionResult> SendMessage(string reciever, string content, string senderName)
     {
         string userid = _userManager.GetUserId(User);
         var user = await _userManager.FindByIdAsync(userid);
@@ -61,12 +61,27 @@ public class MessagesController : Controller
         }
         else
         {
-            var senderId = User.Identity.IsAuthenticated
+            /*var senderId = User.Identity.IsAuthenticated
                 ? _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id
                 : null;
 
-            if (senderId == null)
-                return Unauthorized("Användaren kunde inte hittas.");
+            */
+            var senderId = _userManager.GetUserId(User);
+            var senderUser = _context.Users.FirstOrDefault(u => u.Name == senderName);
+            
+            if (senderName != null)
+            {
+                
+                if (users.Contains(senderUser))
+                {
+                    senderId = senderUser.Id;
+                }
+                else
+                {
+                    return Unauthorized("Användaren kunde inte hittas.");
+                }
+                
+            }
             
             var message = new Message
             {
