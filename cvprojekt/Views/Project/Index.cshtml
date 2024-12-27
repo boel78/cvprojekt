@@ -14,6 +14,7 @@
         <td>Skapat</td>
         <td>Beskrivning</td>
         <td>Skapad av</td>
+        <td>Deltagare</td>
     </thead>
     <tbody>
         
@@ -24,6 +25,12 @@
                 <td>@project.CreatedDate</td>
                 <td>@project.Description</td>
                 <td>@project.CreatedByNavigation?.Name</td>
+                <td>
+                    @foreach (var user in project.Users)
+                    {
+                        <p>@user.Name</p><br/>
+                    }
+                </td>
                 <td>
                     @if(project.CreatedBy == User.FindFirstValue(ClaimTypes.NameIdentifier)) 
                     {
@@ -36,7 +43,7 @@
                     }
                     else
                     {
-                        <form asp-action="AddUserToProject" method="post" style="display: inline">
+                        <form asp-action="AddUserToProject" method="post" style="display: inline" onsubmit="return confirmAddToProject()">
                             <input type="hidden" name="ProjectId" value="@project.ProjectId"/>
                             <input type="hidden" name="UserId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)"/>
                             <button type="submit" class="btn btn-primary">Anslut till projekt</button>
@@ -51,3 +58,11 @@
 <div>
     <a asp-controller="Project" asp-action="Create" class="btn btn-primary">Skapa nytt projekt</a>
 </div>
+
+
+<script>
+    function confirmAddToProject() {
+        alert("Du har lagts till som deltagare i detta projekt");
+        return true;
+    }
+</script>

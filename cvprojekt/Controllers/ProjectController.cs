@@ -19,9 +19,11 @@ namespace cvprojekt.Controllers
 
         public async Task<IActionResult> Index()
         {
-            IQueryable<Project> projects = (from project in _context.Projects
-                                            select project).Include(p => p.CreatedByNavigation);
-
+            // Får med både skapare av projekten och kopplade användare.
+            IQueryable<Project> projects = (from project in _context.Projects select project)
+                .Include(p => p.CreatedByNavigation)
+                .Include(p => p.Users);
+                
             return View(projects);
         }
 
