@@ -1,0 +1,16 @@
+@model string
+@{
+    
+}
+
+<div asp-validation-summary="All"></div>
+
+<form asp-controller="Messages" asp-action="SendMessage" method="post">
+    <label>Skicka meddelande till:</label>
+    <input name="reciever"/>
+    <br/>
+    <label for="content">Meddelande:</label>
+    <textarea name="content" rows="3" required></textarea>
+    <br/>
+    <button type="submit" class="btn btn-primary">Skicka</button>
+</form>

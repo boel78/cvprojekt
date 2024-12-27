@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using cvprojekt.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace cvprojekt.Controllers;
 
@@ -9,10 +10,12 @@ namespace cvprojekt.Controllers;
 public class MessagesController : Controller
 {
     private readonly CvDbContext _context;
+    private readonly UserManager<User> _userManager;
 
-    public MessagesController(CvDbContext context)
+    public MessagesController(CvDbContext context, UserManager<User> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     // Visa mottagna meddelanden
@@ -29,22 +32,40 @@ public class MessagesController : Controller
         return View(messages);
     }
 
+    [HttpGet]
+    public IActionResult SendMessage()
+    {
+        return View();
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> SendMessage(string reciever, string content)
+
+    [HttpPost]
+    public async Task<IActionResult> SendMessage(string reciever, string content)
+    {
+        string userid = _userManager.GetUserId(User);
+        var user = await _userManager.FindByIdAsync(userid);
+        List<User> users = (from u in _context.Users
+            where u != user
+            select u).ToList();
+        User recieverUser = users.FirstOrDefault(u => u.UserName == reciever);
+
+        if (!users.Contains(recieverUser))
         {
-        
+            ModelState.AddModelError(string.Empty, "Det finns ingen användare med det namnet");
+        }
+        else
+        {
             var senderId = User.Identity.IsAuthenticated
                 ? _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id
                 : null;
 
             if (senderId == null)
                 return Unauthorized("Användaren kunde inte hittas.");
-
+            
             var message = new Message
             {
                 Sender = senderId,
-                Reciever = reciever,
+                Reciever = recieverUser.Id,
                 Content = content,
                 TimeSent = DateOnly.FromDateTime(DateTime.Now),
                 IsRead = false
@@ -52,9 +73,10 @@ public class MessagesController : Controller
 
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index");
         }
+
+        return View();
+    }
         
     [HttpPost]
     public async Task<IActionResult> MarkAsRead(int mid)

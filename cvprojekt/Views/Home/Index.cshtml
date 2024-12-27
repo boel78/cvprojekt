@@ -55,43 +55,4 @@
     
 </div>
 
-<div class="text-center">
-    @foreach (var cv in Model.cvs)
-    {
-        <div class="card">
-            <a class="card-header" asp-controller="User">@cv.OwnerNavigation</a>
-            <h3>CV</h3>
-            <p>@cv.Description</p>
-            <div>
-                <h3>Erfarenheter</h3>
-                @foreach (var education in cv.Educations)
-                {
-                    <p>@education.Description</p>
-                    <h3>Kompetenser</h3>
-                    @foreach (var skill in education.Skills)
-                    {
-                        <p>@skill.Name</p>
-                    }
-                }
-            </div>
-            <hr />
-            <h3>Skicka meddelande</h3>
-            <form asp-controller="Messages" asp-action="SendMessage" method="post">
-                <input type="hidden" name="reciever" value="@cv.OwnerNavigation.Id" />
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <p>Avsändare: @User.Identity.Name</p>
-                }
-                else
-                {
-                    <label for="senderName">Ditt namn:</label>
-                    <input type="text" name="senderName" required />
-                }
-                <label for="content">Meddelande:</label>
-                <textarea name="content" rows="3" required></textarea>
-                <button type="submit" class="btn btn-primary">Skicka</button>
-            </form>
-        </div>
-    }
-</div>
 
