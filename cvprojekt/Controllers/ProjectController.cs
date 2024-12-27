@@ -35,6 +35,7 @@ namespace cvprojekt.Controllers
         {
             string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             project.CreatedBy = userid;
+            project.CreatedDate = DateTime.Now;
             _context.Add(project);
             _context.SaveChanges();
             return RedirectToAction("Index", "Project");

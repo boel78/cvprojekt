@@ -11,7 +11,7 @@
 <table class="table">
     <thead>
         <td>Titel</td>
-        <td>ProjektID</td>
+        <td>Skapat</td>
         <td>Beskrivning</td>
         <td>Skapad av</td>
     </thead>
@@ -21,25 +21,33 @@
             {
             <tr>
                 <td>@project.Title</td>
-                <td>@project.ProjectId</td>
+                <td>@project.CreatedDate</td>
                 <td>@project.Description</td>
                 <td>@project.CreatedByNavigation?.Name</td>
-                
+                <td>
                     @if(project.CreatedBy == User.FindFirstValue(ClaimTypes.NameIdentifier)) 
                     {
-                        <td>
-                        <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Redigera</a>
-                        </td>
+                        
+                            <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Redigera</a>
+                        
+                        
+                            <a asp-controller="Project" asp-action="Remove" asp-route-id="@project.ProjectId" class="btn btn-danger">Radera</a>
+                        
                     }
-                
-                <td><a asp-controller="Project" asp-action="Remove" asp-route-id="@project.ProjectId" class="btn btn-danger">Radera</a></td>
+                    else
+                    {
+                        <form asp-action="AddUserToProject" method="post" style="display: inline">
+                            <input type="hidden" name="ProjectId" value="@project.ProjectId"/>
+                            <input type="hidden" name="UserId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)"/>
+                            <button type="submit" class="btn btn-primary">Anslut till projekt</button>
+                        </form>
+                    }
+                </td>
             </tr>
             }
-        
     </tbody>
 </table>
 
 <div>
     <a asp-controller="Project" asp-action="Create" class="btn btn-primary">Skapa nytt projekt</a>
-
 </div>
