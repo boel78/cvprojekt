@@ -20,6 +20,8 @@ namespace cvprojekt.Controllers
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = User.Identity.IsAuthenticated; // kollar om användaren är inloggad
+            ProjectViewModel projectViewModel = new ProjectViewModel(); 
+            projectViewModel.User = await _usermanager.GetUserAsync(User);
             // Får med både skapare av projekten och kopplade användare.
             IQueryable<Project> projects = (from project in _context.Projects select project)
                 .Include(p => p.CreatedByNavigation)
@@ -33,11 +35,12 @@ namespace cvprojekt.Controllers
                     CreatedByNavigation = p.CreatedByNavigation,
                     CreatedDate = p.CreatedDate,
                     Users = isAuthenticated 
-                        ? p.Users // Om användaren är inloggad så visar alla användare
-                        : p.Users.Where(u => !u.IsPrivate).ToList() // Om man inte är inloggad visas inte privata profiler
+                        ? p.Users.Where(u => u.IsActive).ToList() // Om användaren är inloggad så visar alla aktiva användare
+                        : p.Users.Where(u => !u.IsPrivate).Where(u => u.IsActive).ToList() // Om man inte är inloggad visas inte privata profiler
                 });
+            projectViewModel.Projects = projects;
 
-            return View(projects);
+            return View(projectViewModel);
         }
 
         public IActionResult Create()

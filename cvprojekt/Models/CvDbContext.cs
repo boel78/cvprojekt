@@ -151,11 +151,7 @@ public partial class CvDbContext : IdentityDbContext<User>
 
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
             entity.Property(e => e.Title).HasMaxLength(100);
-
-            
-
-                
-                
+       
         });
 
         modelBuilder.Entity<Skill>(entity =>
