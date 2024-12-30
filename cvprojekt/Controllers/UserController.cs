@@ -44,7 +44,7 @@ namespace cvprojekt.Controllers
                 IsPrivate = user.IsPrivate,
                 IsActive = user.IsActive,
             };
-                
+
 
             return View(model);
         }
