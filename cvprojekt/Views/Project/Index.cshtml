@@ -38,8 +38,9 @@
                     @if(project.CreatedBy == User.FindFirstValue(ClaimTypes.NameIdentifier)) 
                     {
                         
-                            <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Redigera</a>
-                            <a asp-controller="Project" asp-action="Remove" asp-route-id="@project.ProjectId" class="btn btn-danger">Radera</a>
+                        <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Redigera</a>
+                        
+                        <a asp-controller="Project" asp-action="Remove" asp-route-id="@project.ProjectId" class="btn btn-danger">Radera</a>
                         
                     }
                     else if (!isUserInProject && isUserLoggedIn)
@@ -57,7 +58,15 @@
 </table>
 
 <div>
-    <a asp-controller="Project" asp-action="Create" class="btn btn-primary">Skapa nytt projekt</a>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a asp-controller="Project" asp-action="Create" class="btn btn-primary">Skapa nytt projekt</a>
+    }
+    else
+    {
+        <button class="btn btn-primary" onclick="showLoginMessage()">Skapa nytt projekt</button>
+    }
+    
 </div>
 
 
@@ -65,5 +74,9 @@
     function confirmAddToProject() {
         alert("Du har lagts till som deltagare i detta projekt");
         return true;
+    }
+    
+    function showLoginMessage() {
+        alert("Du måste vara inloggad för att skapa ett projekt.");
     }
 </script>

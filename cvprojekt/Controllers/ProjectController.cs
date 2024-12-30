@@ -29,7 +29,8 @@ namespace cvprojekt.Controllers
                     ProjectId = p.ProjectId,
                     Title = p.Title,
                     Description = p.Description,
-                    CreatedBy = p.CreatedByNavigation.Name,
+                    CreatedBy = p.CreatedBy,
+                    CreatedByNavigation = p.CreatedByNavigation,
                     CreatedDate = p.CreatedDate,
                     Users = isAuthenticated 
                         ? p.Users // Om användaren är inloggad så visar alla användare
