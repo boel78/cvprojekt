@@ -57,7 +57,7 @@ namespace cvprojekt.Controllers
             return RedirectToAction("Index", "Project");
         }
 
-        [HttpGet]
+        [HttpPost]
         public IActionResult Remove(int id)
         {
             Project project = _context.Projects.Find(id);
@@ -66,6 +66,7 @@ namespace cvprojekt.Controllers
             return RedirectToAction("Index", "Project");
 
         }
+        
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
