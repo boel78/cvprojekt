@@ -62,7 +62,7 @@
     }
     else
     {
-        <button class="btn btn-primary" onclick="showLoginMessage()">Skapa nytt projekt</button>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Skapa nytt projekt</button>
     }
 </div>
 @* Modal för radering och bekräftelse *@
@@ -108,14 +108,27 @@
         </div>
     </div>
 </div>
+@* Modal för att bli skickad till inloggningssidan *@
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Inloggning krävs</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Du måste vara inloggad för att skapa ett projekt. Vill du logga in?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class=" btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                <a href="/Account/Login" class="btn btn-primary">Logga in</a>
+            </div>
+        </div>
+    </div>
+</div>
 
-<script>
-   
-    
-    function showLoginMessage() {
-        alert("Du måste vara inloggad för att skapa ett projekt.");
-    }
-    
+
+<script> 
     //radera projekt
     const deleteModal = document.getElementById('deleteModal');
     deleteModal.addEventListener('show.bs.modal', function (event) {
@@ -124,7 +137,7 @@
         const deleteInput = document.getElementById('deleteProjectId'); //hitta hidden input från modalen och sätter det till projektid
         deleteInput.value = projectId;
     });
-    
+    //bekräfta anslutning till projekt
     const confirmModal = document.getElementById('confirmModal');
     confirmModal.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
