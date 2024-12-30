@@ -22,6 +22,7 @@
             {
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier); // hämtar användarid från inlogg
                 bool isUserInProject = project.Users.Any(u => u.Id == currentUserId); // kollar om användaren är kopplad till projekt
+                bool isUserLoggedIn = User.Identity.IsAuthenticated; // kollar om användare är inloggad
             <tr>
                 <td>@project.Title</td>
                 <td>@project.CreatedDate</td>
@@ -38,12 +39,10 @@
                     {
                         
                             <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning">Redigera</a>
-                        
-                        
                             <a asp-controller="Project" asp-action="Remove" asp-route-id="@project.ProjectId" class="btn btn-danger">Radera</a>
                         
                     }
-                    else if (!isUserInProject)
+                    else if (!isUserInProject && isUserLoggedIn)
                     {
                         <form asp-action="AddUserToProject" method="post" style="display: inline" onsubmit="return confirmAddToProject()">
                             <input type="hidden" name="ProjectId" value="@project.ProjectId"/>
