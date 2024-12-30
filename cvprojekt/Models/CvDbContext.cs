@@ -143,9 +143,10 @@ public partial class CvDbContext : IdentityDbContext<User>
 
         modelBuilder.Entity<Project>(entity =>
         {
-            entity.HasMany(p => p.Users) 
-                .WithMany(u => u.Projects) 
-                .UsingEntity(j => j.ToTable("UserProjects"));
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ProjectsNavigation)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Projects__Create__3E52440B");
             entity.HasKey(e => e.ProjectId).HasName("PK__Projects__761ABED001D3C2A6");
 
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
