@@ -143,15 +143,19 @@ public partial class CvDbContext : IdentityDbContext<User>
 
         modelBuilder.Entity<Project>(entity =>
         {
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ProjectsNavigation)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Projects__Create__3E52440B");
             entity.HasKey(e => e.ProjectId).HasName("PK__Projects__761ABED001D3C2A6");
 
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
             entity.Property(e => e.Title).HasMaxLength(100);
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ProjectsNavigation)
-                .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Projects__Create__3E52440B");
+            
+
+                
+                
         });
 
         modelBuilder.Entity<Skill>(entity =>
@@ -180,6 +184,26 @@ public partial class CvDbContext : IdentityDbContext<User>
             entity.Property(e => e.PasswordHash).HasMaxLength(100);
             entity.Property(e => e.ProfilePicture)
                 .HasMaxLength(100);
+            
+            entity.HasMany(d => d.Projects).WithMany(p => p.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "UserProject",
+                    r => r.HasOne<Project>().WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__UserProje__Proje__571DF1D5"),
+                    l => l.HasOne<User>().WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK__UserProje__UserI__5812160E"),
+                    j =>
+                    {
+                        j.HasKey("UserId", "ProjectId").HasName("PK__UserProj__9B23A0DCC327D1ED");
+                        j.ToTable("UserProjects");
+                        j.IndexerProperty<int>("UserId").HasColumnName("UserId");
+                        j.IndexerProperty<int>("ProjectId").HasColumnName("ProjectId");
+                    });
+
 
         });
 

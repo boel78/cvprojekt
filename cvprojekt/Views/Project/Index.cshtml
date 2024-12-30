@@ -3,6 +3,7 @@
 	ViewData["Title"] = "Projekt";
 }
 
+@using System.Security.Claims
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model IQueryable<cvprojekt.Models.Project>
 <h2>Projektlista</h2>
@@ -10,19 +11,106 @@
 <table class="table">
     <thead>
         <td>Titel</td>
-        <td>ProjektID</td>
+        <td>Skapat</td>
+        <td>Beskrivning</td>
         <td>Skapad av</td>
+        <td>Deltagare</td>
     </thead>
     <tbody>
-        <tr>
+        
             @foreach (var project in Model)
             {
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier); // hämtar användarid från inlogg
+                bool isUserInProject = project.Users.Any(u => u.Id == currentUserId); // kollar om användaren är kopplad till projekt
+                bool isUserLoggedIn = User.Identity.IsAuthenticated; // kollar om användare är inloggad
+            <tr>
                 <td>@project.Title</td>
-                <td>@project.ProjectId</td>
-                <td>@project.CreatedByNavigation.Name</td>
-                <td><a asp-controller="Remove" asp-route-id="@project.ProjectId">Radera</a></td>
+                <td>@project.CreatedDate</td>
+                <td>@project.Description</td>
+                <td>@project.CreatedByNavigation?.Name</td>
+                <td>
+                    @foreach (var user in project.Users)
+                    {
+                        <p>@user.Name</p>
+                    }
+                </td>
+                <td>
+                    @if(project.CreatedBy == User.FindFirstValue(ClaimTypes.NameIdentifier)) 
+                    {
+                        
+                        <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning btn-sm">Redigera</a>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-id="@project.ProjectId">
+                            Radera
+                        </button> 
+                    }
+                    else if (!isUserInProject && isUserLoggedIn)
+                    {
+                        <form asp-action="AddUserToProject" method="post" style="display: inline" onsubmit="return confirmAddToProject()">
+                            <input type="hidden" name="ProjectId" value="@project.ProjectId"/>
+                            <input type="hidden" name="UserId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)"/>
+                            <button type="submit" class="btn btn-primary">Anslut till projekt</button>
+                        </form>
+                    }
+                </td>
+            </tr>
             }
-        </tr>
     </tbody>
 </table>
 
+@*Visar felmeddelande på skapaknappen om man ej är inloggad *@
+<div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a asp-controller="Project" asp-action="Create" class="btn btn-primary">Skapa nytt projekt</a>
+    }
+    else
+    {
+        <button class="btn btn-primary" onclick="showLoginMessage()">Skapa nytt projekt</button>
+    }
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Bekräfta borttagning</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="close"></button>
+            </div>
+            <div class="modal-body">
+                Är du säker på att du vill ta bort detta projekt?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                <form id="deleteForm" method="post" asp-action="Remove">
+                    <input type="hidden" name="id" id="deleteProjectId"/>
+                    <button type="submit" class="btn btn-danger">Ta bort</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+    function confirmAddToProject() {
+        alert("Du har lagts till som deltagare i detta projekt");
+        return true;
+    }
+    
+    function showLoginMessage() {
+        alert("Du måste vara inloggad för att skapa ett projekt.");
+    }
+    
+    //radera projekt
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; //modalknappen
+        const projectId = button.getAttribute('data-project-id'); //hämta projektid från dataattributet
+        const deleteInput = document.getElementById('deleteProjectId'); //hitta hidden input från modalen och sätter det till projektid
+        deleteInput.value = projectId;
+    });
+        
+    
+</script>
