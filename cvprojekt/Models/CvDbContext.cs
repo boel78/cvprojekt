@@ -145,16 +145,19 @@ public partial class CvDbContext : IdentityDbContext<User>
         {
             entity.HasMany(p => p.Users) 
                 .WithMany(u => u.Projects) 
-                .UsingEntity(j => j.ToTable("ProjectUser"));
+                .UsingEntity(j => j.ToTable("UserProjects"));
             entity.HasKey(e => e.ProjectId).HasName("PK__Projects__761ABED001D3C2A6");
 
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
             entity.Property(e => e.Title).HasMaxLength(100);
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ProjectsNavigation)
-                .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Projects__Create__3E52440B");
+            entity.HasMany(d => d.CreatedByNavigation).WithMany(p => p.ProjectsNavigation)
+                .UsingEntity<Dictionary<string, object>>(
+                    "UserProjects", 
+                    j => j.HasOne<Project>().WithMany().HasForeignKey("ProjectId"),
+                    j => j.HasOne<User>().WithMany().HasForeignKey("UserId")
+                );
+                
                 
         });
 
