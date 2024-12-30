@@ -5,7 +5,7 @@
 
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model IQueryable<cvprojekt.Models.Project>
+@model ProjectViewModel
 <h2>Projektlista</h2>
 
 <table class="table">
@@ -18,11 +18,9 @@
     </thead>
     <tbody>
         
-            @foreach (var project in Model)
+            @foreach (var project in Model.Projects)
             {
-                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier); // hämtar användarid från inlogg
-                bool isUserInProject = project.Users.Any(u => u.Id == currentUserId); // kollar om användaren är kopplad till projekt
-                bool isUserLoggedIn = User.Identity.IsAuthenticated; // kollar om användare är inloggad
+                bool isUserInProject = Model.User != null && project.Users.Any(u => u.Id == Model.User.Id); // kollar om användaren är kopplad till projekt
             <tr>
                 <td>@project.Title</td>
                 <td>@project.CreatedDate</td>
@@ -43,13 +41,12 @@
                             Radera
                         </button> 
                     }
-                    else if (!isUserInProject && isUserLoggedIn)
+                    // om användaren inte redan är med i projektet, är inloggad och aktiv
+                    else if (!isUserInProject && User.Identity.IsAuthenticated && Model.User.IsActive)
                     {
-                        <form asp-action="AddUserToProject" method="post" style="display: inline" onsubmit="return confirmAddToProject()">
-                            <input type="hidden" name="ProjectId" value="@project.ProjectId"/>
-                            <input type="hidden" name="UserId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)"/>
-                            <button type="submit" class="btn btn-primary">Anslut till projekt</button>
-                        </form>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal" data-project-id="@project.ProjectId">
+                            Anslut till projekt
+                        </button>
                     }
                 </td>
             </tr>
@@ -68,7 +65,7 @@
         <button class="btn btn-primary" onclick="showLoginMessage()">Skapa nytt projekt</button>
     }
 </div>
-
+@* Modal för radering och bekräftelse *@
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -87,17 +84,33 @@
                 </form>
             </div>
         </div>
-
     </div>
-
+</div>
+@*Modal för bekräftelse av anslutning till projekt *@
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Bekfräfta anslutning</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Vill du ansluta dig som medverkande i detta projekt?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                <form id="confirmForm" method="post" asp-action="AddUserToProject">
+                    <input type="hidden" name="projectId" id="confirmProjectId"/>
+                    <input type="hidden" name="userId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)"/>
+                    <button type="submit" class="btn btn-primary">Anslut</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-
 <script>
-    function confirmAddToProject() {
-        alert("Du har lagts till som deltagare i detta projekt");
-        return true;
-    }
+   
     
     function showLoginMessage() {
         alert("Du måste vara inloggad för att skapa ett projekt.");
@@ -111,6 +124,12 @@
         const deleteInput = document.getElementById('deleteProjectId'); //hitta hidden input från modalen och sätter det till projektid
         deleteInput.value = projectId;
     });
-        
     
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const projectId = button.getAttribute('data-project-id');
+        const confirmInput = document.getElementById('confirmProjectId');
+        confirmInput.value = projectId;
+    })
 </script>
