@@ -7,7 +7,7 @@
 
 <h1>Redigera Projekt</h1>
 
-<form asp-action="Edit" method="post" onsubmit="return confirm('Bekräfta ändringar');">
+<form id="editForm" asp-action="Edit" method="post">
 	<div>
 		<label for="Title">Titel</label>
 		<input asp-for="Title" id="Title"/>
@@ -17,6 +17,30 @@
 		<textarea asp-for="Description" id="Description"></textarea>
 	</div>
 	<input type="hidden" asp-for="ProjectId" />
-	<button type="submit" class="btn btn-primary">Spara</button>
-
+	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmEditModal">Spara</button>
 </form>
+
+@* Modal för bekräftelse av ändringar *@ 
+<div class="modal fade" id="confirmEditModal" tabindex="-1" aria-labelledby="confirmEditModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="confirmEditModalLabel">Bekräfta ändringar</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Vill du bekräfta och spara dina ändringar?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+				<button type="button" class="btn btn-primary" id="confirmSave">Spara</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	document.getElementById('confirmSave').addEventListener('click', function () {
+		document.getElementById('editForm').submit();
+	});
+</script>
