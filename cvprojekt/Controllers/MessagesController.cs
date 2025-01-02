@@ -58,14 +58,11 @@ public class MessagesController : Controller
         if (!users.Contains(recieverUser))
         {
             ModelState.AddModelError(string.Empty, "Det finns ingen användare med det namnet");
+            ViewData["MessageSent"] = false;
         }
         else
         {
-            /*var senderId = User.Identity.IsAuthenticated
-                ? _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id
-                : null;
-
-            */
+            
             var senderId = _userManager.GetUserId(User);
             var senderUser = _context.Users.FirstOrDefault(u => u.Name == senderName);
             
@@ -94,6 +91,7 @@ public class MessagesController : Controller
 
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
+            ViewData["MessageSent"] = true;
             
         }
 

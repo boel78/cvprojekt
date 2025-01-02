@@ -7,7 +7,7 @@
 @if (!Model.Any())
 {
     <p>Du har inga mottagna meddelanden.</p>
-    <a asp-action="SendMessage"><button>Skicka nytt meddelande</button></a>
+
 
 }
 else
@@ -45,7 +45,9 @@ else
         }
         </tbody>
     </table>
-    <!-- Delete Confirmation Modal -->
+    <a asp-action="SendMessage"><button class="btn-primary">Skicka nytt meddelande</button></a>
+            
+   @* <!-- Delete Confirmation Modal --> *@
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
