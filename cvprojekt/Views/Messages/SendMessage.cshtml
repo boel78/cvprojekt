@@ -4,6 +4,9 @@
 @model cvprojekt.Models.Message
 
 <div class="container mt-5">
+    <div class="align-content-lg-start">
+        <a asp-action="Index" class="btn btn-secondary">Inkorg</a>
+    </div>
     <h2 class="text-center mb-4">Skicka meddelande</h2>
 
     <form id="sendMessageForm" asp-controller="Messages" asp-action="SendMessage" method="post">
@@ -11,7 +14,7 @@
             <label>Skicka meddelande till:</label>
             <input name="reciever" class="form-control"/>
         </div>
-        
+
         @if (User.Identity.IsAuthenticated)
         {
             <p>Avsändare: @User.Identity.Name</p>
