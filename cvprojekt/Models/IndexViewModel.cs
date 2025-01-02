@@ -5,6 +5,6 @@
         public IQueryable<Cv> cvs {  get; set; }
         public IQueryable<Project> projects { get; set; }
         
-        public User user { get; set; }
+        public bool isActive { get; set; }
     }
 }

@@ -50,14 +50,16 @@ namespace cvprojekt.Controllers
             IQueryable<Project> projectList = (from Project in _context.Projects select Project)
                 .OrderBy(p => p.CreatedDate).Include(p => p.Users).Take(3);
             im.projects = projectList;
+            im.isActive = false;
+            
             if (User.Identity.IsAuthenticated)
             {
                 IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == true select Cv).Include(c => c.Educations)
                     .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
-                im.user = await _userManager.GetUserAsync(User);
-
+                User user = await _userManager.FindByIdAsync(userId);
                 im.cvs = cvList;
+                im.isActive = user.IsActive;
             }
             else
             {

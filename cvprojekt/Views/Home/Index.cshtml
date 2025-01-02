@@ -2,6 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 
+@using System.Security.Claims
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model IndexViewModel;
 
@@ -47,9 +48,10 @@
         <div>
             @if (User.Identity.IsAuthenticated)
             {
-                bool isUserInProject = Model.user != null && project.Users.Any(u => u.Id == Model.user.Id); // kollar om användaren är kopplad till projekt
+                string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                bool isUserInProject = project.Users.Any(u => u.Id == id); // kollar om användaren är kopplad till projekt
 
-                if (!isUserInProject && Model.user.IsActive)
+                if (!isUserInProject && Model.isActive)
                 {
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal" data-project-id="@project.ProjectId">
                         Anslut till projekt
@@ -80,7 +82,7 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
                 <form id="confirmForm" method="post" asp-controller="Project" asp-action="AddUserToProject">
                     <input type="hidden" name="projectId" id="confirmProjectId"/>
-                    <input type="hidden" name="userId" value="@Model.user.Id"/>
+                    <input type="hidden" name="userId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)"/>
                     <input type="hidden" name="route" value="Home"/>
                     <button type="submit" class="btn btn-primary">Anslut</button>
                 </form>
