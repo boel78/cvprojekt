@@ -100,6 +100,7 @@ namespace cvprojekt.Controllers
                 foreach (var theuser in users)
                 {
                     vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
+                    vm.Projects = await _dbContext.Projects.Where(p => p.Users.Contains(vm.User)).Include(p => p.CreatedByNavigation).Include(p => p.Users).ToListAsync();
                 }
                 
                 //Plussar på 1 varje gång sidan laddas, om det inte är en själv
@@ -128,6 +129,7 @@ namespace cvprojekt.Controllers
                 var userId = vm.User.Id;
 
                 var user = await _dbContext.Users
+                        
                     .Include(u => u.Cvs)
                     .ThenInclude(cv => cv.Educations)
                     .ThenInclude(edu => edu.Skills)
@@ -141,14 +143,18 @@ namespace cvprojekt.Controllers
 
                 if (User.Identity.IsAuthenticated)
                 {
-                    vm.UsersMatch = _dbContext.Users.Where(u => u.IsActive == true).Include(u => u.Cvs)
+                    //Om användaren är inloggad visas matchingar på dom som inte är privata
+                    vm.UsersMatch = _dbContext.Users.Where(u => u.IsActive == true)                
+                        .Include(u => u.Cvs)
                         .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
                         .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
                             .Any(skill => skills.Contains(skill.Name)));
                 }
                 else
                 {
-                    vm.UsersMatch = _dbContext.Users.Where(u => u.IsPrivate == false).Where(u => u.IsActive == true).Include(u => u.Cvs)
+                    //Om användaren inte är inloggad visas matchningar på dom som inte är privata
+                    vm.UsersMatch = _dbContext.Users.Where(u => u.IsPrivate == false).Where(u => u.IsActive == true)
+                        .Include(u => u.Cvs)
                         .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
                         .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
                             .Any(skill => skills.Contains(skill.Name)));
