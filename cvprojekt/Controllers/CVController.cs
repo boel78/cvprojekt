@@ -48,32 +48,29 @@ namespace cvprojekt.Controllers
             foreach (var skill in skillnames)
             {
                 Console.WriteLine("Skill " + skill);
+                
             }
             Education education = new Education()
             {
                 Title = viewmodel.Title,
                 Description = viewmodel.Description,
             };
-            IQueryable<Skill> skills = _dbContext.Skills;
-            foreach (var skill in skills)
-            {
-                foreach (var skillinput in skillnames)
+            List<Skill> skills = await _dbContext.Skills.ToListAsync();
+                foreach (var skillInput in skillnames)
                 {
-                    if (!skill.Name.Equals(skillinput))
+                    if (!skills.Any(s => s.Name.Equals(skillInput, StringComparison.OrdinalIgnoreCase)))
                     {
-                        await AddSkill(new Skill { Name = skillinput });
+                        await AddSkill(new Skill { Name = skillInput });
                     }
-                }
+                
                 
             }
-            IQueryable<Skill> skillsToAdd = from s in skills
-                where skillnames.Contains(s.Name)
-                select s;
+            List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name)).ToListAsync();
             
-            string userid = _userManager.GetUserId(User);
+            var userid = _userManager.GetUserId(User);
     
-            var user = _dbContext.Users.Where(u => u.Id == userid).Include(u => u.Cvs).FirstOrDefault();
-            education.Skills = skillsToAdd.ToList();
+            var user = await _dbContext.Users.Where(u => u.Id == userid).Include(u => u.Cvs).FirstOrDefaultAsync();
+            education.Skills = skillsToAdd;
             education.Cvid = user.Cvs.FirstOrDefault().Cvid;
             _dbContext.Educations.Add(education);
             await _dbContext.SaveChangesAsync();
@@ -83,7 +80,7 @@ namespace cvprojekt.Controllers
         public async Task AddSkill(Skill skill)
         {
             _dbContext.Skills.Add(skill);
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
         //Tar username eftersom det är en get och är känsligt med id

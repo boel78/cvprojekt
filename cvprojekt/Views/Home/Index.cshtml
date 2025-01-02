@@ -19,22 +19,30 @@
 
 
 <div class="text-center">
-    @foreach (var cv in Model.cvs){
+    @foreach (var cv in Model.cvs)
+    {
         <div class="card">
-            <a class="card-header" asp-controller="Cv" asp-action="ShowCv" asp-route-username=@cv.OwnerNavigation>@cv.OwnerNavigation</a>
+            <a class="card-header" asp-controller="Cv" asp-action="ShowCv"
+               asp-route-username=@cv.OwnerNavigation>@cv.OwnerNavigation</a>
             <h3>CV</h3>
             <p>@cv.Description</p>
-            <div>
+            <div class="card">
                 <h3>Erfarenheter</h3>
-                @foreach (var education in cv.Educations){
-                    <h3>@education.Title</h3>
-                    <p>
-                        @education.Description
-                    </p>
-                    <h4>Kompetenser</h4>
-                    @foreach (var skill in education.Skills){
-                        <p>@skill.Name</p>
-                    }
+                @foreach (var education in cv.Educations)
+                {
+                    <div class="card">
+                        <h3 class="card-header">@education.Title</h3>
+                        <p>
+                            @education.Description
+                        </p>
+                        <div class="card">
+                            <h4 class="card-header">Kompetenser</h4>
+                            @foreach (var skill in education.Skills)
+                            {
+                                <p>@skill.Name</p>
+                            }
+                        </div>
+                    </div>
                 }
             </div>
         </div>

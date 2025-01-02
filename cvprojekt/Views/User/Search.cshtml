@@ -9,7 +9,7 @@
 
 	@foreach (var user in Model){
 		<div class="card">
-			<a asp-action="Index" asp-controller="CV" asp-route-id="@user.Id">@user.Name</a>
+			<a asp-action="ShowCv" asp-controller="Cv" asp-route-username="@user.UserName">@user.Name</a>
 			<p>@user.Email</p>
 			<div class="card">
 				<h3 class="card-header">Skills</h3>
