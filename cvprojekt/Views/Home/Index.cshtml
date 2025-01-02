@@ -26,24 +26,26 @@
                asp-route-username=@cv.OwnerNavigation>@cv.OwnerNavigation</a>
             <h3>CV</h3>
             <p>@cv.Description</p>
-            <div class="card">
-                <h3>Erfarenheter</h3>
-                @foreach (var education in cv.Educations)
-                {
-                    <div class="card">
-                        <h3 class="card-header">@education.Title</h3>
-                        <p>
-                            @education.Description
-                        </p>
-                        <div class="card">
-                            <h4 class="card-header">Kompetenser</h4>
-                            @foreach (var skill in education.Skills)
-                            {
-                                <p>@skill.Name</p>
-                            }
+            <div class="card container">
+                <div class="row">
+                    <h3>Erfarenheter</h3>
+                    @foreach (var education in cv.Educations)
+                    {
+                        <div class="card col">
+                            <h3 class="card-header">@education.Title</h3>
+                            <p>
+                                @education.Description
+                            </p>
+                            <div class="card">
+                                <h4 class="card-header">Kompetenser</h4>
+                                @foreach (var skill in education.Skills)
+                                {
+                                    <p>@skill.Name</p>
+                                }
+                            </div>
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         </div>
     }
