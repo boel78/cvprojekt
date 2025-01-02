@@ -44,15 +44,58 @@
 <div>
     <h3>Senaste projekt</h3>
     @foreach (var project in Model.projects){
-        <a asp-controller="Cv" asp-action="Index" asp-route-projectid="@project.ProjectId" class=" text-decoration-none link-opacity-75-hover">
-            <div>
-                <h4>@project.Title</h4>
-                <p>@project.Description</p>
-            </div>
-        </a>
+        <div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                bool isUserInProject = Model.user != null && project.Users.Any(u => u.Id == Model.user.Id); // kollar om användaren är kopplad till projekt
+
+                if (!isUserInProject && Model.user.IsActive)
+                {
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal" data-project-id="@project.ProjectId">
+                        Anslut till projekt
+                    </button>
+                }
+            }
+        <h4>@project.Title</h4>
+        <p>@project.Description</p>
+        
+    </div>
 
     }
     
 </div>
 
+@*Modal för bekräftelse av anslutning till projekt *@
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Bekfräfta anslutning</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Vill du ansluta dig som medverkande i detta projekt?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                <form id="confirmForm" method="post" asp-controller="Project" asp-action="AddUserToProject">
+                    <input type="hidden" name="projectId" id="confirmProjectId"/>
+                    <input type="hidden" name="userId" value="@Model.user.Id"/>
+                    <input type="hidden" name="route" value="Home"/>
+                    <button type="submit" class="btn btn-primary">Anslut</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
+<script>
+    //bekräfta anslutning till projekt
+    const confirmModal = document.getElementById('confirmModal');
+    confirmModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const projectId = button.getAttribute('data-project-id');
+        const confirmInput = document.getElementById('confirmProjectId');
+        confirmInput.value = projectId;
+    });
+</script>

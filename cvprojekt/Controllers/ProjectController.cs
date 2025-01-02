@@ -93,7 +93,7 @@ namespace cvprojekt.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddUserToProject(int projectId, string userId)
+        public IActionResult AddUserToProject(int projectId, string userId, string route)
         {
             var project = _context.Projects.Include(p => p.Users)
                                            .FirstOrDefault(p => p.ProjectId == projectId);
@@ -105,7 +105,7 @@ namespace cvprojekt.Controllers
             }
             project.Users.Add(user);
             _context.SaveChanges();
-            return RedirectToAction("Index", "Project");
+            return RedirectToAction("Index", route);
         }
     }
 }

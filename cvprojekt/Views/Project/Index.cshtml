@@ -102,6 +102,7 @@
                 <form id="confirmForm" method="post" asp-action="AddUserToProject">
                     <input type="hidden" name="projectId" id="confirmProjectId"/>
                     <input type="hidden" name="userId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)"/>
+                    <input type="hidden" name="route" value="Project"/>
                     <button type="submit" class="btn btn-primary">Anslut</button>
                 </form>
             </div>

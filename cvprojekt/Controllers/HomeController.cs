@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using cvprojekt.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace cvprojekt.Controllers
 {
@@ -13,12 +14,14 @@ namespace cvprojekt.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly CvDbContext _context;
         private readonly MessageService _messageService;
+        private readonly UserManager<User> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, CvDbContext context, MessageService messageService)
+        public HomeController(ILogger<HomeController> logger, CvDbContext context, MessageService messageService, UserManager<User> userManager)
         {
             _logger = logger;
             _context = context;
             _messageService = messageService;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index()
@@ -44,15 +47,16 @@ namespace cvprojekt.Controllers
             
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
+            IQueryable<Project> projectList = (from Project in _context.Projects select Project)
+                .OrderBy(p => p.CreatedDate).Include(p => p.Users).Take(3);
+            im.projects = projectList;
             if (User.Identity.IsAuthenticated)
             {
                 IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == true select Cv).Include(c => c.Educations)
                     .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
-                IQueryable<Project> projectList = (from Project in _context.Projects select Project)
-                    .OrderBy(p => p.CreatedDate).Take(3);
+                im.user = await _userManager.GetUserAsync(User);
 
-                im.projects = projectList;
                 im.cvs = cvList;
             }
             else
@@ -62,10 +66,9 @@ namespace cvprojekt.Controllers
                                                     .Include(c => c.Educations)
                                                         .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
-                IQueryable<Project> projectList = (from Project in _context.Projects select Project)
-                    .OrderByDescending(p => p.CreatedDate).Take(3);
 
-                im.projects = projectList;
+
+                
                 im.cvs = cvList;
             }
             
