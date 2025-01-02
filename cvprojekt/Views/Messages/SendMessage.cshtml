@@ -1,20 +1,15 @@
 @{
-    
+    ViewData["Title"] = "Skicka meddelande";
 }
+@model cvprojekt.Models.Message
+
 <div class="container mt-5">
     <h2 class="text-center mb-4">Skicka meddelande</h2>
 
     <form id="sendMessageForm" asp-controller="Messages" asp-action="SendMessage" method="post">
         <div class="form-group mb-3">
             <label>Skicka meddelande till:</label>
-            <input name="reciever"
-                   @if (ViewData["Username"] != null)
-                   {
-                       <text>
-                           value="@ViewData["Username"]"
-                           readonly
-                       </text>
-                   }/>
+            <input name="reciever" class="form-control"/>
         </div>
         
         @if (User.Identity.IsAuthenticated)
@@ -24,13 +19,13 @@
         else
         {
             <div class="form-group mb-3">
-                <label for="senderName" class="form-label">Ditt namn:</label>
-                <input type="text" name="senderName" class="form-control" required/>
+                <label for="sender" class="form-label">Ditt namn:</label>
+                <input type="text" name="sender" class="form-control"/>
             </div>
         }
         <div class="form-group mb-3">
-            <label for="content" class="form-label">Meddelande:</label>
-            <textarea name="content" rows="3" class="form-control" placeholder="Ditt meddelande här.." required></textarea>
+            <label for="Content" class="form-label">Meddelande:</label>
+            <textarea name="Content" rows="3" class="form-control" placeholder="Ditt meddelande här.."></textarea>
         </div>
         <div class="text-end">
             <button type="submit" class="btn btn-primary">Skicka</button>
@@ -62,10 +57,10 @@
     document.addEventListener('DOMContentLoaded', function () {
         @if (ViewData["MessageSent"] != null && (bool)ViewData["MessageSent"])
         {
-        <text>
+            <text>
                 var messageSentModal = new bootstrap.Modal(document.getElementById('messageSentModal'));
                 messageSentModal.show();
         </text>
-            }
+        }
     });
 </script>

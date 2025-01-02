@@ -46,7 +46,7 @@ public class MessagesController : Controller
 
 
     [HttpPost]
-    public async Task<IActionResult> SendMessage(string reciever, string content, string senderName)
+    public async Task<IActionResult> SendMessage(string reciever, string content, string sender)
     {
         string userid = _userManager.GetUserId(User);
         var user = await _userManager.FindByIdAsync(userid);
@@ -55,20 +55,23 @@ public class MessagesController : Controller
             select u).ToList();
         User recieverUser = users.FirstOrDefault(u => u.UserName == reciever);
 
+
         if (!users.Contains(recieverUser))
         {
             ModelState.AddModelError(string.Empty, "Det finns ingen användare med det namnet");
             ViewData["MessageSent"] = false;
+        } else if (content == null)
+        {
+            ModelState.AddModelError(string.Empty, "Meddelandet får inte vara tomt.");
+            ViewData["MessageSent"] = false;
         }
         else
         {
-            
             var senderId = _userManager.GetUserId(User);
-            var senderUser = _context.Users.FirstOrDefault(u => u.Name == senderName);
+            var senderUser = _context.Users.FirstOrDefault(u => u.Name == sender);
             
-            if (senderName != null)
+            if (sender != null)
             {
-                
                 if (users.Contains(senderUser))
                 {
                     senderId = senderUser.Id;
@@ -77,7 +80,6 @@ public class MessagesController : Controller
                 {
                     return Unauthorized("Användaren kunde inte hittas.");
                 }
-                
             }
             
             var message = new Message
@@ -92,9 +94,7 @@ public class MessagesController : Controller
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
             ViewData["MessageSent"] = true;
-            
         }
-
         return View();
     }
         
