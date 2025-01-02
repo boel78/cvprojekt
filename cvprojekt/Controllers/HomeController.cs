@@ -63,7 +63,7 @@ namespace cvprojekt.Controllers
                                                         .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
                 IQueryable<Project> projectList = (from Project in _context.Projects select Project)
-                    .OrderBy(p => p.CreatedDate).Take(3);
+                    .OrderByDescending(p => p.CreatedDate).Take(3);
 
                 im.projects = projectList;
                 im.cvs = cvList;

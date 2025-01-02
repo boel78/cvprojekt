@@ -183,7 +183,7 @@ public partial class CvDbContext : IdentityDbContext<User>
             
             entity.HasMany(d => d.Projects).WithMany(p => p.Users)
                 .UsingEntity<Dictionary<string, object>>(
-                    "UserProject",
+                    "UserProjects",
                     r => r.HasOne<Project>().WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.ClientSetNull)

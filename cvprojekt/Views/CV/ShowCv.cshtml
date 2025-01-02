@@ -1,0 +1,130 @@
+@model ShowCvViewModel
+
+@{
+    bool isAuth = User.Identity.IsAuthenticated;
+}
+
+
+@if (Model.User.Cvs == null || Model.User.Cvs.Count == 0)
+{
+    <h2>Det finns ingen användare som har det användarnamnet, eller så finns det inget cv på denna användare.</h2>
+}
+
+else
+{
+    if (!Model.User.IsPrivate || isAuth)
+    {
+        @*Visa användarinfo *@
+        <div class="row">
+            <div class="col-8">
+                <h2>@Model.User.Name</h2>
+                <p>@Model.User.Email</p>
+            </div>
+            <div class="col-2">
+                <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.User.ProfilePicture)" class="img-thumbnail"/>
+                @if (Model.IsWriter)
+                {
+                    <p>Såhär många har sett ditt CV: @Model.ViewCount</p>
+                }
+            </div>
+        </div>
+
+        @*Visa cvn *@
+        <h2>Cv</h2>
+        @foreach (var cv in Model.User.Cvs)
+        {
+            <p>@cv.Description</p>
+            <div class="card">
+                <h3 class="card-header">Erfarenheter</h3>
+                <div class="card-body">
+                    @foreach (var education in cv.Educations)
+                    {
+                        <h3>@education.Title</h3>
+                        <p>@education.Description</p>
+                        <h3>Kompetenser</h3>
+                        @foreach (var skill in education.Skills)
+                        {
+                            <p>@skill.Name</p>
+                        }
+                    }
+                </div>
+            </div>
+        }
+
+        @*//Visa projekt*@
+        <h2>Projekt</h2>
+        @foreach (var project in Model.Projects)
+        {
+            <div class="card">
+                <h3 class="card-header">@project.Title</h3>
+                @if ((project.CreatedByNavigation.IsPrivate && !isAuth) || !project.CreatedByNavigation.IsActive)
+                {
+                    <p>Skaparen är privat</p>
+                }
+                else
+                {
+                    <p><p>Skapad av:</p> <a asp-action="ShowCv" asp-route-username=@project.CreatedByNavigation.UserName><p>@project.CreatedByNavigation.Name</p></a></p>
+                }
+                <h4>@project.Description</h4>
+                <div class="card">
+                    <h4 class="card-header">Deltagare</h4>
+                    @foreach (var user in project.Users)
+                    {
+                        if (!user.IsPrivate || (user.IsPrivate && isAuth))
+                        {
+                            if (user.IsActive)
+                            {
+                                <a asp-action="ShowCv" asp-route-username=@user.UserName><p>@user.Name</p></a>
+                            }
+                        }
+
+                    }
+                </div>
+
+            </div>
+
+        }
+        
+        
+        <form asp-controller="User" asp-action="SerializeProfile" method="post">
+            <input type="hidden" name="username" value=@Model.User.UserName/>
+            <button type="submit">Skriv ut profil</button>
+        </form>
+        <form asp-controller="Messages" asp-action="SendMessage" method="get">
+            <input type="hidden" name="username" value=@Model.User.UserName/>
+            <button type="submit">Skicka meddelande</button>
+        </form>
+
+        
+        @*Visa matchningar*@
+        <h2>Andra användare med liknande kompetenser</h2>
+        
+        <div class="card">
+            @if (Model.UsersMatch.Count() == 0)
+            {
+                <h3>Det finns inga matchningar</h3>
+            }
+            @foreach (var user in Model.UsersMatch)
+            {
+                <a asp-action="ShowCv" asp-route-username=@user.UserName><h3>@user.Name</h3></a>
+                @foreach (var cv in user.Cvs)
+                {
+                    @foreach (var education in cv.Educations)
+                    {
+                        @foreach (var skill in education.Skills)
+                        {
+                            <p>@skill.Name</p>
+                        }
+                    }
+                }
+            }
+        </div>
+    }
+    else
+    {
+        <div>
+            <h3>Användaren är privat, var vänlig logga in för att se den.</h3>
+        </div>
+    }
+}
+

@@ -1,0 +1,27 @@
+@{
+    
+}
+
+<div asp-validation-summary="All"></div>
+
+<form asp-controller="Messages" asp-action="SendMessage" method="post">
+    <label>Skicka meddelande till:</label>
+    <input name="reciever" @if(ViewData["Username"] != null){<text>
+                                                                 value="@ViewData["Username"]"
+                                                                 readonly
+                                                             </text>} />
+    <br/>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <p>Avsändare: @User.Identity.Name</p>
+    }
+    else
+    {
+        <label for="senderName">Ditt namn:</label>
+        <input type="text" name="senderName" required />
+    }
+    <label for="content">Meddelande:</label>
+    <textarea name="content" rows="3" required></textarea>
+    <br/>
+    <button type="submit" class="btn btn-primary">Skicka</button>
+</form>

@@ -56,6 +56,7 @@ namespace cvprojekt.Controllers
             {
                 return View(evm);
             }
+
             var user = await _userManager.GetUserAsync(User);
 
             var result = await _userManager.ChangePasswordAsync(user, evm.CurrentPassword, evm.NewPassword);
@@ -87,40 +88,44 @@ namespace cvprojekt.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 users = (from user in _ctx.Users where user.IsActive == true select user).Include(u => u.Cvs)
-                .ThenInclude(c => c.Educations)
+                    .ThenInclude(c => c.Educations)
                     .ThenInclude(e => e.Skills).ToList();
 
                 if (!searchWord.IsNullOrEmpty())
                 {
                     string[] searchWords = searchWord.Split(' ');
-                    users = users.Where(u => searchWords.Any(word => u.Name.Trim().ToLower().Contains(word.Trim().ToLower())
-                          || u.Cvs.Any(cv => cv.Educations
-                     .Any(edu => edu.Skills
-                         .Any(sid => searchWords.Any(word => sid.Name.Contains(word))))))).ToList();
+                    users = users.Where(u => searchWords.Any(word =>
+                        u.Name.Trim().ToLower().Contains(word.Trim().ToLower())
+                        || u.Cvs.Any(cv => cv.Educations
+                            .Any(edu => edu.Skills
+                                .Any(sid => searchWords.Any(word =>
+                                    sid.Name.Trim().ToLower().Contains(word.Trim().ToLower()))))))).ToList();
                 }
             }
             else
             {
-                
-                users = (from user in _ctx.Users where user.IsPrivate == false where user.IsActive == true select user).Include(u => u.Cvs)
-                .ThenInclude(c => c.Educations)
+                users = (from user in _ctx.Users where user.IsPrivate == false where user.IsActive == true select user)
+                    .Include(u => u.Cvs)
+                    .ThenInclude(c => c.Educations)
                     .ThenInclude(e => e.Skills)
-                        .ToList();
+                    .ToList();
 
                 if (!searchWord.IsNullOrEmpty())
                 {
                     string[] searchWords = searchWord.Split(' ');
-                    
+
                     foreach (string word in searchWords)
                     {
                         Debug.WriteLine(word);
                     }
-                    users = users.Where(u => searchWords.Any(word => u.Name.Trim().ToLower().Contains(word.Trim().ToLower())
-                         || u.Cvs.Any(cv => cv.Educations
-                    .Any(edu => edu.Skills
-                        .Any(sid => searchWords.Any(word => sid.Name.Contains(word))))))).ToList();
-                }
 
+                    users = users.Where(u => searchWords.Any(word =>
+                        u.Name.Trim().ToLower().Contains(word.Trim().ToLower())
+                        || u.Cvs.Any(cv => cv.Educations
+                            .Any(edu => edu.Skills
+                                .Any(sid => searchWords.Any(word =>
+                                    sid.Name.Trim().ToLower().Contains(word.Trim().ToLower()))))))).ToList();
+                }
             }
 
             return View(users);
@@ -142,19 +147,18 @@ namespace cvprojekt.Controllers
             {
                 if (image.Length > 0)
                 {
-                    Debug.WriteLine("HEJHEJHEJ");
                     byte[] p1 = null;
                     using (var fs1 = image.OpenReadStream())
                     using (var msa1 = new MemoryStream())
-                    { 
+                    {
                         fs1.CopyTo(msa1);
                         p1 = msa1.ToArray();
                     }
 
                     user.ProfilePicture = p1;
-
                 }
             }
+
             _ctx.SaveChanges();
 
             return RedirectToAction("Index", "Home");
@@ -167,8 +171,9 @@ namespace cvprojekt.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SerializeProfile(string path)
+        public async Task<IActionResult> SerializeProfile(string username)
         {
+            Console.WriteLine("user" + username);
             //path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "output.xml");
             //XmlSerializer xml = new XmlSerializer(typeof(XmlContainer));
             //FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
@@ -179,9 +184,10 @@ namespace cvprojekt.Controllers
             //fileStream.Close();
 
             var user = await _userManager.Users
-        .Include(u => u.Cvs)
-        .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Include(u => u.ProjectsNavigation) // Ladda relaterade Project
-        .FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
+                .Include(u => u.Cvs)
+                .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills)
+                .Include(u => u.ProjectsNavigation)
+                .FirstOrDefaultAsync(u => u.UserName == username.Replace("/", ""));
 
             var userDto = new UserDto
             {
@@ -215,10 +221,41 @@ namespace cvprojekt.Controllers
                 xmlSerializer.Serialize(stream, userDto);
                 stream.Position = 0;
 
-                
+
                 return File(stream.ToArray(), "application/xml", "user_info.xml");
             }
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Match()
+        {
+            //Kan bytas ut om man vill ta en annan user
+            var userId = (await _userManager.GetUserAsync(User)).Id;
+
+            var user = await _ctx.Users
+                .Include(u => u.Cvs)
+                .ThenInclude(cv => cv.Educations)
+                .ThenInclude(edu => edu.Skills)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            List<string> skills = user.Cvs
+                .SelectMany(cv => cv.Educations)
+                .SelectMany(edu => edu.Skills)
+                .Select(skill => skill.Name)
+                .ToList();
+            Console.WriteLine("skillS: " + skills.Count());
+            foreach (var skill in skills)
+            {
+                Console.WriteLine(skill);
+            }
+
+            IQueryable<User> matches = _ctx.Users.Include(u => u.Cvs)
+                .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
+                .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
+                    .Any(skill => skills.Contains(skill.Name)));
+            Console.WriteLine("Mathces: " + matches.Count());
+            return View(matches);
+        }
     }
 }
