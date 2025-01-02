@@ -7,6 +7,8 @@
 @if (!Model.Any())
 {
     <p>Du har inga mottagna meddelanden.</p>
+    <a asp-action="SendMessage"><button>Skicka nytt meddelande</button></a>
+
 }
 else
 {
@@ -65,7 +67,6 @@ else
         </div>
     </div>
 
-    <a asp-action="SendMessage"><button>Skicka nytt meddelande</button></a>
     <script>
     const deleteModal = document.getElementById('deleteModal');
     deleteModal.addEventListener('show.bs.modal', function (event) {

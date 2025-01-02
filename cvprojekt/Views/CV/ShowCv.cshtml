@@ -59,13 +59,13 @@ else
                 <h3 class="card-header">@project.Title</h3>
                 @if ((project.CreatedByNavigation.IsPrivate && !isAuth) || !project.CreatedByNavigation.IsActive)
                 {
-                    <p>Skaparen är privat</p>
+                    <p class="card-text">Skaparen är privat</p>
                 }
                 else
                 {
-                    <p><p>Skapad av:</p> <a asp-action="ShowCv" asp-route-username=@project.CreatedByNavigation.UserName><p>@project.CreatedByNavigation.Name</p></a></p>
+                    <p class="card-text container-fluid"><p>Skapad av:</p> <a asp-action="ShowCv" asp-route-username=@project.CreatedByNavigation.UserName><p>@project.CreatedByNavigation.Name</p></a></p>
                 }
-                <h4>@project.Description</h4>
+                <h4 class="card-text">@project.Description</h4>
                 <div class="card">
                     <h4 class="card-header">Deltagare</h4>
                     @foreach (var user in project.Users)
