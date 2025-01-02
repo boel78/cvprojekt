@@ -45,22 +45,22 @@
 <div>
     <h3>Senaste projekt</h3>
     @foreach (var project in Model.projects){
-        <div>
+        <div class="card">
+   
+        <h4 class="card-header">@project.Title</h4>
+        <p>@project.Description</p>
             @if (User.Identity.IsAuthenticated)
             {
                 string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 bool isUserInProject = project.Users.Any(u => u.Id == id); // kollar om användaren är kopplad till projekt
-
                 if (!isUserInProject && Model.isActive)
                 {
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal" data-project-id="@project.ProjectId">
                         Anslut till projekt
                     </button>
                 }
+
             }
-        <h4>@project.Title</h4>
-        <p>@project.Description</p>
-        
     </div>
 
     }
