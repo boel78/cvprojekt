@@ -83,6 +83,11 @@ namespace cvprojekt.Controllers
         public IActionResult Edit(Project updatedProject)
         {
             var project = _context.Projects.FirstOrDefault(p => p.ProjectId == updatedProject.ProjectId);
+            if (!ModelState.IsValid)
+            {
+                return View(project);
+            }
+            
             string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             project.Title = updatedProject.Title;

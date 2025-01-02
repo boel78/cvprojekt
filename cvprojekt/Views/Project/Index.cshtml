@@ -36,7 +36,7 @@
                     @if(project.CreatedBy == User.FindFirstValue(ClaimTypes.NameIdentifier)) 
                     {
                         
-                        <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-warning btn-sm">Redigera</a>
+                        <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-secondary btn-sm">Redigera</a>
                         <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-id="@project.ProjectId">
                             Radera
                         </button> 

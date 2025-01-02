@@ -10,15 +10,18 @@
 <form id="editForm" asp-action="Edit" method="post">
 	<div>
 		<label for="Title">Titel</label>
-		<input asp-for="Title" id="Title"/>
+		<input asp-for="Title" id="Title" class="form-control"/>
+		<span asp-validation-for="Title" class="text-danger"></span>
 	</div>
 	<div>
 		<label for="Description">Beskrivning</label>
-		<textarea asp-for="Description" id="Description"></textarea>
+		<textarea asp-for="Description" id="Description" class="form-control"></textarea>
+		<span asp-validation-for="Description" class="text-danger"></span>
 	</div>
 	<input type="hidden" asp-for="ProjectId" />
 	<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmEditModal">Spara</button>
-</form>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
 @* Modal för bekräftelse av ändringar *@ 
 <div class="modal fade" id="confirmEditModal" tabindex="-1" aria-labelledby="confirmEditModalLabel" aria-hidden="true">
@@ -33,12 +36,12 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
-				<button type="button" class="btn btn-primary" id="confirmSave">Spara</button>
+				<button type="submit" class="btn btn-primary" id="confirmSave">Spara</button>
 			</div>
 		</div>
 	</div>
 </div>
-
+</form>
 <script>
 	document.getElementById('confirmSave').addEventListener('click', function () {
 		document.getElementById('editForm').submit();
