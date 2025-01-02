@@ -44,26 +44,31 @@
 
 <div>
     <h3>Senaste projekt</h3>
-    @foreach (var project in Model.projects){
-        <div class="card">
-   
-        <h4 class="card-header">@project.Title</h4>
-        <p>@project.Description</p>
-            @if (User.Identity.IsAuthenticated)
-            {
-                string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                bool isUserInProject = project.Users.Any(u => u.Id == id); // kollar om användaren är kopplad till projekt
-                if (!isUserInProject && Model.isActive)
+    <div class="container">
+        <div class="row">
+        @foreach (var project in Model.projects)
+        {
+            <div class="card col-sm-4 align-content-end justify-content-between">
+
+                <h4 class="card-header">@project.Title</h4>
+                <p>@project.Description</p>
+                @if (User.Identity.IsAuthenticated)
                 {
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal" data-project-id="@project.ProjectId">
-                        Anslut till projekt
-                    </button>
+                    string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    bool isUserInProject = project.Users.Any(u => u.Id == id); // kollar om användaren är kopplad till projekt
+                    if (!isUserInProject && Model.isActive)
+                    {
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal" data-project-id="@project.ProjectId">
+                            Anslut till projekt
+                        </button>
+                    }
+
                 }
+            </div>
 
-            }
+        }
+        </div>
     </div>
-
-    }
     
 </div>
 
