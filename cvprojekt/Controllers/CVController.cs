@@ -38,23 +38,22 @@ namespace cvprojekt.Controllers
             return View();
         }
 
+        
         [HttpPost]
         public async Task<IActionResult> AddEducation(EducationSkillViewModel viewmodel)
         {
+            //Hämtar strängen från vyn som ser ut som "["erfarenhet1", "erfarenhet2"]" och gör om den till en array
             string revampedstring = viewmodel.Skills.Replace("\"", "").Replace("[", "").Replace("]", "");
             string[] skillnames = revampedstring.Split(',');
             
-            
-            foreach (var skill in skillnames)
-            {
-                Console.WriteLine("Skill " + skill);
-                
-            }
+            //Skapar en ny erfarenhet
             Education education = new Education()
             {
                 Title = viewmodel.Title,
                 Description = viewmodel.Description,
             };
+            
+            //Kontrollerar ifall en kompetens inte finns, då skapas det en ny i databasen
             List<Skill> skills = await _dbContext.Skills.ToListAsync();
                 foreach (var skillInput in skillnames)
                 {
@@ -65,10 +64,11 @@ namespace cvprojekt.Controllers
                 
                 
             }
+            //Gör en lista med kompetenser som ska kopplas till erfarenheten som skapas
             List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name)).ToListAsync();
             
+            //Hämtar användaren och skapar erfarenheten och kopplar den till cvt
             var userid = _userManager.GetUserId(User);
-    
             var user = await _dbContext.Users.Where(u => u.Id == userid).Include(u => u.Cvs).FirstOrDefaultAsync();
             education.Skills = skillsToAdd;
             education.Cvid = user.Cvs.FirstOrDefault().Cvid;
@@ -77,7 +77,7 @@ namespace cvprojekt.Controllers
             return RedirectToAction("Index", "Home");
         }
         
-        public async Task AddSkill(Skill skill)
+        private async Task AddSkill(Skill skill)
         {
             _dbContext.Skills.Add(skill);
             await _dbContext.SaveChangesAsync();
@@ -96,11 +96,13 @@ namespace cvprojekt.Controllers
             {
                 foreach (var theuser in users)
                 {
+                    //Hämtar usern och projects som den deltar i. Inkluderar de models som är viktiga. Fyller Viewmodel.
                     vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
                     vm.Projects = await _dbContext.Projects.Where(p => p.Users.Contains(vm.User)).Include(p => p.CreatedByNavigation).Include(p => p.Users).ToListAsync();
                 }
                 
-                //Plussar på 1 varje gång sidan laddas, om det inte är en själv
+                
+                //Plussar på 1 på tittarsiffror varje gång sidan laddas, om det inte är en själv
                 if (vm.User.Cvs.Count > 0)
                 {
                     if (vm.User.Id != _userManager.GetUserId(User))
@@ -122,11 +124,10 @@ namespace cvprojekt.Controllers
                 
                 
                 //Hämtar matchningar
-                //Kan bytas ut om man vill ta en annan user
                 var userId = vm.User.Id;
 
+                //hämtar användarens erfarenheter
                 var user = await _dbContext.Users
-                        
                     .Include(u => u.Cvs)
                     .ThenInclude(cv => cv.Educations)
                     .ThenInclude(edu => edu.Skills)
@@ -140,7 +141,8 @@ namespace cvprojekt.Controllers
 
                 if (User.Identity.IsAuthenticated)
                 {
-                    //Om användaren är inloggad visas matchingar på dom som inte är privata
+                    //Om användaren är inloggad visas matchingar efter kompetenser på dom som inte är privata
+                    //Inkluderingar krävs eftersom våran databas är Cv -> Erfarenheter -> kompetenser
                     vm.UsersMatch = _dbContext.Users.Where(u => u.IsActive == true)                
                         .Include(u => u.Cvs)
                         .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
@@ -149,7 +151,7 @@ namespace cvprojekt.Controllers
                 }
                 else
                 {
-                    //Om användaren inte är inloggad visas matchningar på dom som inte är privata
+                    //Om användaren inte är inloggad visas matchningar efter kompetenser på dom som inte är privata
                     vm.UsersMatch = _dbContext.Users.Where(u => u.IsPrivate == false).Where(u => u.IsActive == true)
                         .Include(u => u.Cvs)
                         .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)

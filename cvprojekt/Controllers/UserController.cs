@@ -65,7 +65,7 @@ namespace cvprojekt.Controllers
             user.Email = evm.Email;
             user.IsPrivate = evm.IsPrivate;
             user.IsActive = evm.IsActive;
-            _ctx.SaveChanges();
+            await _ctx.SaveChangesAsync();
 
             if (result.Succeeded)
             {
@@ -145,6 +145,7 @@ namespace cvprojekt.Controllers
             {
                 if (image.Length > 0)
                 {
+                    //Gör om filen till bytes
                     byte[] p1 = null;
                     using (var fs1 = image.OpenReadStream())
                     using (var msa1 = new MemoryStream())
@@ -152,12 +153,12 @@ namespace cvprojekt.Controllers
                         fs1.CopyTo(msa1);
                         p1 = msa1.ToArray();
                     }
-
+                    //Uppdaterar profilen
                     user.ProfilePicture = p1;
                 }
             }
 
-            _ctx.SaveChanges();
+            await _ctx.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
         }
@@ -171,22 +172,14 @@ namespace cvprojekt.Controllers
         [HttpPost]
         public async Task<IActionResult> SerializeProfile(string username)
         {
-            Console.WriteLine("user" + username);
-            //path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "output.xml");
-            //XmlSerializer xml = new XmlSerializer(typeof(XmlContainer));
-            //FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
-
-            //XmlContainer container = new XmlContainer();
-
-            //xml.Serialize(fileStream, container);
-            //fileStream.Close();
-
+            //Inkluderar fälten som behövs i xmlen
             var user = await _userManager.Users
                 .Include(u => u.Cvs)
                 .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills)
                 .Include(u => u.ProjectsNavigation)
                 .FirstOrDefaultAsync(u => u.UserName == username.Replace("/", ""));
 
+            //Fyller Dto som används för att formatera xml filen
             var userDto = new UserDto
             {
                 UserName = user.UserName,
@@ -212,6 +205,7 @@ namespace cvprojekt.Controllers
                 }).ToList()
             };
 
+            //Startar serialisering
             var xmlSerializer = new XmlSerializer(typeof(UserDto));
 
             using (var stream = new MemoryStream())
@@ -228,7 +222,6 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public async Task<IActionResult> Match()
         {
-            //Kan bytas ut om man vill ta en annan user
             var userId = (await _userManager.GetUserAsync(User)).Id;
 
             var user = await _ctx.Users
@@ -242,7 +235,6 @@ namespace cvprojekt.Controllers
                 .SelectMany(edu => edu.Skills)
                 .Select(skill => skill.Name)
                 .ToList();
-            Console.WriteLine("skillS: " + skills.Count());
             foreach (var skill in skills)
             {
                 Console.WriteLine(skill);
