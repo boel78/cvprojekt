@@ -9,13 +9,15 @@
 
 <form asp-action="Create" method="post">
 	<div>
-		<label for="Title">Titel</label>
-		<input asp-for="Title" />
+		<label for="Title">Titel</label><br/>
+		<input asp-for="Title" id="Title" class="form-control" />
+		<span asp-validation-for="Title" class="text-danger"></span>
 	</div>
 	<div>
-		<label for="Description">Beskrivning</label>
-		<textarea asp-for="Description"></textarea>
+		<label for="Description">Beskrivning</label><br/>
+		<textarea asp-for="Description" id="Description" class="form-control"></textarea>
+		<span asp-validation-for="Description" class="text-danger"></span>
 	</div>
-	<button type="submit" class="btn btn-success">Spara</button>
-
+	<button type="submit" class="btn btn-primary">Spara</button>
 </form>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>

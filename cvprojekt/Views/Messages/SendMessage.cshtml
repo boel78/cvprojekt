@@ -1,27 +1,69 @@
 @{
-    
+    ViewData["Title"] = "Skicka meddelande";
 }
+@model cvprojekt.Models.Message
 
-<div asp-validation-summary="All"></div>
+<div class="container mt-5">
+    <div class="align-content-lg-start">
+        <a asp-action="Index" class="btn btn-secondary">Inkorg</a>
+    </div>
+    <h2 class="text-center mb-4">Skicka meddelande</h2>
 
-<form asp-controller="Messages" asp-action="SendMessage" method="post">
-    <label>Skicka meddelande till:</label>
-    <input name="reciever" @if(ViewData["Username"] != null){<text>
-                                                                 value="@ViewData["Username"]"
-                                                                 readonly
-                                                             </text>} />
-    <br/>
-    @if (User.Identity.IsAuthenticated)
-    {
-        <p>Avsändare: @User.Identity.Name</p>
-    }
-    else
-    {
-        <label for="senderName">Ditt namn:</label>
-        <input type="text" name="senderName" required />
-    }
-    <label for="content">Meddelande:</label>
-    <textarea name="content" rows="3" required></textarea>
-    <br/>
-    <button type="submit" class="btn btn-primary">Skicka</button>
-</form>
+    <form id="sendMessageForm" asp-controller="Messages" asp-action="SendMessage" method="post">
+        <div class="form-group mb-3">
+            <label>Skicka meddelande till:</label>
+            <input name="reciever" class="form-control"/>
+        </div>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <p>Avsändare: @User.Identity.Name</p>
+        }
+        else
+        {
+            <div class="form-group mb-3">
+                <label for="sender" class="form-label">Ditt namn:</label>
+                <input type="text" name="sender" class="form-control"/>
+            </div>
+        }
+        <div class="form-group mb-3">
+            <label for="Content" class="form-label">Meddelande:</label>
+            <textarea name="Content" rows="3" class="form-control" placeholder="Ditt meddelande här.."></textarea>
+        </div>
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary">Skicka</button>
+        </div>
+    </form>
+</div>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+@* Modal för bekräftelse att meddelandet skickats *@
+<div class="modal fade" id="messageSentModal" tabindex="-1" aria-labelledby="messageSentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageSentModalLabel">Meddelande skickat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
+            </div>
+            <div class="modal-body">
+                Meddelandet har skickats!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stäng</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @if (ViewData["MessageSent"] != null && (bool)ViewData["MessageSent"])
+        {
+            <text>
+                var messageSentModal = new bootstrap.Modal(document.getElementById('messageSentModal'));
+                messageSentModal.show();
+        </text>
+        }
+    });
+</script>

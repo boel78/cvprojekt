@@ -21,7 +21,7 @@ public class MessagesController : Controller
     // Visa mottagna meddelanden
     public async Task<IActionResult> Index()
     {
-        
+
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         var messages = await _context.Messages
             .Where(m => m.Reciever == userId)
@@ -39,14 +39,14 @@ public class MessagesController : Controller
         if (username != null)
         {
             ViewData["Username"] = username.Replace("/", "");
-            
+
         }
         return View();
     }
 
 
     [HttpPost]
-    public async Task<IActionResult> SendMessage(string reciever, string content, string senderName)
+    public async Task<IActionResult> SendMessage(string reciever, string content, string sender)
     {
         string userid = _userManager.GetUserId(User);
         var user = await _userManager.FindByIdAsync(userid);
@@ -55,24 +55,23 @@ public class MessagesController : Controller
             select u).ToList();
         User recieverUser = users.FirstOrDefault(u => u.UserName == reciever);
 
+
         if (!users.Contains(recieverUser))
         {
             ModelState.AddModelError(string.Empty, "Det finns ingen användare med det användarnamnet");
-            
+            ViewData["MessageSent"] = false;
+        } else if (content == null)
+        {
+            ModelState.AddModelError(string.Empty, "Meddelandet får inte vara tomt.");
+            ViewData["MessageSent"] = false;
         }
         else
         {
-            /*var senderId = User.Identity.IsAuthenticated
-                ? _context.Users.FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id
-                : null;
-
-            */
             var senderId = _userManager.GetUserId(User);
-            var senderUser = _context.Users.FirstOrDefault(u => u.Name == senderName);
-            
-            if (senderName != null)
+            var senderUser = _context.Users.FirstOrDefault(u => u.Name == sender);
+
+            if (sender != null)
             {
-                
                 if (users.Contains(senderUser))
                 {
                     senderId = senderUser.Id;
@@ -90,9 +89,8 @@ public class MessagesController : Controller
                     await _context.SaveChangesAsync();
                     senderId = newUser.Id;
                 }
-                
             }
-            
+
             var message = new Message
             {
                 Sender = senderId,
@@ -104,12 +102,11 @@ public class MessagesController : Controller
 
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
-            
+            ViewData["MessageSent"] = true;
         }
-
         return View();
     }
-        
+
     [HttpPost]
     public async Task<IActionResult> MarkAsRead(int mid)
     {
@@ -125,7 +122,7 @@ public class MessagesController : Controller
 
         return RedirectToAction("Index");
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> DeleteMessage(int mid)
     {
@@ -142,5 +139,5 @@ public class MessagesController : Controller
 
         return RedirectToAction("Index");
     }
-   
+
 }
