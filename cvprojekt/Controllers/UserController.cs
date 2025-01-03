@@ -87,12 +87,15 @@ namespace cvprojekt.Controllers
 
             if (User.Identity.IsAuthenticated)
             {
+                //Om Användaren är inloggad så visas alla aktiva användare(Inget sökord)
                 users = (from user in _ctx.Users where user.IsActive == true select user).Include(u => u.Cvs)
                     .ThenInclude(c => c.Educations)
                     .ThenInclude(e => e.Skills).ToList();
 
+                //Om man har skrivit i något sökord
                 if (!searchWord.IsNullOrEmpty())
                 {
+                    //Söker på namn eller erfarenheter
                     string[] searchWords = searchWord.Split(' ');
                     users = users.Where(u => searchWords.Any(word =>
                         u.Name.Trim().ToLower().Contains(word.Trim().ToLower())
@@ -104,6 +107,7 @@ namespace cvprojekt.Controllers
             }
             else
             {
+                //Gör som koden ovanför fast ser till att privata users inte visas
                 users = (from user in _ctx.Users where user.IsPrivate == false where user.IsActive == true select user)
                     .Include(u => u.Cvs)
                     .ThenInclude(c => c.Educations)
@@ -113,12 +117,6 @@ namespace cvprojekt.Controllers
                 if (!searchWord.IsNullOrEmpty())
                 {
                     string[] searchWords = searchWord.Split(' ');
-
-                    foreach (string word in searchWords)
-                    {
-                        Debug.WriteLine(word);
-                    }
-
                     users = users.Where(u => searchWords.Any(word =>
                         u.Name.Trim().ToLower().Contains(word.Trim().ToLower())
                         || u.Cvs.Any(cv => cv.Educations
