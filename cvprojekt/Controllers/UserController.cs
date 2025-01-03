@@ -95,7 +95,7 @@ namespace cvprojekt.Controllers
                 //Om man har skrivit i något sökord
                 if (!searchWord.IsNullOrEmpty())
                 {
-                    //Söker på namn eller erfarenheter
+                    //Söker på namn eller erfarenheter delar sökorden på mellanslag
                     string[] searchWords = searchWord.Split(' ');
                     users = users.Where(u => searchWords.Any(word =>
                         u.Name.Trim().ToLower().Contains(word.Trim().ToLower())
@@ -222,8 +222,11 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public async Task<IActionResult> Match()
         {
+            //Matchar från den inloggades kompetenser
             var userId = (await _userManager.GetUserAsync(User)).Id;
 
+            //hämtar all info som behövs till matchningen
+            //Blir en del kod eftersom Cv -> Erfarenhet -> Kompetens
             var user = await _ctx.Users
                 .Include(u => u.Cvs)
                 .ThenInclude(cv => cv.Educations)
@@ -235,16 +238,12 @@ namespace cvprojekt.Controllers
                 .SelectMany(edu => edu.Skills)
                 .Select(skill => skill.Name)
                 .ToList();
-            foreach (var skill in skills)
-            {
-                Console.WriteLine(skill);
-            }
 
+            //Hämtar användare som har liknande kompetenser
             IQueryable<User> matches = _ctx.Users.Include(u => u.Cvs)
                 .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
                 .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
                     .Any(skill => skills.Contains(skill.Name)));
-            Console.WriteLine("Mathces: " + matches.Count());
             return View(matches);
         }
     }

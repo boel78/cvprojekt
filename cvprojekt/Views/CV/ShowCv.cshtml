@@ -31,15 +31,16 @@ else
             <div class="col-2">
                 @if (Model.User.ProfilePicture != null && Model.User.ProfilePicture.Length > 0)
                 {
-                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.User.ProfilePicture)" alt="profilbild för @Model.User.Name"
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.User.ProfilePicture)"
+                         alt="profilbild för @Model.User.Name"
                          class="rounded-circle" style="width: 10px; height: 10px; object-fit: cover"/>
                 }
                 else
                 {
-                        <img src="/images/profile-placeholder.jpg"
-                             alt="Ingen profilbild"
-                             class="rounded-circle"
-                             style="width: 100px; height: 100px; object-fit: cover;" />
+                    <img src="/images/profile-placeholder.jpg"
+                         alt="Ingen profilbild"
+                         class="rounded-circle"
+                         style="width: 100px; height: 100px; object-fit: cover;"/>
                 }
                 @if (Model.IsWriter)
                 {
@@ -54,7 +55,7 @@ else
         {
             <p>@cv.Description</p>
             <div class="card">
-                
+
                 <h3 class="card-header">Erfarenheter</h3>
                 <div class="card-body container">
                     <div class="row">
@@ -75,7 +76,6 @@ else
                         }
                     </div>
                 </div>
-                
                 @*Visa projekt*@
                 <h2 class="card-header">Projekt</h2>
                 <div class="container">
@@ -108,50 +108,42 @@ else
                                                     <p>@user.Name</p></a>
                                             }
                                         }
-
                                     }
                                 </div>
-
                             </div>
-
                         }
                     </div>
                 </div>
-                
             </div>
         }
 
-        
-        
-        
-        
 
-        
         @*Visa matchningar*@
         <h2>Andra användare med liknande kompetenser</h2>
-        
+
         <div class="card container">
             @if (Model.UsersMatch.Count() == 0)
             {
                 <h3>Det finns inga matchningar</h3>
             }
             <div class="row">
-            @foreach (var user in Model.UsersMatch)
-            {
-                <div class="card col">
-                    <a asp-action="ShowCv" asp-route-username=@user.UserName><h3 class="card-header">@user.Name</h3></a>
-                    @*Loopar igenom Cvn -> Erfarenheter -> Färdigheter*@
-                @foreach (var cv in user.Cvs)
+                @foreach (var user in Model.UsersMatch)
                 {
-                    @foreach (var education in cv.Educations)
-                    {
-                        @foreach (var skill in education.Skills)
+                    <div class="card col">
+                        <a asp-action="ShowCv" asp-route-username=@user.UserName><h3 class="card-header">@user.Name</h3>
+                        </a>
+                        @*Loopar igenom Cvn -> Erfarenheter -> Färdigheter*@
+                        @foreach (var cv in user.Cvs)
                         {
-                            <p>@skill.Name</p>
+                            @foreach (var education in cv.Educations)
+                            {
+                                @foreach (var skill in education.Skills)
+                                {
+                                    <p>@skill.Name</p>
+                                }
+                            }
                         }
-                    }
-                }
-                </div>
+                    </div>
                 }
             </div>
         </div>

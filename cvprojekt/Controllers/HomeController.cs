@@ -1,9 +1,7 @@
 using System.Diagnostics;
-
 using cvprojekt.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 using cvprojekt.Services;
 using Microsoft.AspNetCore.Identity;
 
@@ -16,7 +14,8 @@ namespace cvprojekt.Controllers
         private readonly MessageService _messageService;
         private readonly UserManager<User> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, CvDbContext context, MessageService messageService, UserManager<User> userManager)
+        public HomeController(ILogger<HomeController> logger, CvDbContext context, MessageService messageService,
+            UserManager<User> userManager)
         {
             _logger = logger;
             _context = context;
@@ -26,54 +25,45 @@ namespace cvprojekt.Controllers
 
         public async Task<IActionResult> Index()
         {
-            
-
-            //Kod f�r att d�lja icke aktiva
-            //IQueryable<User> userList = from user in _context.Users select user;
-            //if (showOnlyActive)
-            //{
-            //    userList = userList.Where(x => x.IsActive);
-            //}
-            //else
-            //{
-            //    userList = userList.Where(x => !x.IsActive);
-            //}
-
-
-            //ViewData["ShowOnlyActive"] = showOnlyActive;
-
-
             IndexViewModel im = new IndexViewModel();
-            
+
+            //Fyller viewbag med "olästa" meddelanden
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
+            ViewBag.UnreadMessagesCount =
+                userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
+            
+            //Hämtar tre senaste projekten
             IQueryable<Project> projectList = (from Project in _context.Projects select Project)
                 .OrderBy(p => p.CreatedDate).Include(p => p.Users).Take(3);
+            
             im.projects = projectList;
             im.isActive = false;
-            
+
             if (User.Identity.IsAuthenticated)
             {
-                IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == true select Cv).Include(c => c.Educations)
+                //hämta cvn som har aktiva skribenter
+                IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == true select Cv)
+                    .Include(c => c.Educations)
                     .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
+                //Fyll viewmodel med info, inklusive om det är en user is authenticated, annars är det false
                 User user = await _userManager.FindByIdAsync(userId);
                 im.cvs = cvList;
                 im.isActive = user.IsActive;
             }
             else
             {
-                IQueryable<Cv> cvList = (from Cv in _context.Cvs where Cv.OwnerNavigation.IsActive == true 
-                                                where Cv.OwnerNavigation.IsPrivate == false select Cv)
-                                                    .Include(c => c.Educations)
-                                                        .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
+                //Hämtar icke privata och aktiva cvn
+                IQueryable<Cv> cvList = (from Cv in _context.Cvs
+                        where Cv.OwnerNavigation.IsActive == true
+                        where Cv.OwnerNavigation.IsPrivate == false
+                        select Cv)
+                    .Include(c => c.Educations)
+                    .ThenInclude(e => e.Skills).Include(c => c.OwnerNavigation);
 
-
-
-                
                 im.cvs = cvList;
             }
-            
+
             return View(im);
         }
 

@@ -55,7 +55,7 @@ public class MessagesController : Controller
             select u).ToList();
         User recieverUser = users.FirstOrDefault(u => u.UserName == reciever);
 
-
+        //Kollar om mottagaren finns och om meddelandet är tomt 
         if (!users.Contains(recieverUser))
         {
             ModelState.AddModelError(string.Empty, "Det finns ingen användare med det användarnamnet");
@@ -67,9 +67,11 @@ public class MessagesController : Controller
         }
         else
         {
+            //Hämtar användarens id(den som skickat)
             var senderId = _userManager.GetUserId(User);
             var senderUser = _context.Users.FirstOrDefault(u => u.Name == sender);
 
+            //Om användarnamnet inte är tomt
             if (sender != null)
             {
                 if (users.Contains(senderUser))
@@ -78,6 +80,8 @@ public class MessagesController : Controller
                 }
                 else
                 {
+                    //Om avsändaren inte finns i databasen/icke inloggad användare skapas en temporär användare
+                    //Den tas sedan bort när meddelandet tas bort. Identifieraren för det är Name="anonym"
                     User newUser = new User
                     {
                         UserName = sender,
@@ -90,6 +94,7 @@ public class MessagesController : Controller
                 }
             }
 
+            //Skapar meddelande objekt med avsändarId som vi satte ovanför
             var message = new Message
             {
                 Sender = senderId,
@@ -134,6 +139,7 @@ public class MessagesController : Controller
             return Unauthorized();
         }
 
+        //Ta bort användaren om det är en anonym användare
         if (sender.Name == "anonym")
         {
             _context.Users.Remove(sender);

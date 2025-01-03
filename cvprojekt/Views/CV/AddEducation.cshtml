@@ -33,8 +33,11 @@
 			thediv.style.display = 'block'
 			this.style.display = 'none'
 		}
+		
+		//Väljer det som inte är en ny kompetens
 		else{
 			thediv.style.display = 'none'
+			//Skapar en ny div som visar en kompetens som ska läggas till i erfarenheten
 			if(value){
 				var newSkillDiv = document.createElement('div')
 				var newSkillText = document.createElement('p')
@@ -42,9 +45,9 @@
 				newSkillDiv.style.border = '2px solid black'
 				newSkillDelete.textContent = 'Ta bort'
 				newSkillDelete.id = 'skillDelete'
+				//Ta bort knappen tar bort från den listan som sen skickas in till controllern(med det konstiga formatet..)
 				newSkillDelete.addEventListener('click', function (){
 					newSkillDiv.remove()
-
 					let skills = JSON.parse(skillsInput.value || '[]');
 					skills = skills.filter(skill => skill !== value);
 					skillsInput.value = JSON.stringify(skills);
@@ -56,23 +59,25 @@
 				newSkillDiv.appendChild(newSkillDelete)
 				skillList.appendChild(newSkillDiv)
 
+				//lägger till i listan
 				let skills = JSON.parse(skillsInput.value || '[]');
 				if (!skills.includes(value)) {
 					skills.push(value);
 				}
 				skillsInput.value = JSON.stringify(skills);
-				console.log(skills)
 			}
 		}
 		
 	})
 	
+	//Om man klickar "utanför" och alltså lägger till en ny skill
 	document.getElementById('newSkillInput').addEventListener('blur', function (){
 		const skillListSelector = document.getElementById('selector')
 		const value = this.value
 		const newSkilldiv = document.getElementById('newSkill')
 		skillListSelector.style.display = 'block'
 		newSkilldiv.style.display = 'none'
+		//Funkar på samma sätt och skapar en ny div, lägger till i listan/fixar ta bort knapp
 		if(value){
 			var newSkillDiv = document.createElement('div')
 			var newSkillText = document.createElement('p')
@@ -82,7 +87,6 @@
 			newSkillDelete.id = 'skillDelete'
 			newSkillDelete.addEventListener('click', function (){
 				newSkillDiv.remove()
-
 				let skills = JSON.parse(skillsInput.value || '[]');
 				skills = skills.filter(skill => skill !== value);
 				skillsInput.value = JSON.stringify(skills);
@@ -99,7 +103,6 @@
 				skills.push(value);
 			}
 			skillsInput.value = JSON.stringify(skills);
-			console.log(skills)
 		}
 		
 	})

@@ -49,7 +49,7 @@ namespace cvprojekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                Debug.WriteLine("pass: " + rm.Password);
+                //Sätter default värden på properties som inte finns i IdentityUser
                 User user = new User();
                 user.UserName = rm.UserName;
                 user.Name = rm.Name;

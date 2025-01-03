@@ -14,27 +14,28 @@
 	else
 	{
 		<div class="row">
-		@foreach (var user in Model)
-		{
-			<div class="col-md-4 mb-4">
-				<div class="card h-100 text-center">
-					<div class="card-body">
-						<div class="mb-3 d-flex justify-content-center align-items-center">
-							@if (user.ProfilePicture != null && user.ProfilePicture.Length > 0)
-							{
-								<img src="data:image/jpeg;base64,@Convert.ToBase64String(user.ProfilePicture)" alt="profilbild för @user.Name"
-								     class="rounded-circle" style="width: 10px; height: 10px; object-fit: cover"/>
-							}
-							else
-							{
-								<div class="d-flex justify-content-center align-items-center">
-									<img src="/images/profile-placeholder.jpg"
-									     alt="Ingen profilbild"
-									     class="rounded-circle"
-									     style="width: 100px; height: 100px; object-fit: cover;" />
-								</div>
-							}
-						</div>
+			@foreach (var user in Model)
+			{
+				<div class="col-md-4 mb-4">
+					<div class="card h-100 text-center">
+						<div class="card-body">
+							<div class="mb-3 d-flex justify-content-center align-items-center">
+								@if (user.ProfilePicture != null && user.ProfilePicture.Length > 0)
+								{
+									<img src="data:image/jpeg;base64,@Convert.ToBase64String(user.ProfilePicture)"
+									     alt="profilbild för @user.Name"
+									     class="rounded-circle" style="width: 10px; height: 10px; object-fit: cover"/>
+								}
+								else
+								{
+									<div class="d-flex justify-content-center align-items-center">
+										<img src="/images/profile-placeholder.jpg"
+										     alt="Ingen profilbild"
+										     class="rounded-circle"
+										     style="width: 100px; height: 100px; object-fit: cover;"/>
+									</div>
+								}
+							</div>
 							<h5 class="card-title">
 								<a href="/Cv/ShowCv?username=@user.UserName" class="text-decoration-none">
 									@user.Name
@@ -57,8 +58,8 @@
 							</ul>
 						</div>
 					</div>
-			</div>
-		}
+				</div>
+			}
 		</div>
 	}
-</div >
+</div>
