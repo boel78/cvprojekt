@@ -13,47 +13,41 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">cvprojekt</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="notifications">
-                <a href="/Messages/Index">
-                    <i class="bi bi-envelope-fill"></i>
-                    <span class="badge">
-                        @ViewBag.UnreadMessagesCount
-                    </span>
-                    
-                </a>
-            </div>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
+    <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container-fluid d-flex">
+            @*Vänstra delen av navbar *@
+            <div class="d-flex flex-grow-1 align-items-center">
+                <a class="navbar-brand me-3" asp-area="" asp-controller="Home" asp-action="Index">Startsida</a>
+                <ul class="navbar-nav d-flex align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Project" asp-action="Index">Projekt</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                    <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Project" asp-action="Index">Projekt</a>
-                        </li>
                 </ul>
             </div>
-            <div>
-                <form asp-action="Search" asp-controller="User" method="get">
-                    <input name="searchWord"/>
-                    <button type="submit">Sök</button>
+            @*Mittendelen av navbar *@
+            <div class="d-flex justify-content-center flex-grow-1 align-items-center">
+                <form asp-action="Search" asp-controller="User" method="get" class="d-flex">
+                    <input name="searchWord" class="form-control form-control-sm" placeholder="Sök" />
+                    <button type="submit" class="btn btn-primary btn-sm ms-2">Sök</button>
                 </form>
             </div>
-            <form asp-action="Edit" asp-controller="User" method="get">
-                <button type="submit">
-                    Profil
-                </button>
-            </form>
-
+            @*Högra delen av navbar *@
+            <div class="d-flex flex-grow-1 justify-content-end align-items-center">
+                <div class="notifications me-3">
+                    <a href="/Messages/Index">
+                        <i class="bi bi-envelope-fill"></i>
+                        <span class="badge">@ViewBag.UnreadMessagesCount</span>
+                    </a>
+                </div>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a asp-action="Edit" asp-controller="User" class="btn btn-primary btn-sm me-2">Profil</a>
+                }
+                else
+                {
+                    <a asp-action="LogIn" asp-controller="Account" class="btn btn-primary btn-sm">Logga In</a>
+                }
+            </div>
         </div>
     </nav>
 </header>
