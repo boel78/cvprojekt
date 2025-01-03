@@ -57,7 +57,8 @@ public class MessagesController : Controller
 
         if (!users.Contains(recieverUser))
         {
-            ModelState.AddModelError(string.Empty, "Det finns ingen användare med det namnet");
+            ModelState.AddModelError(string.Empty, "Det finns ingen användare med det användarnamnet");
+            
         }
         else
         {
@@ -78,7 +79,16 @@ public class MessagesController : Controller
                 }
                 else
                 {
-                    return Unauthorized("Användaren kunde inte hittas.");
+                    Console.WriteLine("anonoym");
+                    User newUser = new User
+                    {
+                        UserName = senderName,
+                        Name = "anonym",
+                        ProfilePicture = []
+                    };
+                    _context.Users.Add(newUser);
+                    await _context.SaveChangesAsync();
+                    senderId = newUser.Id;
                 }
                 
             }

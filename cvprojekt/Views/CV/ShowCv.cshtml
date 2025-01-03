@@ -64,7 +64,8 @@ else
                         }
                     </div>
                 </div>
-                @*//Visa projekt*@
+                
+                @*Visa projekt*@
                 <h2 class="card-header">Projekt</h2>
                 <div class="container">
                     <div class="row">
@@ -127,7 +128,8 @@ else
             @foreach (var user in Model.UsersMatch)
             {
                 <div class="card col">
-                <a asp-action="ShowCv" asp-route-username=@user.UserName><h3 class="card-header">@user.Name</h3></a>
+                    <a asp-action="ShowCv" asp-route-username=@user.UserName><h3 class="card-header">@user.Name</h3></a>
+                    @*Loopar igenom Cvn -> Erfarenheter -> Färdigheter*@
                 @foreach (var cv in user.Cvs)
                 {
                     @foreach (var education in cv.Educations)
