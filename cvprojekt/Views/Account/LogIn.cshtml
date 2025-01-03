@@ -1,22 +1,35 @@
 ﻿@{
+	ViewData["Title"] = "Logga In";
 }
 
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model LoginViewModel
 
-<form method="post" asp-action="LogIn">
-	<label>Användarnamn: </label>
-	<input asp-for="UserName"/>
-	<br />
-	<label>Lösenord: </label>
-	<input type="password" asp-for="Password"/>+
-	<br />
-	<label>Kom ihåg mig</label>
-	<input type="checkbox" title="Remember me" asp-for="RememberMe"/>
-	<br />
-	<button type="submit">Login</button>
-	<br />
-	<label>Har du inget konto?</label>
-	<a asp-action="Register">Registera dig</a>
-</form>
-+
+<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<h2 class="text-center mb-4">Logga in</h2>
+			<form method="post" asp-action="LogIn">
+				<div class="mb-3">
+					<label for="UserName" class="form-label">Användarnamn: </label>
+					<input type="text" class="form-control" asp-for="UserName" id="UserName"/>
+				</div>
+				<div class="mb-3">
+					<label for="Password" class="form-label">Lösenord: </label>
+					<input type="password" class="form-control" asp-for="Password" id="Password"/>
+				</div>
+				<div class="form-check mb-3">
+					<input type="checkbox" class="form-check-input" title="Remember me" asp-for="RememberMe" id="RememberMe"/>
+					<label class="form-check-label" for="RememberMe">Kom ihåg mig</label>
+				</div>
+				<button type="submit" class="btn btn-primary">Logga in</button>
+
+			</form>
+			<div class="text-center mt-3">
+				<p>Har du inget konto? <a asp-action="Register">Registrera dig här</a></p>
+			</div>
+		</div>
+	</div>
+</div>
+
+		
