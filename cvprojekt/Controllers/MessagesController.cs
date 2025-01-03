@@ -78,10 +78,9 @@ public class MessagesController : Controller
                 }
                 else
                 {
-                    Console.WriteLine("anonoym");
                     User newUser = new User
                     {
-                        UserName = senderName,
+                        UserName = sender,
                         Name = "anonym",
                         ProfilePicture = []
                     };
