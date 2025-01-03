@@ -59,25 +59,29 @@ namespace cvprojekt.Controllers
 
             var user = await _userManager.GetUserAsync(User);
 
-            var result = await _userManager.ChangePasswordAsync(user, evm.CurrentPassword, evm.NewPassword);
+            if (!string.IsNullOrEmpty(evm.NewPassword) && !string.IsNullOrEmpty(evm.CurrentPassword))
+            {
+                var result = await _userManager.ChangePasswordAsync(user, evm.CurrentPassword, evm.NewPassword);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(evm); // Returnera formuläret med felmeddelanden
+                }
+            }
 
+            // Uppdatera användarens andra uppgifter
             user.Name = evm.Name;
             user.Email = evm.Email;
             user.IsPrivate = evm.IsPrivate;
             user.IsActive = evm.IsActive;
-            _ctx.SaveChanges();
 
-            if (result.Succeeded)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            await _ctx.SaveChangesAsync();
 
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-
-            return View(evm);
+            TempData["SuccessMessage"] = "Dina ändringar har sparats.";
+            return RedirectToAction("Edit", "User");
         }
 
         [HttpGet]

@@ -1,40 +1,55 @@
 ﻿@{
-	ViewData["Title"] = "Edit User";
+	ViewData["Title"] = "Redigera profil";
 }
 
+@using System.Reflection.Metadata
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model cvprojekt.Models.EditUserViewModel
 
+<div class="container mt-5">
+	<h2 class="text-center mb-4">Redigera profil</h2>
+	<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+	@if (TempData["SuccessMessage"] != null)
+	{
+		<div class="alert alert-success">
+			@TempData["SuccessMessage"]
+		</div>
+	}
 
-<div asp-validation-summary="All"></div>
-
-<form asp-action="Edit" method="post">
-	<label>Namn: </label>
-	<input type="text" asp-for="Name" value=@Model.Name />
-	<br />
-	<label>Email: </label>
-	<input type="text" asp-for="Email" value=@Model.Email/>
-	<br />
-	<label>Nuvarande Lösenord: </label>
-	<input type="password" asp-for="CurrentPassword"/>
-	<br />
-	<label>Nytt Lösenord:</label>
-	<input type="password" asp-for="NewPassword"/>
-	<br />
-	<label>Bekfräfta Nytt Lösenord:</label>
-	<input type="password" asp-for="ConfirmNewPassword"/>
-	<br />
-	<label title="IsActive">Aktivt konto: </label>
-	<input type="checkbox" asp-for="IsActive" title="Aktivera/Av Aktivera Ditt Konto"/>
-	<br />
-	<label for="IsPrivate" title="Ställ in om ditt konto ska vara privat" >Privat konto: </label>
-	<input type="checkbox" name="IsPrivate" asp-for="IsPrivate" title="Ställ in om ditt konto ska vara privat" />
-	<br />
-	<button type="submit">Ändra</button>
+<form asp-action="Edit" method="post" class="needs-validation" novalidate>
+	<div class="mb-3">
+		<label for="Name" class="form-label">Namn: </label>
+		<input type="text" class="form-control" asp-for="Name" value=@Model.Name/>
+	</div>
+	<div class="mb-3">
+		<label for="Email" class="form-label">Email: </label>
+		<input type="text" class="form-control" asp-for="Email" value=@Model.Email/>
+	</div>
+	<div class="mb-3">
+		<label for="CurrentPassword" class="form-label">Nuvarande Lösenord: </label>
+		<input type="password" class="form-control" asp-for="CurrentPassword"/>
+	</div>
+	<div class="mb-3">
+		<label for="NewPassword" class="form-label">Nytt Lösenord:</label>
+		<input type="password" class="form-control" asp-for="NewPassword"/>
+	</div>
+	<div class="mb-3">
+		<label for="ConfirmNewPassword" class="form-label">Bekfräfta Nytt Lösenord:</label>
+		<input type="password" class="form-control" asp-for="ConfirmNewPassword"/>
+	</div>
+	<div class="mb-3 form-check">
+		<input type="checkbox" class="form-check-input" asp-for="IsActive" id="IsActive" title="Aktivera/Av Aktivera Ditt Konto"/>
+		<label class="form-check-label" for="IsActive" title="IsActive">Aktivt konto: </label>
+	</div>
+	<div class="mb-3 form-check">
+		<input type="checkbox" class="form-check-input" asp-for="IsPrivate" id="IsPrivate" title="Ställ in om ditt konto ska vara privat"/>
+		<label class="form-check-label" for="IsPrivate" title="Ställ in om ditt konto ska vara privat">Privat konto: </label>
+	</div>
+	<button type="submit" class="btn btn-primary">Spara ändringar</button>
 </form>
+	<form asp-action="Logout" asp-controller="Account" method="post" class="mt-4">
+		<button type="submit" class="btn btn-danger">Logga ut</button>
+	</form>
+</div>
 
 
-<form asp-action="Logout" asp-controller="Account" method="post">
-	<button>Logga ut</button>
-</form>
- 
