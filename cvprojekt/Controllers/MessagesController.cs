@@ -127,13 +127,20 @@ public class MessagesController : Controller
     {
         var message = await _context.Messages.FindAsync(mid);
         var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
+        User sender = await _context.Users.Where(u => u.Id == message.Sender).FirstOrDefaultAsync();
+        
         if (message == null || message.Reciever != userId)
         {
             return Unauthorized();
         }
 
+        if (sender.Name == "anonym")
+        {
+            _context.Users.Remove(sender);
+        }
+        
         _context.Messages.Remove(message);
+        
         await _context.SaveChangesAsync();
 
         return RedirectToAction("Index");
