@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
+using Microsoft.AspNetCore.Authorization;
 
 namespace cvprojekt.Controllers
 {
@@ -165,6 +166,7 @@ namespace cvprojekt.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> EditCV()
         {
             var userId = _userManager.GetUserId(User);
