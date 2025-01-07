@@ -1,11 +1,13 @@
-﻿@{
+﻿@model List<cvprojekt.Models.Cv>
+
+@{
 }
 
-@model List<cvprojekt.Models.Cv>
-	<h2>Dina CV:n</h2>
+<h2>Ditt CV</h2>
 
-		@foreach (var cv in Model)
-		{
-			<p>@cv.Description</p>
-		}
-	
+@foreach (var cv in Model)
+{
+    <p>@cv.Description</p>
+}
+
+<a asp-controller="CV" asp-action="EditCv" class="btn btn-primary">Redigera CV</a>

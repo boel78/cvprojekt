@@ -1,0 +1,116 @@
+﻿@model cvprojekt.Models.EducationSkillViewModel
+
+@{
+    ViewBag.Title = "Edit CV";
+}
+
+<h3>Edit CV</h3>
+
+<form asp-action="EditCV" method="post">
+    <div>
+        <label>Jobb/Erfarenhet: </label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div>
+        <label>Beskrivning: </label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div>
+        <label>Kompetenser: </label>
+        <select asp-items="ViewBag.options" id="selector" class="form-control"></select>
+        <div id="skillList">
+            <h3>Kompetenser</h3>
+            @foreach (var skill in Model.Skills.Split(','))
+            {
+                <div style="border: 2px solid black;">
+                    <p>@skill</p>
+                    <button type="button" class="skillDelete">Ta bort</button>
+                </div>
+            }
+        </div>
+        <div id="newSkill" style="display:none;">
+            <label>Ny kompetens: </label>
+            <input id="newSkillInput" class="form-control" />
+        </div>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Spara</button>
+    <input type="hidden" id="skillsInput" name="Skills" value='@Model.Skills' />
+</form>
+
+<!-- @section Scripts {
+    <script>
+        document.getElementById('selector').addEventListener('change', function () {
+            const value = this.value;
+            const thediv = document.getElementById('newSkill');
+            const skillList = document.getElementById('skillList');
+
+            if (value === 'NewSkill') {
+                thediv.style.display = 'block';
+                this.style.display = 'none';
+            } else {
+                thediv.style.display = 'none';
+                if (value) {
+                    var newSkillDiv = document.createElement('div');
+                    var newSkillText = document.createElement('p');
+                    var newSkillDelete = document.createElement('button');
+                    newSkillDiv.style.border = '2px solid black';
+                    newSkillDelete.textContent = 'Ta bort';
+                    newSkillDelete.className = 'skillDelete';
+                    newSkillDelete.addEventListener('click', function () {
+                        newSkillDiv.remove();
+
+                        let skills = JSON.parse(skillsInput.value || '[]');
+                        skills = skills.filter(skill => skill !== value);
+                        skillsInput.value = JSON.stringify(skills);
+                    });
+                    newSkillText.textContent = value;
+                    newSkillDiv.appendChild(newSkillText);
+                    newSkillDiv.appendChild(newSkillDelete);
+                    skillList.appendChild(newSkillDiv);
+
+                    let skills = JSON.parse(skillsInput.value || '[]');
+                    if (!skills.includes(value)) {
+                        skills.push(value);
+                    }
+                    skillsInput.value = JSON.stringify(skills);
+                }
+            }
+        });
+
+        document.getElementById('newSkillInput').addEventListener('blur', function () {
+            const skillListSelector = document.getElementById('selector');
+            const value = this.value;
+            const newSkilldiv = document.getElementById('newSkill');
+            skillListSelector.style.display = 'block';
+            newSkilldiv.style.display = 'none';
+            if (value) {
+                var newSkillDiv = document.createElement('div');
+                var newSkillText = document.createElement('p');
+                var newSkillDelete = document.createElement('button');
+                newSkillDiv.style.border = '2px solid black';
+                newSkillDelete.textContent = 'Ta bort';
+                newSkillDelete.className = 'skillDelete';
+                newSkillDelete.addEventListener('click', function () {
+                    newSkillDiv.remove();
+
+                    let skills = JSON.parse(skillsInput.value || '[]');
+                    skills = skills.filter(skill => skill !== value);
+                    skillsInput.value = JSON.stringify(skills);
+                });
+                newSkillText.textContent = value;
+                newSkillDiv.appendChild(newSkillText);
+                newSkillDiv.appendChild(newSkillDelete);
+                skillList.appendChild(newSkillDiv);
+
+                let skills = JSON.parse(skillsInput.value || '[]');
+                if (!skills.includes(value)) {
+                    skills.push(value);
+                }
+                skillsInput.value = JSON.stringify(skills);
+            }
+        });
+    </script> -->
+}

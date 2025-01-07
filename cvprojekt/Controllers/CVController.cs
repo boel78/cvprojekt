@@ -31,12 +31,13 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public IActionResult AddEducation()
         {
-            List<SelectListItem> skills = _dbContext.Skills.Select(x => new SelectListItem { Text = x.Name, Value = x.Name}).ToList();
+            List<SelectListItem> skills = _dbContext.Skills.Select(x => new SelectListItem { Text = x.Name, Value = x.Name }).ToList();
             SelectListItem newSkill = new SelectListItem { Text = "Lägg till en ny kompetens..", Value = "NewSkill" };
             skills.Insert(skills.Count, newSkill);
             ViewBag.options = skills;
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AddEducation(EducationSkillViewModel viewmodel)
@@ -83,7 +84,7 @@ namespace cvprojekt.Controllers
         public async Task AddSkill(Skill skill)
         {
             _dbContext.Skills.Add(skill);
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
 
         //Tar username eftersom det är en get och är känsligt med id
@@ -159,9 +160,81 @@ namespace cvprojekt.Controllers
                         .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
                             .Any(skill => skills.Contains(skill.Name)));
                 }
-
             }
-        return View(vm);
+            return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditCV()
+        {
+            var userId = _userManager.GetUserId(User);
+            var user = await _dbContext.Users
+                            .Include(u => u.Cvs)
+                            .ThenInclude(cv => cv.Educations)
+                            .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null || user.Cvs.Count == 0)
+            {
+                return NotFound();
+            }
+
+            var cv = user.Cvs.FirstOrDefault();
+            var education = cv.Educations.FirstOrDefault();
+            var model = new EducationSkillViewModel
+            {
+                Title = education?.Title,
+                Description = education?.Description,
+                Skills = education != null ? string.Join(",", education.Skills.Select(s => s.Name)) : string.Empty
+            };
+
+            ViewBag.options = new SelectList(_dbContext.Skills, "Name", "Name");
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditCV(EducationSkillViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = _userManager.GetUserId(User);
+                var user = await _dbContext.Users
+                    .Include(u => u.Cvs)
+                    .ThenInclude(cv => cv.Educations)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user == null || user.Cvs.Count == 0)
+                {
+                    return NotFound();
+                }
+
+                var cv = user.Cvs.FirstOrDefault();
+                var education = cv.Educations.FirstOrDefault();
+
+                if (education != null)
+                {
+                    education.Title = model.Title;
+                    education.Description = model.Description;
+                    education.Skills = model.Skills.Split(',').Select(s => new Skill { Name = s }).ToList();
+                    _dbContext.Update(education);
+                }
+                else
+                {
+                    education = new Education
+                    {
+                        Title = model.Title,
+                        Description = model.Description,
+                        Skills = model.Skills.Split(',').Select(s => new Skill { Name = s }).ToList(),
+                        Cvid = cv.Cvid
+                    };
+                    _dbContext.Add(education);
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.options = new SelectList(_dbContext.Skills, "Name", "Name");
+            return View(model);
         }
     }
 }
