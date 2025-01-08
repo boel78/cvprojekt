@@ -16,13 +16,14 @@ namespace cvprojekt.Controllers
             _context = context;
             _usermanager = usermanager;
         }
-
+        //Hämtar en lista med projekt och visar den på indexsidan
         public async Task<IActionResult> Index()
         {
             bool isAuthenticated = User.Identity.IsAuthenticated; // kollar om användaren är inloggad
-            ProjectViewModel projectViewModel = new ProjectViewModel(); 
+            ProjectViewModel projectViewModel = new ProjectViewModel(); //skapar viewmodel för att skicka data till vyn
             projectViewModel.User = await _usermanager.GetUserAsync(User);
-            // Får med både skapare av projekten och kopplade användare.
+            
+            // Hämtar projekt och får med både skapare av projekten och kopplade användare.
             IQueryable<Project> projects = (from project in _context.Projects select project)
                 .Include(p => p.CreatedByNavigation)
                 .Include(p => p.Users)
@@ -55,7 +56,7 @@ namespace cvprojekt.Controllers
             string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             project.CreatedBy = userid;
             project.CreatedDate = DateTime.Now;
-            _context.Add(project);
+            _context.Add(project); //lägger till projektet i databasen
             _context.SaveChanges();
             return RedirectToAction("Index", "Project");
         }
@@ -64,7 +65,7 @@ namespace cvprojekt.Controllers
         public IActionResult Remove(int id)
         {
             Project project = _context.Projects.Find(id);
-            _context.Projects.Remove(project);
+            _context.Projects.Remove(project); //tar bort projektet från databasen
             _context.SaveChanges();
             return RedirectToAction("Index", "Project");
 
@@ -75,7 +76,6 @@ namespace cvprojekt.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var project = _context.Projects.FirstOrDefault(p => p.ProjectId == id);
-            var user = await _usermanager.GetUserAsync(User);
             return View(project);
         }
 
@@ -85,11 +85,10 @@ namespace cvprojekt.Controllers
             var project = _context.Projects.FirstOrDefault(p => p.ProjectId == updatedProject.ProjectId);
             if (!ModelState.IsValid)
             {
-                return View(project);
+                return View(project); //visar vyn igen med valideringsfel
             }
             
-            string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
+            //uppdaterar projektet och sparar i databasen
             project.Title = updatedProject.Title;
             project.Description = updatedProject.Description;
             _context.SaveChanges();
@@ -100,6 +99,7 @@ namespace cvprojekt.Controllers
         [HttpPost]
         public IActionResult AddUserToProject(int projectId, string userId, string route)
         {
+            //hämtar projekt och kopplade users
             var project = _context.Projects.Include(p => p.Users)
                                            .FirstOrDefault(p => p.ProjectId == projectId);
             var user = _context.Users.FirstOrDefault(u => u.Id == userId);
@@ -108,7 +108,7 @@ namespace cvprojekt.Controllers
             {
                 return BadRequest("Användaren är redan kopplad till projektet.");
             }
-            project.Users.Add(user);
+            project.Users.Add(user); //lägger till användaren till projektet
             _context.SaveChanges();
             return RedirectToAction("Index", route);
         }
