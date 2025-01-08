@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using cvprojekt.Services;
 
 namespace cvprojekt.Controllers
 {
@@ -10,16 +11,20 @@ namespace cvprojekt.Controllers
     {
         private UserManager<User> userManager;
         private SignInManager<User> signInManager;
+        private MessageService messageService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, MessageService messageService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.messageService = messageService;
         }
 
         [HttpGet]
-        public IActionResult LogIn()
+        public async Task<IActionResult> LogIn()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await messageService.GetUnreadMessagesCountAsync(userId) : 0;
             LoginViewModel vm = new LoginViewModel();
             return View(vm);
         }
@@ -39,8 +44,10 @@ namespace cvprojekt.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await messageService.GetUnreadMessagesCountAsync(userId) : 0;
             return View();
         }
 

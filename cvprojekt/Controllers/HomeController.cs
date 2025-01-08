@@ -63,7 +63,8 @@ namespace cvprojekt.Controllers
 
                 im.cvs = cvList;
             }
-
+            userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             return View(im);
         }
 

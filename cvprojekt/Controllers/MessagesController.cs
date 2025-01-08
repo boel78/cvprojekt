@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using cvprojekt.Models;
+using cvprojekt.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace cvprojekt.Controllers;
@@ -11,11 +12,13 @@ public class MessagesController : Controller
 {
     private readonly CvDbContext _context;
     private readonly UserManager<User> _userManager;
+    private readonly MessageService _messageService;
 
-    public MessagesController(CvDbContext context, UserManager<User> userManager)
+    public MessagesController(CvDbContext context, UserManager<User> userManager, MessageService messageService)
     {
         _context = context;
         _userManager = userManager;
+        _messageService = messageService;
     }
 
     // Visa mottagna meddelanden
@@ -28,14 +31,15 @@ public class MessagesController : Controller
             .Include(m => m.SenderNavigation)
             .OrderByDescending(m => m.TimeSent)
             .ToListAsync();
-
+        ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
         return View(messages);
     }
 
     [HttpGet]
-    public IActionResult SendMessage(string username)
+    public async Task<IActionResult> SendMessage(string username)
     {
-        Console.WriteLine("user " + username);
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
         if (username != null)
         {
             ViewData["Username"] = username.Replace("/", "");
