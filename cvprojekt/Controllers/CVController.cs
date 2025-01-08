@@ -99,14 +99,18 @@ namespace cvprojekt.Controllers
             //Väljer rätt user
             List<User> users = await _dbContext.Users.ToListAsync();
             vm.User = new User();
-            if (!string.IsNullOrEmpty(username))
-            {
-                foreach (var theuser in users)
+                //Hämtar usern och projects som den deltar i. Inkluderar de models som är viktiga. Fyller Viewmodel.
+                if (User.Identity.IsAuthenticated)
                 {
-                    //Hämtar usern och projects som den deltar i. Inkluderar de models som är viktiga. Fyller Viewmodel.
-                    vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
-                    vm.Projects = await _dbContext.Projects.Where(p => p.Users.Contains(vm.User)).Include(p => p.CreatedByNavigation).Include(p => p.Users).ToListAsync();
+                    string id = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                    vm.User = await _userManager.FindByIdAsync(id);
                 }
+                else
+                {
+                    vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
+                }
+                    vm.Projects = await _dbContext.Projects.Where(p => p.Users.Contains(vm.User)).Include(p => p.CreatedByNavigation).Include(p => p.Users).ToListAsync();
+                
                 
                 
                 //Plussar på 1 på tittarsiffror varje gång sidan laddas, om det inte är en själv
@@ -165,8 +169,7 @@ namespace cvprojekt.Controllers
                         .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
                             .Any(skill => skills.Contains(skill.Name)));
                 }
-
-            }
+                
             var userIdForMessage = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             ViewBag.UnreadMessagesCount = userIdForMessage != null ? await _messageService.GetUnreadMessagesCountAsync(userIdForMessage) : 0;
         return View(vm);
