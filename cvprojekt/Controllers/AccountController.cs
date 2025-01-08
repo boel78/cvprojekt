@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using cvprojekt.Services;
+using Models;
 
 namespace cvprojekt.Controllers
 {

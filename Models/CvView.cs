@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace cvprojekt.Models;
+namespace Models;
 
 public partial class CvView
 {

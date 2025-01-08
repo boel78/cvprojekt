@@ -1,4 +1,4 @@
-﻿namespace cvprojekt.Models
+﻿namespace Models
 {
     public class IndexViewModel
     {

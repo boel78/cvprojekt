@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Runtime.Serialization;
 
-namespace cvprojekt.Models;
+namespace Models;
 
 public  class User : IdentityUser
 {

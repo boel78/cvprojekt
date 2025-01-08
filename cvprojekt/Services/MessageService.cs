@@ -1,5 +1,7 @@
 using cvprojekt.Models;
 using Microsoft.EntityFrameworkCore;
+using Models;
+
 
 namespace cvprojekt.Services
 {

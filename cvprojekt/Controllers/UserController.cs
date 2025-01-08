@@ -12,6 +12,8 @@ using System.Security.Claims;
 using System.Xml;
 using System.Xml.Serialization;
 using cvprojekt.Services;
+using Models;
+
 
 namespace cvprojekt.Controllers
 {

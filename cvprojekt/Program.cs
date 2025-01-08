@@ -3,6 +3,7 @@ using cvprojekt.Models;
 using cvprojekt.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

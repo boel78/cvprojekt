@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Models;
 
-namespace cvprojekt.Models;
+namespace Models;
 
 public partial class CvDbContext : IdentityDbContext<User>
 {

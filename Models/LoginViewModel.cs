@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace cvprojekt.Models
+namespace Models
 {
     public class LoginViewModel
     {

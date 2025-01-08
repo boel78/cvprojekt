@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace cvprojekt.Models;
+namespace Models;
 
 public partial class Cv
 {

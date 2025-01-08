@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
 using cvprojekt.Services;
+using Models;
+
 
 namespace cvprojekt.Controllers
 {
@@ -98,7 +100,6 @@ namespace cvprojekt.Controllers
             
             //Väljer rätt user
             List<User> users = await _dbContext.Users.ToListAsync();
-            vm.User = new User();
                 //Hämtar usern och projects som den deltar i. Inkluderar de models som är viktiga. Fyller Viewmodel.
                 if (User.Identity.IsAuthenticated)
                 {
@@ -112,66 +113,65 @@ namespace cvprojekt.Controllers
 
                 }
                 vm.Projects = await _dbContext.Projects.Where(p => p.Users.Contains(vm.User)).Include(p => p.CreatedByNavigation).Include(p => p.Users).ToListAsync();
-                
-                
-                
-                //Plussar på 1 på tittarsiffror varje gång sidan laddas, om det inte är en själv
-                if (vm.User.Cvs.Count > 0)
+
+
+                if (vm.User != null)
                 {
-                    if (vm.User.Id != _userManager.GetUserId(User))
+                    //Plussar på 1 på tittarsiffror varje gång sidan laddas, om det inte är en själv
+                    if (vm.User.Cvs.Count > 0)
                     {
-                        Cv cv = vm.User.Cvs.FirstOrDefault();
-                        CvView cvv = _dbContext.CvViews.Where(cvv => cvv.Cvid == cv.Cvid).FirstOrDefault();
-                        cvv.ViewCount = cvv.ViewCount + 1;
-                        _dbContext.SaveChanges();
+                        if (vm.User.Id != _userManager.GetUserId(User))
+                        {
+                            Cv cv = vm.User.Cvs.FirstOrDefault();
+                            CvView cvv = _dbContext.CvViews.Where(cvv => cvv.Cvid == cv.Cvid).FirstOrDefault();
+                            cvv.ViewCount = cvv.ViewCount + 1;
+                            _dbContext.SaveChanges();
+                        }
+                        else
+                        {
+                            Cv cv = vm.User.Cvs.FirstOrDefault();
+                            vm.IsWriter = true;
+                            vm.ViewCount = _dbContext.CvViews.Where(cvv => cvv.Cvid == cv.Cvid).Select(cvv => cvv.ViewCount).FirstOrDefault();
+                        }
+                    
+                    }
+                    //Hämtar matchningar
+                    var userId = vm.User.Id;
+
+                    //hämtar användarens erfarenheter
+                    var user = await _dbContext.Users
+                        .Include(u => u.Cvs)
+                        .ThenInclude(cv => cv.Educations)
+                        .ThenInclude(edu => edu.Skills)
+                        .FirstOrDefaultAsync(u => u.Id == userId);
+            
+                    List<string> skills = user.Cvs
+                        .SelectMany(cv => cv.Educations)
+                        .SelectMany(edu => edu.Skills)
+                        .Select(skill => skill.Name)
+                        .ToList();
+                    
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        //Om användaren är inloggad visas matchingar efter kompetenser på dom som inte är privata
+                        //Inkluderingar krävs eftersom våran databas är Cv -> Erfarenheter -> kompetenser
+                        vm.UsersMatch = _dbContext.Users.Where(u => u.IsActive == true)                
+                            .Include(u => u.Cvs)
+                            .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
+                            .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
+                                .Any(skill => skills.Contains(skill.Name)));
                     }
                     else
                     {
-                        Cv cv = vm.User.Cvs.FirstOrDefault();
-                        vm.IsWriter = true;
-                        vm.ViewCount = _dbContext.CvViews.Where(cvv => cvv.Cvid == cv.Cvid).Select(cvv => cvv.ViewCount).FirstOrDefault();
+                        //Om användaren inte är inloggad visas matchningar efter kompetenser på dom som inte är privata
+                        vm.UsersMatch = _dbContext.Users.Where(u => u.IsPrivate == false).Where(u => u.IsActive == true)
+                            .Include(u => u.Cvs)
+                            .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
+                            .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
+                                .Any(skill => skills.Contains(skill.Name)));
                     }
-                    
                 }
-                
-                
-                
-                //Hämtar matchningar
-                var userId = vm.User.Id;
-
-                //hämtar användarens erfarenheter
-                var user = await _dbContext.Users
-                    .Include(u => u.Cvs)
-                    .ThenInclude(cv => cv.Educations)
-                    .ThenInclude(edu => edu.Skills)
-                    .FirstOrDefaultAsync(u => u.Id == userId);
-            
-                List<string> skills = user.Cvs
-                    .SelectMany(cv => cv.Educations)
-                    .SelectMany(edu => edu.Skills)
-                    .Select(skill => skill.Name)
-                    .ToList();
-
-                if (User.Identity.IsAuthenticated)
-                {
-                    //Om användaren är inloggad visas matchingar efter kompetenser på dom som inte är privata
-                    //Inkluderingar krävs eftersom våran databas är Cv -> Erfarenheter -> kompetenser
-                    vm.UsersMatch = _dbContext.Users.Where(u => u.IsActive == true)                
-                        .Include(u => u.Cvs)
-                        .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
-                        .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
-                            .Any(skill => skills.Contains(skill.Name)));
-                }
-                else
-                {
-                    //Om användaren inte är inloggad visas matchningar efter kompetenser på dom som inte är privata
-                    vm.UsersMatch = _dbContext.Users.Where(u => u.IsPrivate == false).Where(u => u.IsActive == true)
-                        .Include(u => u.Cvs)
-                        .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
-                        .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
-                            .Any(skill => skills.Contains(skill.Name)));
-                }
-                
+    
             var userIdForMessage = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             ViewBag.UnreadMessagesCount = userIdForMessage != null ? await _messageService.GetUnreadMessagesCountAsync(userIdForMessage) : 0;
         return View(vm);

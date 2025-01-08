@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using cvprojekt.Services;
+using Models;
+
 
 namespace cvprojekt.Controllers
 {

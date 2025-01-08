@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using cvprojekt.Models;
 using cvprojekt.Services;
 using Microsoft.AspNetCore.Identity;
+using Models;
+
 
 namespace cvprojekt.Controllers;
 
