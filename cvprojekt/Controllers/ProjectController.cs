@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using cvprojekt.Services;
 
 namespace cvprojekt.Controllers
 {
@@ -11,14 +12,18 @@ namespace cvprojekt.Controllers
     {
         private readonly CvDbContext _context;
         private readonly UserManager<User> _usermanager;
-        public ProjectController(CvDbContext context, UserManager<User> usermanager)
+        private readonly MessageService _messageService;
+        public ProjectController(CvDbContext context, UserManager<User> usermanager, MessageService messageService)
         {
             _context = context;
             _usermanager = usermanager;
+            _messageService = messageService;
         }
 
         public async Task<IActionResult> Index()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             bool isAuthenticated = User.Identity.IsAuthenticated; // kollar om användaren är inloggad
             ProjectViewModel projectViewModel = new ProjectViewModel(); 
             projectViewModel.User = await _usermanager.GetUserAsync(User);
@@ -43,8 +48,10 @@ namespace cvprojekt.Controllers
             return View(projectViewModel);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             return View();
         }
 
@@ -74,6 +81,8 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             var project = _context.Projects.FirstOrDefault(p => p.ProjectId == id);
             var user = await _usermanager.GetUserAsync(User);
             return View(project);

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
+using cvprojekt.Services;
 
 namespace cvprojekt.Controllers
 {
@@ -12,25 +13,30 @@ namespace cvprojekt.Controllers
     {
         private readonly CvDbContext _dbContext;
         private readonly UserManager<User> _userManager;
+        private readonly MessageService _messageService;
 
-        public CVController(CvDbContext dbContext, UserManager<User> userManager)
+        public CVController(CvDbContext dbContext, UserManager<User> userManager, MessageService messageService)
         {
             _userManager = userManager;
             _dbContext = dbContext;
+            _messageService = messageService;
         }
 
 
-        public IActionResult Index(string projekt)
+        public async Task<IActionResult> Index(string projekt)
         {
-            
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             List<Cv> cvs = _dbContext.Cvs.Where(c => c.Projects.Any(p => p.Title.Contains(projekt))).ToList();
 
             return View(cvs);
         }
 
         [HttpGet]
-        public IActionResult AddEducation()
+        public async Task<IActionResult> AddEducation()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             List<SelectListItem> skills = _dbContext.Skills.Select(x => new SelectListItem { Text = x.Name, Value = x.Name}).ToList();
             SelectListItem newSkill = new SelectListItem { Text = "Lägg till en ny kompetens..", Value = "NewSkill" };
             skills.Insert(skills.Count, newSkill);
@@ -43,13 +49,7 @@ namespace cvprojekt.Controllers
         {
             string revampedstring = viewmodel.Skills.Replace("\"", "").Replace("[", "").Replace("]", "");
             string[] skillnames = revampedstring.Split(',');
-            
-            
-            foreach (var skill in skillnames)
-            {
-                Console.WriteLine("Skill " + skill);
-                
-            }
+
             Education education = new Education()
             {
                 Title = viewmodel.Title,
@@ -87,6 +87,7 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public async Task<IActionResult> ShowCv(string username)
         {
+            
             ShowCvViewModel vm = new ShowCvViewModel();
             
             //Väljer rätt user
@@ -158,6 +159,8 @@ namespace cvprojekt.Controllers
                 }
 
             }
+            var userIdForMessage = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userIdForMessage != null ? await _messageService.GetUnreadMessagesCountAsync(userIdForMessage) : 0;
         return View(vm);
         }
     }

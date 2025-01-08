@@ -11,6 +11,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Claims;
 using System.Xml;
 using System.Xml.Serialization;
+using cvprojekt.Services;
 
 namespace cvprojekt.Controllers
 {
@@ -18,6 +19,7 @@ namespace cvprojekt.Controllers
     {
         private readonly CvDbContext _ctx;
         private readonly UserManager<User> _userManager;
+        private readonly MessageService _messageService;
 
         public UserController(CvDbContext ctx, UserManager<User> userManager)
         {
@@ -25,16 +27,20 @@ namespace cvprojekt.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             return View();
         }
 
         [Authorize]
         [HttpGet]
-        public IActionResult Edit()
+        public async Task<IActionResult> Edit()
         {
+            
             string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.UnreadMessagesCount = userid != null ? await _messageService.GetUnreadMessagesCountAsync(userid) : 0;
             User user = _ctx.Users.Find(userid);
 
             var model = new EditUserViewModel
@@ -52,6 +58,8 @@ namespace cvprojekt.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(EditUserViewModel evm)
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             if (!ModelState.IsValid)
             {
                 return View(evm);
@@ -81,8 +89,10 @@ namespace cvprojekt.Controllers
         }
 
         [HttpGet]
-        public IActionResult Search(string searchWord)
+        public async Task<IActionResult> Search(string searchWord)
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             List<User> users = new List<User>();
 
             if (User.Identity.IsAuthenticated)
@@ -133,6 +143,8 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public async Task<IActionResult> Image()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             User user = await _userManager.GetUserAsync(User);
             return View(user);
         }
@@ -163,23 +175,16 @@ namespace cvprojekt.Controllers
         }
 
         [HttpGet]
-        public IActionResult SerializeProfile()
+        public async Task<IActionResult> SerializeProfile()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> SerializeProfile(string username)
         {
-            Console.WriteLine("user" + username);
-            //path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "output.xml");
-            //XmlSerializer xml = new XmlSerializer(typeof(XmlContainer));
-            //FileStream fileStream = new FileStream(path, FileMode.Create, FileAccess.Write);
-
-            //XmlContainer container = new XmlContainer();
-
-            //xml.Serialize(fileStream, container);
-            //fileStream.Close();
 
             var user = await _userManager.Users
                 .Include(u => u.Cvs)
@@ -228,8 +233,10 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public async Task<IActionResult> Match()
         {
+            
             //Kan bytas ut om man vill ta en annan user
             var userId = (await _userManager.GetUserAsync(User)).Id;
+            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
 
             var user = await _ctx.Users
                 .Include(u => u.Cvs)
