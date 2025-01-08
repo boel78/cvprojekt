@@ -105,11 +105,13 @@ namespace cvprojekt.Controllers
                     string id = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                     vm.User = await _userManager.FindByIdAsync(id);
                 }
-                else
+
+                if (username != null)
                 {
                     vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
+
                 }
-                    vm.Projects = await _dbContext.Projects.Where(p => p.Users.Contains(vm.User)).Include(p => p.CreatedByNavigation).Include(p => p.Users).ToListAsync();
+                vm.Projects = await _dbContext.Projects.Where(p => p.Users.Contains(vm.User)).Include(p => p.CreatedByNavigation).Include(p => p.Users).ToListAsync();
                 
                 
                 
