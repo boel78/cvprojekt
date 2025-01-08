@@ -1,13 +1,28 @@
 ﻿@model List<cvprojekt.Models.Cv>
 
-@{
-}
-
 <h2>Ditt CV</h2>
 
 @foreach (var cv in Model)
 {
-    <p>@cv.Description</p>
+    <div>
+        <h3>Beskrivning</h3>
+        <p>@cv.Description</p>
+        <h3>Erfarenheter</h3>
+        @foreach (var education in cv.Educations)
+        {
+            <div>
+                <h4>@education.Title</h4>
+                <p>@education.Description</p>
+                <h5>Kompetenser</h5>
+                <ul>
+                    @foreach (var skill in education.Skills)
+                    {
+                        <li>@skill.Name</li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
 }
 
-<a asp-controller="CV" asp-action="EditCv" class="btn btn-primary">Redigera CV</a>
+<a asp-controller="CV" asp-action="EditCV" class="btn btn-primary">Redigera CV</a>
