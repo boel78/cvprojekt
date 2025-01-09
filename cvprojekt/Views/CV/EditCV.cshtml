@@ -12,38 +12,46 @@
         <input asp-for="Description" class="form-control" />
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
-    @for (int i = 0; i < Model.Educations.Count; i++)
-    {
-        <div>
-            <label>Jobb/Erfarenhet: </label>
-            <input asp-for="@Model.Educations[i].Title" class="form-control" />
-            <span asp-validation-for="@Model.Educations[i].Title" class="text-danger"></span>
-        </div>
-        <div>
-            <label>Beskrivning: </label>
-            <input asp-for="@Model.Educations[i].Description" class="form-control" />
-            <span asp-validation-for="@Model.Educations[i].Description" class="text-danger"></span>
-        </div>
-        <div>
-            <label>Kompetenser: </label>
-            <select asp-items="ViewBag.options" id="selector-@i" class="form-control"></select>
-            <div id="skillList-@i">
-                <h3>Kompetenser</h3>
-                @foreach (var skill in Model.Educations[i].Skills?.Split(',') ?? new string[0])
-                {
-                    <div style="border: 2px solid black;">
-                        <p>@skill</p>
-                        <button type="button" class="skillDelete">Ta bort</button>
+    <div id="educations">
+        @for (int i = 0; i < Model.Educations.Count; i++)
+        {
+            <div class="education-item" data-index="@i">
+                <h4>Erfarenhet @i</h4>
+                <div>
+                    <label>Jobb/Erfarenhet: </label>
+                    <input asp-for="@Model.Educations[i].Title" class="form-control" />
+                    <span asp-validation-for="@Model.Educations[i].Title" class="text-danger"></span>
+                </div>
+                <div>
+                    <label>Beskrivning: </label>
+                    <input asp-for="@Model.Educations[i].Description" class="form-control" />
+                    <span asp-validation-for="@Model.Educations[i].Description" class="text-danger"></span>
+                </div>
+                <div>
+                    <label>Kompetenser: </label>
+                    <select asp-items="ViewBag.options" id="selector-@i" class="form-control"></select>
+                    <div id="skillList-@i">
+                        <h5>Kompetenser</h5>
+                        @foreach (var skill in Model.Educations[i].Skills?.Split(',') ?? new string[0])
+                        {
+                            <div style="border: 2px solid black;">
+                                <p>@skill</p>
+                                <button type="button" class="skillDelete">Ta bort</button>
+                            </div>
+                        }
                     </div>
-                }
+                    <div id="newSkill-@i" style="display:none;">
+                        <label>Ny kompetens: </label>
+                        <input id="newSkillInput-@i" class="form-control" />
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger remove-education">Ta bort erfarenhet</button>
+                <br />
             </div>
-            <div id="newSkill-@i" style="display:none;">
-                <label>Ny kompetens: </label>
-                <input id="newSkillInput-@i" class="form-control" />
-            </div>
-        </div>
-        <br />
-    }
+        }
+    </div>
+    <button type="button" class="btn btn-secondary" id="add-education">Lägg till erfarenhet</button>
+    <br />
     <button type="submit" class="btn btn-primary">Spara</button>
 </form>
 
@@ -124,6 +132,44 @@
                     document.getElementById('skillsInput-' + index).value = JSON.stringify(skills);
                 }
             });
+        });
+
+        document.getElementById('add-education').addEventListener('click', function () {
+            const index = document.querySelectorAll('.education-item').length;
+            const newEducation = document.createElement('div');
+            newEducation.className = 'education-item';
+            newEducation.setAttribute('data-index', index);
+            newEducation.innerHTML = `
+                <h4>Erfarenhet ${index}</h4>
+                <div>
+                    <label>Jobb/Erfarenhet: </label>
+                    <input name="Educations[${index}].Title" class="form-control" />
+                </div>
+                <div>
+                    <label>Beskrivning: </label>
+                    <input name="Educations[${index}].Description" class="form-control" />
+                </div>
+                <div>
+                    <label>Kompetenser: </label>
+                    <select name="Educations[${index}].Skills" id="selector-${index}" class="form-control"></select>
+                    <div id="skillList-${index}">
+                        <h5>Kompetenser</h5>
+                    </div>
+                    <div id="newSkill-${index}" style="display:none;">
+                        <label>Ny kompetens: </label>
+                        <input id="newSkillInput-${index}" class="form-control" />
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger remove-education">Ta bort erfarenhet</button>
+                <br />
+            `;
+            document.getElementById('educations').appendChild(newEducation);
+        });
+
+        document.getElementById('educations').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-education')) {
+                e.target.closest('.education-item').remove();
+            }
         });
     </script>
 }

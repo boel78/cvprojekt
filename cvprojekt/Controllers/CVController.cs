@@ -234,6 +234,13 @@ namespace cvprojekt.Controllers
                     _dbContext.Update(cv);
                 }
 
+                // Remove existing educations that are not in the model
+                var educationsToRemove = cv.Educations.Where(e => !model.Educations.Any(em => em.Title == e.Title)).ToList();
+                foreach (var education in educationsToRemove)
+                {
+                    _dbContext.Educations.Remove(education);
+                }
+
                 foreach (var educationModel in model.Educations)
                 {
                     var education = cv.Educations.FirstOrDefault(e => e.Title == educationModel.Title);
