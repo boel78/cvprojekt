@@ -20,14 +20,22 @@ namespace cvprojekt.Controllers
             _dbContext = dbContext;
         }
 
-        public IActionResult Index(string projekt)
+        [Authorize]
+        public async Task<IActionResult> Index()
         {
-            List<Cv> cvs = _dbContext.Cvs
-                .Include(c => c.Educations)
-                .ThenInclude(e => e.Skills)
-                .Where(c => c.Projects.Any(p => p.Title.Contains(projekt)))
-                .ToList();
+            var userId = _userManager.GetUserId(User);
+            var user = await _dbContext.Users
+                .Include(u => u.Cvs)
+                .ThenInclude(cv => cv.Educations)
+                .ThenInclude(edu => edu.Skills)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var cvs = user.Cvs.ToList();
             return View(cvs);
         }
 

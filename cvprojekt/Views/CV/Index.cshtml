@@ -1,6 +1,10 @@
 ﻿@model List<cvprojekt.Models.Cv>
 
-<h2>Ditt CV</h2>
+@{
+    ViewBag.Title = "Ditt CV";
+}
+
+<h2>@ViewBag.Title</h2>
 
 @foreach (var cv in Model)
 {
