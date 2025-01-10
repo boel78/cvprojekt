@@ -170,30 +170,41 @@ namespace cvprojekt.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> EditCV()
+        public async Task<IActionResult> EditCV(int? id)
         {
-            var userId = _userManager.GetUserId(User);
-            var user = await _dbContext.Users
-                .Include(u => u.Cvs)
-                .ThenInclude(cv => cv.Educations)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (user == null)
+            Cv cv;
+            if (id.HasValue)
             {
-                return NotFound();
+                cv = await _dbContext.Cvs
+                    .Include(c => c.Educations)
+                    .ThenInclude(e => e.Skills)
+                    .FirstOrDefaultAsync(c => c.Cvid == id.Value);
+
+                if (cv == null)
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                var userId = _userManager.GetUserId(User);
+                cv = new Cv
+                {
+                    Owner = userId
+                };
             }
 
-            var cv = user.Cvs.FirstOrDefault();
             var model = new CvViewModel
             {
-                Cvid = cv?.Cvid ?? 0,
-                Description = cv?.Description,
-                Educations = cv?.Educations.Select(e => new EducationSkillViewModel
+                Cvid = cv.Cvid,
+                Description = cv.Description,
+                Educations = cv.Educations.Select(e => new EducationSkillViewModel
                 {
+                    Eid = e.Eid,
                     Title = e.Title,
                     Description = e.Description,
                     Skills = string.Join(",", e.Skills.Select(s => s.Name))
-                }).ToList() ?? new List<EducationSkillViewModel>()
+                }).ToList()
             };
 
             ViewBag.options = new SelectList(_dbContext.Skills, "Name", "Name");
@@ -206,36 +217,35 @@ namespace cvprojekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                var userId = _userManager.GetUserId(User);
-                var user = await _dbContext.Users
-                    .Include(u => u.Cvs)
-                    .ThenInclude(cv => cv.Educations)
-                    .FirstOrDefaultAsync(u => u.Id == userId);
-
-                if (user == null)
+                Cv cv;
+                if (model.Cvid == 0)
                 {
-                    return NotFound();
-                }
-
-                var cv = user.Cvs.FirstOrDefault();
-                if (cv == null)
-                {
+                    var userId = _userManager.GetUserId(User);
                     cv = new Cv
                     {
                         Description = model.Description,
                         Owner = userId
                     };
-                    user.Cvs.Add(cv);
                     _dbContext.Cvs.Add(cv);
                 }
                 else
                 {
+                    cv = await _dbContext.Cvs
+                        .Include(c => c.Educations)
+                        .ThenInclude(e => e.Skills)
+                        .FirstOrDefaultAsync(c => c.Cvid == model.Cvid);
+
+                    if (cv == null)
+                    {
+                        return NotFound();
+                    }
+
                     cv.Description = model.Description;
                     _dbContext.Update(cv);
                 }
 
                 // Remove existing educations that are not in the model
-                var educationsToRemove = cv.Educations.Where(e => !model.Educations.Any(em => em.Title == e.Title)).ToList();
+                var educationsToRemove = cv.Educations.Where(e => !model.Educations.Any(em => em.Eid == e.Eid)).ToList();
                 foreach (var education in educationsToRemove)
                 {
                     _dbContext.Educations.Remove(education);
@@ -243,7 +253,7 @@ namespace cvprojekt.Controllers
 
                 foreach (var educationModel in model.Educations)
                 {
-                    var education = cv.Educations.FirstOrDefault(e => e.Title == educationModel.Title);
+                    var education = cv.Educations.FirstOrDefault(e => e.Eid == educationModel.Eid);
                     if (education != null)
                     {
                         education.Title = educationModel.Title;

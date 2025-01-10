@@ -1,175 +1,74 @@
 ﻿@model cvprojekt.Models.CvViewModel
 
 @{
-    ViewBag.Title = "Edit CV";
+    ViewBag.Title = "Redigera CV";
 }
 
-<h3>@(Model.Cvid == 0 ? "Create CV" : "Edit CV")</h3>
+<h2>@ViewBag.Title</h2>
 
 <form asp-action="EditCV" method="post">
     <div>
-        <label>Beskrivning: </label>
-        <input asp-for="Description" class="form-control" />
-        <span asp-validation-for="Description" class="text-danger"></span>
+        <label for="Description">Beskrivning</label>
+        <textarea id="Description" name="Description" class="form-control">@Model.Description</textarea>
     </div>
-    <div id="educations">
+
+    <h3>Erfarenheter</h3>
+    <div id="experiences">
         @for (int i = 0; i < Model.Educations.Count; i++)
         {
-            <div class="education-item" data-index="@i">
+            <div>
                 <h4>Erfarenhet @i</h4>
+                <input type="hidden" name="Educations[@i].Eid" value="@Model.Educations[i].Eid" />
                 <div>
-                    <label>Jobb/Erfarenhet: </label>
-                    <input asp-for="@Model.Educations[i].Title" class="form-control" />
-                    <span asp-validation-for="@Model.Educations[i].Title" class="text-danger"></span>
+                    <label for="Educations_@(i)__Title">Titel</label>
+                    <input id="Educations_@(i)__Title" name="Educations[@i].Title" class="form-control" value="@Model.Educations[i].Title" />
                 </div>
                 <div>
-                    <label>Beskrivning: </label>
-                    <input asp-for="@Model.Educations[i].Description" class="form-control" />
-                    <span asp-validation-for="@Model.Educations[i].Description" class="text-danger"></span>
+                    <label for="Educations_@(i)__Description">Beskrivning</label>
+                    <textarea id="Educations_@(i)__Description" name="Educations[@i].Description" class="form-control">@Model.Educations[i].Description</textarea>
                 </div>
                 <div>
-                    <label>Kompetenser: </label>
-                    <select asp-items="ViewBag.options" id="selector-@i" class="form-control"></select>
-                    <div id="skillList-@i">
-                        <h5>Kompetenser</h5>
-                        @foreach (var skill in Model.Educations[i].Skills?.Split(',') ?? new string[0])
-                        {
-                            <div style="border: 2px solid black;">
-                                <p>@skill</p>
-                                <button type="button" class="skillDelete">Ta bort</button>
-                            </div>
-                        }
-                    </div>
-                    <div id="newSkill-@i" style="display:none;">
-                        <label>Ny kompetens: </label>
-                        <input id="newSkillInput-@i" class="form-control" />
-                    </div>
+                    <label for="Educations_@(i)__Skills">Kompetenser</label>
+                    <input id="Educations_@(i)__Skills" name="Educations[@i].Skills" class="form-control" value="@Model.Educations[i].Skills" />
                 </div>
-                <button type="button" class="btn btn-danger remove-education">Ta bort erfarenhet</button>
-                <br />
+                <button type="button" class="btn btn-danger" onclick="removeExperience(@i)">Ta bort</button>
             </div>
         }
     </div>
-    <button type="button" class="btn btn-secondary" id="add-education">Lägg till erfarenhet</button>
-    <br />
+    <button type="button" class="btn btn-secondary" onclick="addExperience()">Lägg till erfarenhet</button>
     <button type="submit" class="btn btn-primary">Spara</button>
 </form>
 
 @section Scripts {
     <script>
-        document.querySelectorAll('[id^="selector-"]').forEach(function (selector) {
-            selector.addEventListener('change', function () {
-                const index = this.id.split('-')[1];
-                const value = this.value;
-                const thediv = document.getElementById('newSkill-' + index);
-                const skillList = document.getElementById('skillList-' + index);
-
-                if (value === 'NewSkill') {
-                    thediv.style.display = 'block';
-                    this.style.display = 'none';
-                } else {
-                    thediv.style.display = 'none';
-                    if (value) {
-                        var newSkillDiv = document.createElement('div');
-                        var newSkillText = document.createElement('p');
-                        var newSkillDelete = document.createElement('button');
-                        newSkillDiv.style.border = '2px solid black';
-                        newSkillDelete.textContent = 'Ta bort';
-                        newSkillDelete.className = 'skillDelete';
-                        newSkillDelete.addEventListener('click', function () {
-                            newSkillDiv.remove();
-
-                            let skills = JSON.parse(document.getElementById('skillsInput-' + index).value || '[]');
-                            skills = skills.filter(skill => skill !== value);
-                            document.getElementById('skillsInput-' + index).value = JSON.stringify(skills);
-                        });
-                        newSkillText.textContent = value;
-                        newSkillDiv.appendChild(newSkillText);
-                        newSkillDiv.appendChild(newSkillDelete);
-                        skillList.appendChild(newSkillDiv);
-
-                        let skills = JSON.parse(document.getElementById('skillsInput-' + index).value || '[]');
-                        if (!skills.includes(value)) {
-                            skills.push(value);
-                        }
-                        document.getElementById('skillsInput-' + index).value = JSON.stringify(skills);
-                    }
-                }
-            });
-        });
-
-        document.querySelectorAll('[id^="newSkillInput-"]').forEach(function (input) {
-            input.addEventListener('blur', function () {
-                const index = this.id.split('-')[1];
-                const skillListSelector = document.getElementById('selector-' + index);
-                const value = this.value;
-                const newSkilldiv = document.getElementById('newSkill-' + index);
-                skillListSelector.style.display = 'block';
-                newSkilldiv.style.display = 'none';
-                if (value) {
-                    var newSkillDiv = document.createElement('div');
-                    var newSkillText = document.createElement('p');
-                    var newSkillDelete = document.createElement('button');
-                    newSkillDiv.style.border = '2px solid black';
-                    newSkillDelete.textContent = 'Ta bort';
-                    newSkillDelete.className = 'skillDelete';
-                    newSkillDelete.addEventListener('click', function () {
-                        newSkillDiv.remove();
-
-                        let skills = JSON.parse(document.getElementById('skillsInput-' + index).value || '[]');
-                        skills = skills.filter(skill => skill !== value);
-                        document.getElementById('skillsInput-' + index).value = JSON.stringify(skills);
-                    });
-                    newSkillText.textContent = value;
-                    newSkillDiv.appendChild(newSkillText);
-                    newSkillDiv.appendChild(newSkillDelete);
-                    skillList.appendChild(newSkillDiv);
-
-                    let skills = JSON.parse(document.getElementById('skillsInput-' + index).value || '[]');
-                    if (!skills.includes(value)) {
-                        skills.push(value);
-                    }
-                    document.getElementById('skillsInput-' + index).value = JSON.stringify(skills);
-                }
-            });
-        });
-
-        document.getElementById('add-education').addEventListener('click', function () {
-            const index = document.querySelectorAll('.education-item').length;
-            const newEducation = document.createElement('div');
-            newEducation.className = 'education-item';
-            newEducation.setAttribute('data-index', index);
-            newEducation.innerHTML = `
+        function addExperience() {
+            var experiencesDiv = document.getElementById('experiences');
+            var index = experiencesDiv.children.length;
+            var newExperience = document.createElement('div');
+            newExperience.innerHTML = `
                 <h4>Erfarenhet ${index}</h4>
+                <input type="hidden" name="Educations[${index}].Eid" value="0" />
                 <div>
-                    <label>Jobb/Erfarenhet: </label>
-                    <input name="Educations[${index}].Title" class="form-control" />
+                    <label for="Educations_${index}__Title">Titel</label>
+                    <input id="Educations_${index}__Title" name="Educations[${index}].Title" class="form-control" value="" />
                 </div>
                 <div>
-                    <label>Beskrivning: </label>
-                    <input name="Educations[${index}].Description" class="form-control" />
+                    <label for="Educations_${index}__Description">Beskrivning</label>
+                    <textarea id="Educations_${index}__Description" name="Educations[${index}].Description" class="form-control"></textarea>
                 </div>
                 <div>
-                    <label>Kompetenser: </label>
-                    <select name="Educations[${index}].Skills" id="selector-${index}" class="form-control"></select>
-                    <div id="skillList-${index}">
-                        <h5>Kompetenser</h5>
-                    </div>
-                    <div id="newSkill-${index}" style="display:none;">
-                        <label>Ny kompetens: </label>
-                        <input id="newSkillInput-${index}" class="form-control" />
-                    </div>
+                    <label for="Educations_${index}__Skills">Kompetenser</label>
+                    <input id="Educations_${index}__Skills" name="Educations[${index}].Skills" class="form-control" value="" />
                 </div>
-                <button type="button" class="btn btn-danger remove-education">Ta bort erfarenhet</button>
-                <br />
+                <button type="button" class="btn btn-danger" onclick="removeExperience(${index})">Ta bort</button>
             `;
-            document.getElementById('educations').appendChild(newEducation);
-        });
+            experiencesDiv.appendChild(newExperience);
+        }
 
-        document.getElementById('educations').addEventListener('click', function (e) {
-            if (e.target.classList.contains('remove-education')) {
-                e.target.closest('.education-item').remove();
-            }
-        });
+        function removeExperience(index) {
+            var experiencesDiv = document.getElementById('experiences');
+            var experienceToRemove = experiencesDiv.children[index];
+            experiencesDiv.removeChild(experienceToRemove);
+        }
     </script>
 }
