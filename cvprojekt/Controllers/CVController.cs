@@ -27,21 +27,78 @@ namespace cvprojekt.Controllers
         }
 
 
-        public async Task<IActionResult> Index(string projekt)
+        public async Task<IActionResult> Index()
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
-            /*List<Cv> cvs = _dbContext.Cvs.Where(c => c.Projects.Any(p => p.Title.Contains(projekt))).ToList();
-
-            if (user == null)
+            List<Cv> allCv = await _dbContext.Cvs.Include(c => c.Educations)
+                .ThenInclude(e => e.Skills)
+                .Include(c => c.OwnerNavigation)
+                .Where(c => c.OwnerNavigation.IsActive == true)
+                .ToListAsync();
+            if (!User.Identity.IsAuthenticated)
             {
-                return NotFound();
+                allCv = await _dbContext.Cvs.Include(c => c.Educations)
+                    .ThenInclude(e => e.Skills)
+                    .Include(c => c.OwnerNavigation)
+                    .Where(c => c.OwnerNavigation.IsActive == true).Where(c => c.OwnerNavigation.IsPrivate == false)
+                    .ToListAsync();
             }
-
-            var cvs = user.Cvs.ToList();*/
-            return View();
+            return View(allCv);
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> EditCV()
+        {
+            string userid = _userManager.GetUserId(User);
+            int cvCount = _dbContext.Cvs.Where(c => c.Owner == userid).ToList().Count();
+            
+            
+            Cv cv;
+            var model = new CvViewModel();
+            //Kollar efter om användaren har ett cv eller inte
+            if (cvCount > 0)
+            {
+                cv = await _dbContext.Cvs.Where(c => c.Owner == userid)
+                    .Include(c => c.Educations)
+                    .ThenInclude(e => e.Skills)
+                    .FirstOrDefaultAsync();
+                
+                
+                
+                model = new CvViewModel
+                {
+                    Cvid = cv.Cvid,
+                    Description = cv.Description,
+                    Educations = cv.Educations.Select(e => new EducationSkillViewModel
+                    {
+                        Eid = e.Eid,
+                        Title = e.Title,
+                        Description = e.Description,
+                        Skills = string.Join(",", e.Skills.Select(s => s.Name))
+                    }).ToList()
+                };
+
+                
+                if (cv == null)
+                {
+                    return NotFound();
+                }
+            }
+            //Om det inte finns cv så sätter vi cvid = 0 och tomma fält
+            else if(cvCount == 0)
+            {
+                model = new CvViewModel
+                {
+                    Cvid = 0,
+                    Description = "",
+                    Educations = []
+                };
+            }
+
+            ViewBag.options = new SelectList(_dbContext.Skills, "Name", "Name");
+            return View(model);
+        }
+        
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> EditCV(CvViewModel model)
@@ -136,7 +193,7 @@ namespace cvprojekt.Controllers
                 }
 
                 await _dbContext.SaveChangesAsync();
-                return RedirectToAction("Index");
+                return RedirectToAction("ShowCv");
             }
 
             ViewBag.options = new SelectList(_dbContext.Skills, "Name", "Name");
@@ -159,9 +216,9 @@ namespace cvprojekt.Controllers
                 .Where(skillName => !skills.Any(existingSkill => existingSkill.Name == skillName))
                 .Distinct()
                 .ToList();
-            foreach (var skill in skills)
+            foreach (var skill in skillsToDb)
             {
-                await AddSkill(new Skill { Name = skill.Name });
+                await AddSkill(new Skill { Name = skill});
 
             }
             //Skills som ska läggas till i respektive education

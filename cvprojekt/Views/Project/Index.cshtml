@@ -41,13 +41,14 @@
                             Radera
                         </button> 
                     }
-                    // om användaren inte redan är med i projektet, är inloggad och aktiv
-                    else if (!isUserInProject && User.Identity.IsAuthenticated && Model.User.IsActive)
+                    @* om användaren inte redan är med i projektet, är inloggad och aktiv*@
+                    @if (!isUserInProject && User.Identity.IsAuthenticated && Model.User.IsActive)
                     {
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal" data-project-id="@project.ProjectId">
                             Anslut till projekt
                         </button>
                     }
+                    
                 </td>
             </tr>
             }

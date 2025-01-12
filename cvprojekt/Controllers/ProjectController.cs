@@ -57,12 +57,14 @@ namespace cvprojekt.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Project project)
+        public async Task<IActionResult> Create(Project project)
         {
             // hämtar id från inloggad användare och sätter det som skapare på projektet.
             string userid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userid);
             project.CreatedBy = userid;
             project.CreatedDate = DateTime.Now;
+            project.Users.Add(user);
             _context.Add(project);
             _context.SaveChanges();
             return RedirectToAction("Index", "Project");
