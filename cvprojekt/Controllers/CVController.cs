@@ -48,10 +48,10 @@ namespace cvprojekt.Controllers
         {
             var userId = _userManager.GetUserId(User);
             
-            
             if (ModelState.IsValid)
             {
                 Cv cv;
+                //Har användaren 0 cvn så skapa det
                 if (model.Cvid == 0)
                 {
                     cv = new Cv
@@ -63,6 +63,7 @@ namespace cvprojekt.Controllers
                 }
                 else
                 {
+                    //Hämta cvt och uppdatera det
                     cv = await _dbContext.Cvs.Where(c => c.Owner == userId)
                         .Include(c => c.Educations)
                         .ThenInclude(e => e.Skills)
@@ -77,7 +78,7 @@ namespace cvprojekt.Controllers
                     _dbContext.Update(cv);
                 }
                 
-                // Remove existing educations that are not in the model
+                // Tar bort educations som inte finns i model
                 var educationsToRemove = cv.Educations.Where(e => !model.Educations.Any(em => em.Eid == e.Eid)).ToList();
                 foreach (var education in educationsToRemove)
                 {
@@ -89,6 +90,7 @@ namespace cvprojekt.Controllers
 
                 foreach (var educationModel in model.Educations)
                 {
+                    //Om det inte redan finns en education i databasen som i model så lägg till
                     if (!cv.Educations.Any(e => e.Eid == educationModel.Eid))
                     {
                         await AddEducation(educationModel);
@@ -143,31 +145,26 @@ namespace cvprojekt.Controllers
 
         private async Task AddEducation(EducationSkillViewModel viewmodel)
         {
-            string userId = _userManager.GetUserId(User);
-            Cv cv = await _dbContext.Cvs.Where(c => c.Owner == userId).FirstAsync();
             string revampedstring = viewmodel.Skills.Replace("\"", "").Replace("[", "").Replace("]", "");
             string[] skillnames = revampedstring.Split(',');
 
-            foreach (var skill in skillnames)
-            {
-                Console.WriteLine("Skill " + skill);
-            }
             Education education = new Education()
             {
                 Title = viewmodel.Title,
                 Description = viewmodel.Description,
             };
             List<Skill> skills = await _dbContext.Skills.ToListAsync();
+            //nya skills som behöver läggas till i databasen
             var skillsToDb = skillnames
                 .Where(skillName => !skills.Any(existingSkill => existingSkill.Name == skillName))
                 .Distinct()
                 .ToList();
-            foreach (var skill in skillsToDb)
+            foreach (var skill in skills)
             {
-                        await AddSkill(new Skill { Name = skill });
-
+                await AddSkill(new Skill { Name = skill.Name });
 
             }
+            //Skills som ska läggas till i respektive education
             List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name)).ToListAsync();
 
 
