@@ -42,6 +42,8 @@ namespace cvprojekt.Controllers
                     .Where(c => c.OwnerNavigation.IsActive == true).Where(c => c.OwnerNavigation.IsPrivate == false)
                     .ToListAsync();
             }
+            var userid = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            ViewBag.UnreadMessagesCount = userid != null ? await _messageService.GetUnreadMessagesCountAsync(userid) : 0;
             return View(allCv);
         }
 
@@ -94,7 +96,7 @@ namespace cvprojekt.Controllers
                     Educations = []
                 };
             }
-
+            ViewBag.UnreadMessagesCount = userid != null ? await _messageService.GetUnreadMessagesCountAsync(userid) : 0;
             ViewBag.options = new SelectList(_dbContext.Skills, "Name", "Name");
             return View(model);
         }
@@ -152,6 +154,21 @@ namespace cvprojekt.Controllers
                     {
                         await AddEducation(educationModel);
                     }
+                    
+                    //Kontrollerar om en education uppdateras
+                    if (_dbContext.Educations.Any(e => e.Eid == educationModel.Eid))
+                    {
+                        Console.WriteLine("uppdarerar");
+                        int eid = educationModel.Eid;
+                        var education = cv.Educations.Where(e => e.Eid == eid).FirstOrDefault();
+                        education.Skills.Clear();
+                        cv.Educations.Remove(education);
+                        
+                        _dbContext.Educations.Remove(education);
+                        await _dbContext.SaveChangesAsync();
+                        await AddEducation(educationModel);
+                    }
+                    
                     /*Education education = new Education()
                     {
                         Title = educationModel.Title,
@@ -213,16 +230,19 @@ namespace cvprojekt.Controllers
             List<Skill> skills = await _dbContext.Skills.ToListAsync();
             //nya skills som behöver läggas till i databasen
             var skillsToDb = skillnames
+                .Select(skillname => skillname.TrimStart(' '))
                 .Where(skillName => !skills.Any(existingSkill => existingSkill.Name == skillName))
                 .Distinct()
                 .ToList();
+            List<Skill> newSkills = new List<Skill>();
             foreach (var skill in skillsToDb)
             {
-                await AddSkill(new Skill { Name = skill});
-
+                var newSkill = new Skill { Name = skill };
+                await AddSkill(newSkill);
+                newSkills.Add(newSkill);
             }
             //Skills som ska läggas till i respektive education
-            List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name)).ToListAsync();
+            List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name) || newSkills.Select(ns => ns.Name).Contains(s.Name)).ToListAsync();
 
 
             string userid = _userManager.GetUserId(User);

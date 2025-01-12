@@ -9,16 +9,16 @@
 <form asp-action="EditCV" method="post">
     <div>
         <input type="hidden" name="Cvid" value="@Model.Cvid" />
-        <label for="Description">Beskrivning</label>
+        <label for="Description"><h4>Beskrivning</h4></label>
         <textarea id="Description" name="Description" class="form-control">@Model.Description</textarea>
     </div>
 
-    <h3>Erfarenheter</h3>
+    <h4>Erfarenheter</h4>
     <div id="experiences">
         @for (int i = 0; i < Model.Educations.Count; i++)
         {
-            <div>
-                <h4>Erfarenhet @i</h4>
+            <div class="card mb-5">
+                <p class="card-header">Erfarenhet @i</p>
                 <input type="hidden" name="Educations[@i].Eid" value="@Model.Educations[i].Eid" />
                 <div>
                     <label for="Educations_@(i)__Title">Titel</label>
@@ -32,7 +32,7 @@
                     <label for="Educations_@(i)__Skills">Kompetenser</label>
                     <input id="Educations_@(i)__Skills" name="Educations[@i].Skills" class="form-control" value="@Model.Educations[i].Skills" />
                 </div>
-                <button type="button" class="btn btn-danger" onclick="removeExperience(@i)">Ta bort</button>
+                <button type="button" class="btn btn-danger w-50 align-self-center" onclick="removeExperience(@i)">Ta bort</button>
             </div>
         }
     </div>

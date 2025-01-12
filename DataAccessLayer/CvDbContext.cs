@@ -93,6 +93,7 @@ public partial class CvDbContext : IdentityDbContext<User>
             entity.HasKey(e => e.Eid).HasName("PK__Educatio__C190170B7306CCE1");
 
             entity.ToTable("Education");
+            
 
             entity.Property(e => e.Eid).HasColumnName("EID");
             entity.Property(e => e.Cvid).HasColumnName("CVID");
@@ -122,6 +123,7 @@ public partial class CvDbContext : IdentityDbContext<User>
                         j.IndexerProperty<int>("Eid").HasColumnName("EID");
                         j.IndexerProperty<int>("Sid").HasColumnName("SID");
                     });
+            
         });
 
         modelBuilder.Entity<Message>(entity =>
