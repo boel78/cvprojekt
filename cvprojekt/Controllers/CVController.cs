@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 using cvprojekt.Services;
 using Models;
-
 
 namespace cvprojekt.Controllers
 {
@@ -31,6 +32,12 @@ namespace cvprojekt.Controllers
             ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
             List<Cv> cvs = _dbContext.Cvs.Where(c => c.Projects.Any(p => p.Title.Contains(projekt))).ToList();
 
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var cvs = user.Cvs.ToList();
             return View(cvs);
         }
 
@@ -46,48 +53,54 @@ namespace cvprojekt.Controllers
             return View();
         }
 
-        
-        [HttpPost]
-        public async Task<IActionResult> AddEducation(EducationSkillViewModel viewmodel)
+
+        private async Task AddEducation(EducationSkillViewModel viewmodel)
         {
-            //Hämtar strängen från vyn som ser ut som "["erfarenhet1", "erfarenhet2"]" och gör om den till en array
+            string userId = _userManager.GetUserId(User);
+            Cv cv = await _dbContext.Cvs.Where(c => c.Owner == userId).FirstAsync();
             string revampedstring = viewmodel.Skills.Replace("\"", "").Replace("[", "").Replace("]", "");
             string[] skillnames = revampedstring.Split(',');
-            
-            //Skapar en ny erfarenhet
+
+            foreach (var skill in skillnames)
+            {
+                Console.WriteLine("Skill " + skill);
+            }
             Education education = new Education()
             {
                 Title = viewmodel.Title,
                 Description = viewmodel.Description,
             };
-            
-            //Kontrollerar ifall en kompetens inte finns, då skapas det en ny i databasen
             List<Skill> skills = await _dbContext.Skills.ToListAsync();
-                foreach (var skillInput in skillnames)
-                {
-                    if (!skills.Any(s => s.Name.Equals(skillInput, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        await AddSkill(new Skill { Name = skillInput });
-                    }
-                
-                
+            var skillsToDb = skillnames
+                .Where(skillName => !skills.Any(existingSkill => existingSkill.Name == skillName))
+                .Distinct()
+                .ToList();
+            foreach (var skill in skillsToDb)
+            {
+                        await AddSkill(new Skill { Name = skill });
+
+
             }
-            //Gör en lista med kompetenser som ska kopplas till erfarenheten som skapas
             List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name)).ToListAsync();
-            
-            //Hämtar användaren och skapar erfarenheten och kopplar den till cvt
-            var userid = _userManager.GetUserId(User);
-            var user = await _dbContext.Users.Where(u => u.Id == userid).Include(u => u.Cvs).FirstOrDefaultAsync();
+
+
+            string userid = _userManager.GetUserId(User);
+
+            var user = _dbContext.Users.Where(u => u.Id == userid).Include(u => u.Cvs).FirstOrDefault();
             education.Skills = skillsToAdd;
             education.Cvid = user.Cvs.FirstOrDefault().Cvid;
             _dbContext.Educations.Add(education);
             await _dbContext.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
         }
-        
-        private async Task AddSkill(Skill skill)
+
+        public async Task AddSkill(Skill skill)
         {
-            _dbContext.Skills.Add(skill);
+            List<Skill> skills = await _dbContext.Skills.ToListAsync();
+            if (!skills.Contains(skill))
+            {
+                _dbContext.Skills.Add(skill);
+            }
+
             await _dbContext.SaveChangesAsync();
         }
 
@@ -95,9 +108,9 @@ namespace cvprojekt.Controllers
         [HttpGet]
         public async Task<IActionResult> ShowCv(string username)
         {
-            
+
             ShowCvViewModel vm = new ShowCvViewModel();
-            
+
             //Väljer rätt user
             List<User> users = await _dbContext.Users.ToListAsync();
                 //Hämtar usern och projects som den deltar i. Inkluderar de models som är viktiga. Fyller Viewmodel.
@@ -133,7 +146,7 @@ namespace cvprojekt.Controllers
                             vm.IsWriter = true;
                             vm.ViewCount = _dbContext.CvViews.Where(cvv => cvv.Cvid == cv.Cvid).Select(cvv => cvv.ViewCount).FirstOrDefault();
                         }
-                    
+
                     }
                     //Hämtar matchningar
                     var userId = vm.User.Id;
@@ -144,18 +157,18 @@ namespace cvprojekt.Controllers
                         .ThenInclude(cv => cv.Educations)
                         .ThenInclude(edu => edu.Skills)
                         .FirstOrDefaultAsync(u => u.Id == userId);
-            
+
                     List<string> skills = user.Cvs
                         .SelectMany(cv => cv.Educations)
                         .SelectMany(edu => edu.Skills)
                         .Select(skill => skill.Name)
                         .ToList();
-                    
+
                     if (User.Identity.IsAuthenticated)
                     {
                         //Om användaren är inloggad visas matchingar efter kompetenser på dom som inte är privata
                         //Inkluderingar krävs eftersom våran databas är Cv -> Erfarenheter -> kompetenser
-                        vm.UsersMatch = _dbContext.Users.Where(u => u.IsActive == true)                
+                        vm.UsersMatch = _dbContext.Users.Where(u => u.IsActive == true)
                             .Include(u => u.Cvs)
                             .ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).Where(u => u.Id != userId)
                             .Where(u => u.Cvs.SelectMany(c => c.Educations).SelectMany(e => e.Skills)
@@ -171,7 +184,7 @@ namespace cvprojekt.Controllers
                                 .Any(skill => skills.Contains(skill.Name)));
                     }
                 }
-    
+
             var userIdForMessage = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             ViewBag.UnreadMessagesCount = userIdForMessage != null ? await _messageService.GetUnreadMessagesCountAsync(userIdForMessage) : 0;
         return View(vm);

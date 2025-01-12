@@ -1,0 +1,75 @@
+﻿@model cvprojekt.Models.CvViewModel
+
+@{
+    ViewBag.Title = "Redigera CV";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form asp-action="EditCV" method="post">
+    <div>
+        <input type="hidden" name="Cvid" value="@Model.Cvid" />
+        <label for="Description">Beskrivning</label>
+        <textarea id="Description" name="Description" class="form-control">@Model.Description</textarea>
+    </div>
+
+    <h3>Erfarenheter</h3>
+    <div id="experiences">
+        @for (int i = 0; i < Model.Educations.Count; i++)
+        {
+            <div>
+                <h4>Erfarenhet @i</h4>
+                <input type="hidden" name="Educations[@i].Eid" value="@Model.Educations[i].Eid" />
+                <div>
+                    <label for="Educations_@(i)__Title">Titel</label>
+                    <input id="Educations_@(i)__Title" name="Educations[@i].Title" class="form-control" value="@Model.Educations[i].Title" />
+                </div>
+                <div>
+                    <label for="Educations_@(i)__Description">Beskrivning</label>
+                    <textarea id="Educations_@(i)__Description" name="Educations[@i].Description" class="form-control">@Model.Educations[i].Description</textarea>
+                </div>
+                <div>
+                    <label for="Educations_@(i)__Skills">Kompetenser</label>
+                    <input id="Educations_@(i)__Skills" name="Educations[@i].Skills" class="form-control" value="@Model.Educations[i].Skills" />
+                </div>
+                <button type="button" class="btn btn-danger" onclick="removeExperience(@i)">Ta bort</button>
+            </div>
+        }
+    </div>
+    <button type="button" class="btn btn-secondary" onclick="addExperience()">Lägg till erfarenhet</button>
+    <button type="submit" class="btn btn-primary">Spara</button>
+</form>
+
+@section Scripts {
+    <script>
+        function addExperience() {
+            var experiencesDiv = document.getElementById('experiences');
+            var index = experiencesDiv.children.length;
+            var newExperience = document.createElement('div');
+            newExperience.innerHTML = `
+                <h4>Erfarenhet ${index}</h4>
+                <input type="hidden" name="Educations[${index}].Eid" value="0" />
+                <div>
+                    <label for="Educations_${index}__Title">Titel</label>
+                    <input id="Educations_${index}__Title" name="Educations[${index}].Title" class="form-control" value="" />
+                </div>
+                <div>
+                    <label for="Educations_${index}__Description">Beskrivning</label>
+                    <textarea id="Educations_${index}__Description" name="Educations[${index}].Description" class="form-control"></textarea>
+                </div>
+                <div>
+                    <label for="Educations_${index}__Skills">Kompetenser</label>
+                    <input id="Educations_${index}__Skills" name="Educations[${index}].Skills" class="form-control" value="" />
+                </div>
+                <button type="button" class="btn btn-danger" onclick="removeExperience(${index})">Ta bort</button>
+            `;
+            experiencesDiv.appendChild(newExperience);
+        }
+
+        function removeExperience(index) {
+            var experiencesDiv = document.getElementById('experiences');
+            var experienceToRemove = experiencesDiv.children[index];
+            experiencesDiv.removeChild(experienceToRemove);
+        }
+    </script>
+}
