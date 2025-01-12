@@ -5,7 +5,7 @@
 }
 
 
-@if (Model.User.Cvs == null || Model.User.Cvs.Count == 0)
+@if (Model.User == null || Model.User.Cvs == null || Model.User.Cvs.Count == 0)
 {
     <h2>Det finns ingen användare som har det användarnamnet, eller så finns det inget cv på denna användare.</h2>
 }

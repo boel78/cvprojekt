@@ -8,6 +8,7 @@ using System.Net.WebSockets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using cvprojekt.Services;
+using Microsoft.VisualBasic;
 using Models;
 
 namespace cvprojekt.Controllers
@@ -30,15 +31,15 @@ namespace cvprojekt.Controllers
         {
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
-            List<Cv> cvs = _dbContext.Cvs.Where(c => c.Projects.Any(p => p.Title.Contains(projekt))).ToList();
+            /*List<Cv> cvs = _dbContext.Cvs.Where(c => c.Projects.Any(p => p.Title.Contains(projekt))).ToList();
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            var cvs = user.Cvs.ToList();
-            return View(cvs);
+            var cvs = user.Cvs.ToList();*/
+            return View();
         }
 
         [HttpGet]
@@ -117,7 +118,7 @@ namespace cvprojekt.Controllers
                 if (User.Identity.IsAuthenticated)
                 {
                     string id = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                    vm.User = await _userManager.FindByIdAsync(id);
+                    vm.User = _dbContext.Users.Where(u => u.Id == id).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefault();
                 }
 
                 if (username != null)
@@ -135,6 +136,7 @@ namespace cvprojekt.Controllers
                     {
                         if (vm.User.Id != _userManager.GetUserId(User))
                         {
+                            
                             Cv cv = vm.User.Cvs.FirstOrDefault();
                             CvView cvv = _dbContext.CvViews.Where(cvv => cvv.Cvid == cv.Cvid).FirstOrDefault();
                             cvv.ViewCount = cvv.ViewCount + 1;
