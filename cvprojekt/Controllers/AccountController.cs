@@ -40,6 +40,7 @@ namespace cvprojekt.Controllers
                 {
                     return RedirectToAction("Index", "Home");
                 }
+                ModelState.AddModelError(string.Empty, "Felaktigt användarnamn eller lösenord.");
             }
             return View(lm);
         }

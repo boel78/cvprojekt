@@ -1,27 +1,41 @@
 ﻿@{
+	ViewData["Title"] = "Registrera Konto";
 }
 
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Models.RegisterViewModel
 
-<div asp-validation-summary="All"></div>
-
-
-<form method="post" asp-action="Register">
-	<label>Användarnamn: </label>
-	<input asp-for="UserName" />
-	<br />
-	<label>Epost: </label>
-	<input asp-for="Email" />
-	<br />
-	<label>Namn: </label>
-	<input asp-for="Name" />
-	<br />
-	<label>Lösenord: </label>
-	<input type="password" asp-for="Password" />
-	<br />
-	<label>Bekräfta Lösenord</label>
-	<input type="password" asp-for="ConfirmPassword" />
-	<br />
-	<button type="submit">Login</button>
-</form>
+<div class="container mt-3">
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+			<h2 class="text-center mb-4">Registrera Konto</h2>
+			<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+			<form method="post" asp-action="Register">
+				<div class="mb-3">
+					<label for="UserName" class="form-label" >Användarnamn</label>
+					<input type="text" class="form-control" asp-for="UserName" id="UserName"/>
+				</div>
+				<div class="mb-3">
+					<label for="Email" class="form-label">E-post</label>
+					<input type="text" class="form-control" asp-for="Email" id="Email"/>
+				</div>
+				<div class="mb-3">
+					<label for="Name" class="form-label">Namn</label>
+					<input type="text" class="form-control" asp-for="Name" id="Name"/>
+				</div>
+				<div class="mb-3">
+					<label for="Password" class="form-label">Lösenord</label>
+					<input type="password" class="form-control" asp-for="Password" id="Password"/>
+				</div>
+				<div class="mb-3">
+					<label for="ConfirmPassword" class="form-label">Bekräfta Lösenord</label>
+					<input type="password" class="form-control" asp-for="ConfirmPassword" id="ConfirmPassword"/>
+				</div>
+				<button type="submit" class="btn btn-primary">Skapa konto</button>
+			</form>
+			<div class="text-center mt-3">
+				<p>Har du redan ett konto? <a asp-action="LogIn">Logga in här</a></p>
+			</div>
+		</div>
+	</div>
+</div>
