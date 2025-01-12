@@ -53,6 +53,8 @@ namespace cvprojekt.Controllers
        
         private async Task AddEducation(EducationSkillViewModel viewmodel)
         {
+            string userId = _userManager.GetUserId(User);
+            Cv cv = await _dbContext.Cvs.Where(c => c.Owner == userId).FirstAsync();
             string revampedstring = viewmodel.Skills.Replace("\"", "").Replace("[", "").Replace("]", "");
             string[] skillnames = revampedstring.Split(',');
 
@@ -66,12 +68,13 @@ namespace cvprojekt.Controllers
                 Description = viewmodel.Description,
             };
             List<Skill> skills = await _dbContext.Skills.ToListAsync();
-            List<Skill> skillsToDb = skills.Where(s => !skillnames.Contains(s.Name)).ToList();
-
+            var skillsToDb = skillnames
+                .Where(skillName => !skills.Any(existingSkill => existingSkill.Name == skillName))
+                .Distinct() 
+                .ToList();
             foreach (var skill in skillsToDb)
             {
-                        //Console.WriteLine("Skill " + skillinput);
-                        await AddSkill(new Skill { Name = skill.Name });
+                        await AddSkill(new Skill { Name = skill });
                     
                 
             }
@@ -272,7 +275,10 @@ namespace cvprojekt.Controllers
 
                 foreach (var educationModel in model.Educations)
                 {
-                    await AddEducation(educationModel);
+                    if (!cv.Educations.Any(e => e.Eid == educationModel.Eid))
+                    {
+                        await AddEducation(educationModel);
+                    }
                     /*Education education = new Education()
                     {
                         Title = educationModel.Title,
