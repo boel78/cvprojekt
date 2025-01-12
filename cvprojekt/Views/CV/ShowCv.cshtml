@@ -21,11 +21,11 @@ else
                 <p>@Model.User.Email</p>
                 <form asp-controller="User" asp-action="SerializeProfile" method="post">
                     <input type="hidden" name="username" value=@Model.User.UserName/>
-                    <button type="submit" class="btn btn-primary border-2 border-dark">Skriv ut profil</button>
+                    <button type="submit" class="btn btn-primary mb-2">Skriv ut profil</button>
                 </form>
                 <form asp-controller="Messages" asp-action="SendMessage" method="get">
                     <input type="hidden" name="username" value=@Model.User.UserName/>
-                    <button type="submit" class="btn btn-primary border-2 border-dark">Skicka meddelande</button>
+                    <button type="submit" class="btn btn-primary">Skicka meddelande</button>
                 </form>
             </div>
             <div class="col-2">
@@ -47,10 +47,10 @@ else
                     <p>Såhär många har sett ditt CV: @Model.ViewCount</p>
                     <h3>Byt profilbild</h3>
                     <form asp-action="Image" asp-controller="User" method="post" enctype="multipart/form-data">
-                        <input type="file" name="image" />
-                        <button type="submit">Ladda upp bild</button>
+                            <input type="file" name="image" class="form-control" />
+                        <button type="submit" class="btn btn-primary mb-2 mt-2">Ladda upp bild</button>
                     </form>
-                    <a asp-controller="CV" asp-action="EditCV" class="btn btn-primary">Redigera CV</a>
+                    <a asp-controller="CV" asp-action="EditCV" class="btn btn-secondary">Redigera CV</a>
                 }
             </div>
         </div>
@@ -96,15 +96,16 @@ else
                                 }
                                 else
                                 {
-                                    <p class="card-text container-fluid">
-                                    <p>Skapad av:</p>
+                                    <p class="card-text">
+                                    Skapad av:
                                     <a asp-action="ShowCv" asp-route-username=@project.CreatedByNavigation.UserName>
-                                        <p>@project.CreatedByNavigation.Name</p></a></p>
+                                        @project.CreatedByNavigation.Name
+                                    </a>
+                                    </p>
                                 }
-                                <h4 class="card-text">@project.Description</h4>
-                                <div class="card">
-                                    <h4 class="card-header">Deltagare</h4>
-                                    @foreach (var user in project.Users)
+                                <h6 class="card-text">@project.Description</h6>
+                                    <h5 class="modal-header">Deltagare</h5>
+                                    @foreach (var user in project.Users.Where(u => u.Id != project.CreatedBy))
                                     {
                                         if (!user.IsPrivate || (user.IsPrivate && isAuth))
                                         {
@@ -115,7 +116,6 @@ else
                                             }
                                         }
                                     }
-                                </div>
                             </div>
                         }
                     </div>
@@ -125,30 +125,38 @@ else
 
 
         @*Visa matchningar*@
-        <h2>Andra användare med liknande kompetenser</h2>
+        <h2 class="mt-3">Andra användare med liknande kompetenser</h2>
 
-        <div class="card container">
+        <div class="container mt-3">
             @if (Model.UsersMatch.Count() == 0)
             {
-                <h3>Det finns inga matchningar</h3>
+                <h3 class="text-center text-muted">Det finns inga matchningar</h3>
             }
             <div class="row">
                 @foreach (var user in Model.UsersMatch)
                 {
-                    <div class="card col">
-                        <a asp-action="ShowCv" asp-route-username=@user.UserName><h3 class="card-header">@user.Name</h3>
-                        </a>
-                        @*Loopar igenom Cvn -> Erfarenheter -> Färdigheter*@
-                        @foreach (var cv in user.Cvs)
-                        {
-                            @foreach (var education in cv.Educations)
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 text-center">
+                            <div class="card-body">
+                            <a asp-action="ShowCv" asp-route-username=@user.UserName>
+                                <h4 class="card-title">@user.Name</h4>
+                            </a>
+                            @*Loopar igenom Cvn -> Erfarenheter -> Färdigheter*@
+                            <h6>Kompetenser</h6>
+                            <ul class="list-unstyled">
+                            @foreach (var cv in user.Cvs)
                             {
-                                @foreach (var skill in education.Skills)
+                                @foreach (var education in cv.Educations)
                                 {
-                                    <p>@skill.Name</p>
+                                    @foreach (var skill in education.Skills)
+                                    {
+                                        <li class="badge bg-primary text-light me-1 mb-1">@skill.Name</li>
+                                    }
                                 }
                             }
-                        }
+                            </ul>
+                            </div>
+                        </div>
                     </div>
                 }
             </div>
