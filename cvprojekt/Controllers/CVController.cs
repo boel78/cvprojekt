@@ -155,10 +155,9 @@ namespace cvprojekt.Controllers
                         await AddEducation(educationModel);
                     }
                     
-                    //Kontrollerar om en education uppdateras
+                    //Kontrollerar om en education ska uppdateras
                     if (_dbContext.Educations.Any(e => e.Eid == educationModel.Eid))
                     {
-                        Console.WriteLine("uppdarerar");
                         int eid = educationModel.Eid;
                         var education = cv.Educations.Where(e => e.Eid == eid).FirstOrDefault();
                         education.Skills.Clear();
@@ -168,45 +167,6 @@ namespace cvprojekt.Controllers
                         await _dbContext.SaveChangesAsync();
                         await AddEducation(educationModel);
                     }
-                    
-                    /*Education education = new Education()
-                    {
-                        Title = educationModel.Title,
-                        Description = educationModel.Description,
-                    };
-                    if (education != null)
-                    {
-                        string[] skillnames = educationModel.Skills.Split(',');
-                        List<Skill> skills = await _dbContext.Skills.ToListAsync();
-                        List<Skill> skillsToDb = skills.Where(s => !skillnames.Contains(s.Name)).ToList();
-
-                        Console.WriteLine("skills");
-                        foreach (var skill in skillsToDb)
-                        {
-                            Console.WriteLine(skill.Name);
-                            //await AddSkill(new Skill { Name = skill.Name });
-                        }
-
-                        List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name)).ToListAsync();
-
-
-                        education.Title = educationModel.Title;
-                        education.Description = educationModel.Description;
-                        education.Skills = skillsToAdd;
-                        _dbContext.Update(education);
-                    }
-                    else
-                    {
-                        education = new Education
-                        {
-                            Title = educationModel.Title,
-                            Description = educationModel.Description,
-                            Skills = educationModel.Skills.Split(',').Select(s => new Skill { Name = s }).ToList(),
-                            Cvid = cv.Cvid
-                        };
-                        _dbContext.Educations.Add(education);
-                    }*/
-
                 }
 
                 await _dbContext.SaveChangesAsync();
