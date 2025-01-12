@@ -36,7 +36,7 @@
                     @if(project.CreatedBy == User.FindFirstValue(ClaimTypes.NameIdentifier)) 
                     {
                         
-                        <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-secondary btn-sm">Redigera</a>
+                        <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-secondary btn-sm mb-2">Redigera</a>
                         <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-id="@project.ProjectId">
                             Radera
                         </button> 
@@ -44,7 +44,7 @@
                     @* om användaren inte redan är med i projektet, är inloggad och aktiv*@
                     @if (!isUserInProject && User.Identity.IsAuthenticated && Model.User.IsActive)
                     {
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal" data-project-id="@project.ProjectId">
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#confirmModal" data-project-id="@project.ProjectId">
                             Anslut till projekt
                         </button>
                     }
