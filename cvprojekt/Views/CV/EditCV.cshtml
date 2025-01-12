@@ -29,7 +29,7 @@
                     <textarea id="Educations_@(i)__Description" name="Educations[@i].Description" class="form-control">@Model.Educations[i].Description</textarea>
                 </div>
                 <div>
-                    <label for="Educations_@(i)__Skills">Kompetenser</label>
+                    <label for="Educations_@(i)__Skills">Kompetenser (flera kompetenser separeras med "," ex: "Sql, C#")</label>
                     <input id="Educations_@(i)__Skills" name="Educations[@i].Skills" class="form-control" value="@Model.Educations[i].Skills" />
                 </div>
                 <button type="button" class="btn btn-danger w-50 align-self-center" onclick="removeExperience(@i)">Ta bort</button>
