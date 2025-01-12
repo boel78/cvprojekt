@@ -42,6 +42,104 @@ namespace cvprojekt.Controllers
             return View();
         }
 
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditCV(CvViewModel model)
+        {
+            var userId = _userManager.GetUserId(User);
+            
+            
+            if (ModelState.IsValid)
+            {
+                Cv cv;
+                if (model.Cvid == 0)
+                {
+                    cv = new Cv
+                    {
+                        Description = model.Description,
+                        Owner = userId
+                    };
+                    _dbContext.Cvs.Add(cv);
+                }
+                else
+                {
+                    cv = await _dbContext.Cvs.Where(c => c.Owner == userId)
+                        .Include(c => c.Educations)
+                        .ThenInclude(e => e.Skills)
+                        .FirstOrDefaultAsync();
+
+                    if (cv == null)
+                    {
+                        return NotFound();
+                    }
+
+                    cv.Description = model.Description;
+                    _dbContext.Update(cv);
+                }
+                
+                // Remove existing educations that are not in the model
+                var educationsToRemove = cv.Educations.Where(e => !model.Educations.Any(em => em.Eid == e.Eid)).ToList();
+                foreach (var education in educationsToRemove)
+                {
+                    //fixade constraints för att ta bort
+                    education.Skills.Clear();
+                    cv.Educations.Remove(education);
+                    _dbContext.Educations.Remove(education);
+                }
+
+                foreach (var educationModel in model.Educations)
+                {
+                    if (!cv.Educations.Any(e => e.Eid == educationModel.Eid))
+                    {
+                        await AddEducation(educationModel);
+                    }
+                    /*Education education = new Education()
+                    {
+                        Title = educationModel.Title,
+                        Description = educationModel.Description,
+                    };
+                    if (education != null)
+                    {
+                        string[] skillnames = educationModel.Skills.Split(',');
+                        List<Skill> skills = await _dbContext.Skills.ToListAsync();
+                        List<Skill> skillsToDb = skills.Where(s => !skillnames.Contains(s.Name)).ToList();
+
+                        Console.WriteLine("skills");
+                        foreach (var skill in skillsToDb)
+                        {
+                            Console.WriteLine(skill.Name);
+                            //await AddSkill(new Skill { Name = skill.Name });
+                        }
+
+                        List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name)).ToListAsync();
+
+
+                        education.Title = educationModel.Title;
+                        education.Description = educationModel.Description;
+                        education.Skills = skillsToAdd;
+                        _dbContext.Update(education);
+                    }
+                    else
+                    {
+                        education = new Education
+                        {
+                            Title = educationModel.Title,
+                            Description = educationModel.Description,
+                            Skills = educationModel.Skills.Split(',').Select(s => new Skill { Name = s }).ToList(),
+                            Cvid = cv.Cvid
+                        };
+                        _dbContext.Educations.Add(education);
+                    }*/
+
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.options = new SelectList(_dbContext.Skills, "Name", "Name");
+            return View(model);
+        }
 
         private async Task AddEducation(EducationSkillViewModel viewmodel)
         {
