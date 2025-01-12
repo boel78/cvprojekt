@@ -50,8 +50,8 @@ namespace cvprojekt.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddEducation(EducationSkillViewModel viewmodel)
+       
+        private async Task AddEducation(EducationSkillViewModel viewmodel)
         {
             string revampedstring = viewmodel.Skills.Replace("\"", "").Replace("[", "").Replace("]", "");
             string[] skillnames = revampedstring.Split(',');
@@ -65,34 +65,36 @@ namespace cvprojekt.Controllers
                 Title = viewmodel.Title,
                 Description = viewmodel.Description,
             };
-            IQueryable<Skill> skills = _dbContext.Skills;
-            foreach (var skill in skills)
+            List<Skill> skills = await _dbContext.Skills.ToListAsync();
+            List<Skill> skillsToDb = skills.Where(s => !skillnames.Contains(s.Name)).ToList();
+
+            foreach (var skill in skillsToDb)
             {
-                foreach (var skillinput in skillnames)
-                {
-                    if (!skill.Name.Equals(skillinput))
-                    {
-                        await AddSkill(new Skill { Name = skillinput });
-                    }
-                }
+                        //Console.WriteLine("Skill " + skillinput);
+                        await AddSkill(new Skill { Name = skill.Name });
+                    
+                
             }
-            IQueryable<Skill> skillsToAdd = from s in skills
-                                            where skillnames.Contains(s.Name)
-                                            select s;
+            List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name)).ToListAsync();
+
 
             string userid = _userManager.GetUserId(User);
 
             var user = _dbContext.Users.Where(u => u.Id == userid).Include(u => u.Cvs).FirstOrDefault();
-            education.Skills = skillsToAdd.ToList();
+            education.Skills = skillsToAdd;
             education.Cvid = user.Cvs.FirstOrDefault().Cvid;
             _dbContext.Educations.Add(education);
             await _dbContext.SaveChangesAsync();
-            return RedirectToAction("Index", "Home");
         }
 
         public async Task AddSkill(Skill skill)
         {
-            _dbContext.Skills.Add(skill);
+            List<Skill> skills = await _dbContext.Skills.ToListAsync();
+            if (!skills.Contains(skill))
+            {
+                _dbContext.Skills.Add(skill);
+            }
+            
             await _dbContext.SaveChangesAsync();
         }
 
@@ -262,17 +264,39 @@ namespace cvprojekt.Controllers
                 var educationsToRemove = cv.Educations.Where(e => !model.Educations.Any(em => em.Eid == e.Eid)).ToList();
                 foreach (var education in educationsToRemove)
                 {
+                    //fixade constraints för att ta bort
+                    education.Skills.Clear();
+                    cv.Educations.Remove(education);
                     _dbContext.Educations.Remove(education);
                 }
 
                 foreach (var educationModel in model.Educations)
                 {
-                    var education = cv.Educations.FirstOrDefault(e => e.Eid == educationModel.Eid);
+                    await AddEducation(educationModel);
+                    /*Education education = new Education()
+                    {
+                        Title = educationModel.Title,
+                        Description = educationModel.Description,
+                    };
                     if (education != null)
                     {
+                        string[] skillnames = educationModel.Skills.Split(',');
+                        List<Skill> skills = await _dbContext.Skills.ToListAsync();
+                        List<Skill> skillsToDb = skills.Where(s => !skillnames.Contains(s.Name)).ToList();
+
+                        Console.WriteLine("skills");
+                        foreach (var skill in skillsToDb)
+                        {
+                            Console.WriteLine(skill.Name);
+                            //await AddSkill(new Skill { Name = skill.Name });
+                        }
+
+                        List<Skill> skillsToAdd = await _dbContext.Skills.Where(s => skillnames.Contains(s.Name)).ToListAsync();
+
+
                         education.Title = educationModel.Title;
                         education.Description = educationModel.Description;
-                        education.Skills = educationModel.Skills.Split(',').Select(s => new Skill { Name = s }).ToList();
+                        education.Skills = skillsToAdd;
                         _dbContext.Update(education);
                     }
                     else
@@ -285,7 +309,8 @@ namespace cvprojekt.Controllers
                             Cvid = cv.Cvid
                         };
                         _dbContext.Educations.Add(education);
-                    }
+                    }*/
+
                 }
 
                 await _dbContext.SaveChangesAsync();
