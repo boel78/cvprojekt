@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace cvprojekt.Controllers
 {
@@ -170,42 +171,53 @@ namespace cvprojekt.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> EditCV(int? id)
+        public async Task<IActionResult> EditCV()
         {
+            string userid = _userManager.GetUserId(User);
+            int cvCount = _dbContext.Cvs.Where(c => c.Owner == userid).ToList().Count();
+            
+            
             Cv cv;
-            if (id.HasValue)
+            var model = new CvViewModel();
+            //Kollar efter om användaren har ett cv eller inte
+            if (cvCount > 0)
             {
-                cv = await _dbContext.Cvs
+                cv = await _dbContext.Cvs.Where(c => c.Owner == userid)
                     .Include(c => c.Educations)
                     .ThenInclude(e => e.Skills)
-                    .FirstOrDefaultAsync(c => c.Cvid == id.Value);
+                    .FirstOrDefaultAsync();
+                
+                
+                
+                model = new CvViewModel
+                {
+                    Cvid = cv.Cvid,
+                    Description = cv.Description,
+                    Educations = cv.Educations.Select(e => new EducationSkillViewModel
+                    {
+                        Eid = e.Eid,
+                        Title = e.Title,
+                        Description = e.Description,
+                        Skills = string.Join(",", e.Skills.Select(s => s.Name))
+                    }).ToList()
+                };
 
+                
                 if (cv == null)
                 {
                     return NotFound();
                 }
             }
-            else
+            //Om det inte finns cv så sätter vi cvid = 0 och tomma fält
+            else if(cvCount == 0)
             {
-                var userId = _userManager.GetUserId(User);
-                cv = new Cv
+                model = new CvViewModel
                 {
-                    Owner = userId
+                    Cvid = 0,
+                    Description = "",
+                    Educations = []
                 };
             }
-
-            var model = new CvViewModel
-            {
-                Cvid = cv.Cvid,
-                Description = cv.Description,
-                Educations = cv.Educations.Select(e => new EducationSkillViewModel
-                {
-                    Eid = e.Eid,
-                    Title = e.Title,
-                    Description = e.Description,
-                    Skills = string.Join(",", e.Skills.Select(s => s.Name))
-                }).ToList()
-            };
 
             ViewBag.options = new SelectList(_dbContext.Skills, "Name", "Name");
             return View(model);
@@ -215,12 +227,14 @@ namespace cvprojekt.Controllers
         [Authorize]
         public async Task<IActionResult> EditCV(CvViewModel model)
         {
+            var userId = _userManager.GetUserId(User);
+            
+            
             if (ModelState.IsValid)
             {
                 Cv cv;
                 if (model.Cvid == 0)
                 {
-                    var userId = _userManager.GetUserId(User);
                     cv = new Cv
                     {
                         Description = model.Description,
@@ -230,10 +244,10 @@ namespace cvprojekt.Controllers
                 }
                 else
                 {
-                    cv = await _dbContext.Cvs
+                    cv = await _dbContext.Cvs.Where(c => c.Owner == userId)
                         .Include(c => c.Educations)
                         .ThenInclude(e => e.Skills)
-                        .FirstOrDefaultAsync(c => c.Cvid == model.Cvid);
+                        .FirstOrDefaultAsync();
 
                     if (cv == null)
                     {
@@ -243,7 +257,7 @@ namespace cvprojekt.Controllers
                     cv.Description = model.Description;
                     _dbContext.Update(cv);
                 }
-
+                
                 // Remove existing educations that are not in the model
                 var educationsToRemove = cv.Educations.Where(e => !model.Educations.Any(em => em.Eid == e.Eid)).ToList();
                 foreach (var education in educationsToRemove)

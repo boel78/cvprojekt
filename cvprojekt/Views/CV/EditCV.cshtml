@@ -8,6 +8,7 @@
 
 <form asp-action="EditCV" method="post">
     <div>
+        <input type="hidden" name="Cvid" value="@Model.Cvid" />
         <label for="Description">Beskrivning</label>
         <textarea id="Description" name="Description" class="form-control">@Model.Description</textarea>
     </div>
