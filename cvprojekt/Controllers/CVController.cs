@@ -158,14 +158,7 @@ namespace cvprojekt.Controllers
                     //Kontrollerar om en education ska uppdateras
                     if (_dbContext.Educations.Any(e => e.Eid == educationModel.Eid))
                     {
-                        int eid = educationModel.Eid;
-                        var education = cv.Educations.Where(e => e.Eid == eid).FirstOrDefault();
-                        education.Skills.Clear();
-                        cv.Educations.Remove(education);
-                        
-                        _dbContext.Educations.Remove(education);
-                        await _dbContext.SaveChangesAsync();
-                        await AddEducation(educationModel);
+                        await UpdateEducation(educationModel, cv);
                     }
                 }
 
@@ -214,7 +207,7 @@ namespace cvprojekt.Controllers
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task AddSkill(Skill skill)
+        private async Task AddSkill(Skill skill)
         {
             List<Skill> skills = await _dbContext.Skills.ToListAsync();
             if (!skills.Contains(skill))
@@ -223,6 +216,18 @@ namespace cvprojekt.Controllers
             }
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        private async Task UpdateEducation(EducationSkillViewModel educationModel, Cv cv)
+        {
+            int eid = educationModel.Eid;
+            var education = cv.Educations.Where(e => e.Eid == eid).FirstOrDefault();
+            education.Skills.Clear();
+            cv.Educations.Remove(education);
+                        
+            _dbContext.Educations.Remove(education);
+            await _dbContext.SaveChangesAsync();
+            await AddEducation(educationModel);
         }
 
         //Tar username eftersom det är en get och är känsligt med id
