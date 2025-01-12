@@ -42,18 +42,6 @@ namespace cvprojekt.Controllers
             return View();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> AddEducation()
-        {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            ViewBag.UnreadMessagesCount = userId != null ? await _messageService.GetUnreadMessagesCountAsync(userId) : 0;
-            List<SelectListItem> skills = _dbContext.Skills.Select(x => new SelectListItem { Text = x.Name, Value = x.Name}).ToList();
-            SelectListItem newSkill = new SelectListItem { Text = "Lägg till en ny kompetens..", Value = "NewSkill" };
-            skills.Insert(skills.Count, newSkill);
-            ViewBag.options = skills;
-            return View();
-        }
-
 
         private async Task AddEducation(EducationSkillViewModel viewmodel)
         {
