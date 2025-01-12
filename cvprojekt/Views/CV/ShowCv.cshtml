@@ -45,6 +45,11 @@ else
                 @if (Model.IsWriter)
                 {
                     <p>Såhär många har sett ditt CV: @Model.ViewCount</p>
+                    <h3>Byt profilbild</h3>
+                    <form asp-action="Image" asp-controller="User" method="post" enctype="multipart/form-data">
+                        <input type="file" name="image" />
+                        <button type="submit">Ladda upp bild</button>
+                    </form>
                 }
             </div>
         </div>
