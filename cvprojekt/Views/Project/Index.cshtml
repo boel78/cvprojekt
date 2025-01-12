@@ -27,7 +27,7 @@
                 <td>@project.Description</td>
                 <td>@project.CreatedByNavigation?.Name</td>
                 <td>
-                    @foreach (var user in project.Users)
+                    @foreach (var user in project.Users.Where(u => u.Id != project.CreatedBy))
                     {
                         <p>@user.Name</p>
                     }
