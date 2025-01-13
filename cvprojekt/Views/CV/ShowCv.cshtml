@@ -9,109 +9,113 @@
 {
     <h2>Det finns ingen användare som har det användarnamnet</h2>
 }
-@if (Model.User?.Cvs?.Count == 0 && !Model.IsWriter)
-{
-        <a asp-action="EditCV"><button class="btn btn-primary btn-sm">Skapa ditt cv!</button></a>
-}
+
 
 else
 {
-    if (!Model.User.IsPrivate || isAuth)
+    if (Model.User?.Cvs?.Count == 0 && !Model.IsWriter)
     {
-        @*Visa användarinfo *@
-        <div class="row">
-            <div class="col-8">
-                <h2>@Model.User.Name</h2>
-                <p>@Model.User.Email</p>
-                <form asp-controller="User" asp-action="SerializeProfile" method="post">
-                    <input type="hidden" name="username" value=@Model.User.UserName/>
-                    <button type="submit" class="btn btn-primary mb-2">Skriv ut profil</button>
-                </form>
-                @if (!Model.IsWriter)
-                {
-                    <form asp-controller="Messages" asp-action="SendMessage" method="get">
-                        <input type="hidden" name="username" value=@Model.User.UserName/>
-                        <button type="submit" class="btn btn-primary">Skicka meddelande</button>
-                    </form>
-                }
-                
-            </div>
-            <div class="col-2">
-                @if (Model.User.ProfilePicture != null && Model.User.ProfilePicture.Length > 0)
-                {
-                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.User.ProfilePicture)"
-                         alt="profilbild för @Model.User.Name"
-                         class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover"/>
-                }
-                else
-                {
-                    <img src="/images/profile-placeholder.jpg"
-                         alt="Ingen profilbild"
-                         class="rounded-circle"
-                         style="width: 100px; height: 100px; object-fit: cover;"/>
-                }
-                @if (Model.IsWriter)
-                {
-                    <p>Såhär många har sett ditt CV: @Model.ViewCount</p>
-                    <h3>Byt profilbild</h3>
-                    <form asp-action="Image" asp-controller="User" method="post" enctype="multipart/form-data">
-                            <input type="file" name="image" class="form-control" />
-                        <button type="submit" class="btn btn-primary mb-2 mt-2">Ladda upp bild</button>
-                    </form>
-                    <a asp-controller="CV" asp-action="EditCV" class="btn btn-secondary">Redigera CV</a>
-                }
-            </div>
-        </div>
-
-        @*Visa cvn *@
-        <h2>Cv</h2>
-        @foreach (var cv in Model.User.Cvs)
+        <a asp-action="EditCV">
+            <button class="btn btn-primary btn-sm">Skapa ditt cv!</button>
+        </a>
+    }
+    else
+    {
+        if (!Model.User.IsPrivate || isAuth)
         {
-            <p>@cv.Description</p>
-            <div class="card">
+            @*Visa användarinfo *@
+            <div class="row">
+                <div class="col-8">
+                    <h2> @Model.User.Name </h2>
+                    <p> @Model.User.Email </p>
+                    <form asp - controller="User" asp - action="SerializeProfile" method="post">
+                        <input type="hidden" name="username" value=@Model.User.UserName/>
+                        <button type="submit" class="btn btn-primary mb-2"> Skriv ut profil</button>
+                    </form>
+                    @if (!Model.IsWriter)
+                    {
+                        <form asp-controller="Messages" asp-action="SendMessage" method="get">
+                            <input type="hidden" name="username" value=@Model.User.UserName/>
+                            <button type="submit" class="btn btn-primary">Skicka meddelande</button>
+                        </form>
+                    }
 
-                <h3 class="card-header">Erfarenheter</h3>
-                <div class="card-body container">
-                    <div class="row">
-                        @foreach (var education in cv.Educations)
-                        {
-                            <div class="card col">
-                                <h3 class="card-header">@education.Title</h3>
-                                <p>@education.Description</p>
-                                <h3>Kompetenser</h3>
-
-                                @foreach (var skill in education.Skills)
-                                {
-                                    <div class="card">
-                                        <p class="card-header">@skill.Name</p>
-                                    </div>
-                                }
-                            </div>
-                        }
-                    </div>
                 </div>
-                @*Visa projekt*@
-                <h2 class="card-header">Projekt</h2>
-                <div class="container">
-                    <div class="row">
-                        @foreach (var project in Model.Projects)
-                        {
-                            <div class="card col">
-                                <h3 class="card-header">@project.Title</h3>
-                                @if ((project.CreatedByNavigation.IsPrivate && !isAuth) || !project.CreatedByNavigation.IsActive)
-                                {
-                                    <p class="card-text">Skaparen är privat</p>
-                                }
-                                else
-                                {
-                                    <p class="card-text">
-                                    Skapad av:
-                                    <a asp-action="ShowCv" asp-route-username=@project.CreatedByNavigation.UserName>
-                                        @project.CreatedByNavigation.Name
-                                    </a>
-                                    </p>
-                                }
-                                <h6 class="card-text">@project.Description</h6>
+                <div class="col-2">
+                    @if (Model.User.ProfilePicture != null && Model.User.ProfilePicture.Length > 0)
+                    {
+                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.User.ProfilePicture)"
+                             alt="profilbild för @Model.User.Name"
+                             class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover"/>
+                    }
+                    else
+                    {
+                        <img src="/images/profile-placeholder.jpg"
+                             alt="Ingen profilbild"
+                             class="rounded-circle"
+                             style="width: 100px; height: 100px; object-fit: cover;"/>
+                    }
+                    @if (Model.IsWriter)
+                    {
+                        <p>Såhär många har sett ditt CV: @Model.ViewCount</p>
+                        <h3>Byt profilbild</h3>
+                        <form asp-action="Image" asp-controller="User" method="post" enctype="multipart/form-data">
+                            <input type="file" name="image" class="form-control"/>
+                            <button type="submit" class="btn btn-primary mb-2 mt-2">Ladda upp bild</button>
+                        </form>
+                        <a asp-controller="CV" asp-action="EditCV" class="btn btn-secondary">Redigera CV</a>
+                    }
+                </div>
+            </div>
+            @*Visa cvn *@
+            <h2>Cv</h2>
+            @foreach (var cv in Model.User.Cvs)
+            {
+                <p>@cv.Description</p>
+                <div class="card">
+
+                    <h3 class="card-header">Erfarenheter</h3>
+                    <div class="card-body container">
+                        <div class="row">
+                            @foreach (var education in cv.Educations)
+                            {
+                                <div class="card col">
+                                    <h3 class="card-header">@education.Title</h3>
+                                    <p>@education.Description</p>
+                                    <h3>Kompetenser</h3>
+
+                                    @foreach (var skill in education.Skills)
+                                    {
+                                        <div class="card">
+                                            <p class="card-header">@skill.Name</p>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    @*Visa projekt*@
+                    <h2 class="card-header">Projekt</h2>
+                    <div class="container">
+                        <div class="row">
+                            @foreach (var project in Model.Projects)
+                            {
+                                <div class="card col">
+                                    <h3 class="card-header">@project.Title</h3>
+                                    @if ((project.CreatedByNavigation.IsPrivate && !isAuth) || !project.CreatedByNavigation.IsActive)
+                                    {
+                                        <p class="card-text">Skaparen är privat</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="card-text">
+                                            Skapad av:
+                                            <a asp-action="ShowCv" asp-route-username=@project.CreatedByNavigation.UserName>
+                                                @project.CreatedByNavigation.Name
+                                            </a>
+                                        </p>
+                                    }
+                                    <h6 class="card-text">@project.Description</h6>
                                     <h5 class="modal-header">Deltagare</h5>
                                     @foreach (var user in project.Users.Where(u => u.Id != project.CreatedBy))
                                     {
@@ -124,57 +128,55 @@ else
                                             }
                                         }
                                     }
-                            </div>
-                        }
+                                </div>
+                            }
+                        </div>
                     </div>
+                </div>
+            }
+
+            @*Visa matchningar*@
+            <h2 class="mt-3">Andra användare med liknande kompetenser</h2>
+            <div class="container mt-3">
+                @if (Model.UsersMatch.Count() == 0)
+                {
+                    <h3 class="text-center text-muted">Det finns inga matchningar</h3>
+                }
+                <div class="row">
+                    @foreach (var user in Model.UsersMatch)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 text-center">
+                                <div class="card-body">
+                                    <a asp-action="ShowCv" asp-route-username=@user.UserName>
+                                        <h4 class="card-title">@user.Name</h4>
+                                    </a>
+                                    @*Loopar igenom Cvn -> Erfarenheter -> Färdigheter*@
+                                    <h6>Kompetenser</h6>
+                                    <ul class="list-unstyled">
+                                        @foreach (var cv in user.Cvs)
+                                        {
+                                            @foreach (var education in cv.Educations)
+                                            {
+                                                @foreach (var skill in education.Skills)
+                                                {
+                                                    <li class="badge bg-primary text-light me-1 mb-1">@skill.Name</li>
+                                                }
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         }
-
-
-        @*Visa matchningar*@
-        <h2 class="mt-3">Andra användare med liknande kompetenser</h2>
-
-        <div class="container mt-3">
-            @if (Model.UsersMatch.Count() == 0)
-            {
-                <h3 class="text-center text-muted">Det finns inga matchningar</h3>
-            }
-            <div class="row">
-                @foreach (var user in Model.UsersMatch)
-                {
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 text-center">
-                            <div class="card-body">
-                            <a asp-action="ShowCv" asp-route-username=@user.UserName>
-                                <h4 class="card-title">@user.Name</h4>
-                            </a>
-                            @*Loopar igenom Cvn -> Erfarenheter -> Färdigheter*@
-                            <h6>Kompetenser</h6>
-                            <ul class="list-unstyled">
-                            @foreach (var cv in user.Cvs)
-                            {
-                                @foreach (var education in cv.Educations)
-                                {
-                                    @foreach (var skill in education.Skills)
-                                    {
-                                        <li class="badge bg-primary text-light me-1 mb-1">@skill.Name</li>
-                                    }
-                                }
-                            }
-                            </ul>
-                            </div>
-                        </div>
-                    </div>
-                }
+        else
+        {
+            <div>
+                <h3>Användaren är privat, var vänlig logga in för att se den.</h3>
             </div>
-        </div>
-    }
-    else
-    {
-        <div>
-            <h3>Användaren är privat, var vänlig logga in för att se den.</h3>
-        </div>
+        }
     }
 }
-

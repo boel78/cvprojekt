@@ -261,10 +261,14 @@ namespace cvprojekt.Controllers
                     string id = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                         var loggedInUser = _dbContext.Users.Where(u => u.Id == id).FirstOrDefault();
                         vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
-                        if (username == loggedInUser.UserName)
+                        if (User.Identity.IsAuthenticated)
                         {
-                            vm.IsWriter = true;
+                            if (username == loggedInUser.UserName)
+                            {
+                                vm.IsWriter = true;
+                            }
                         }
+                        
 
                 }
                 vm.Projects = await _dbContext.Projects.Where(p => p.Users.Contains(vm.User)).Include(p => p.CreatedByNavigation).Include(p => p.Users).ToListAsync();
