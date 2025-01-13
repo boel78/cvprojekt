@@ -16,6 +16,7 @@ namespace cvprojekt.Services
 
         public async Task<int> GetUnreadMessagesCountAsync(string userId)
         {
+            // Räknar antalet meddelanden där mottagaren är userId och IsRead är false
             return await _context.Messages.CountAsync(m => m.Reciever == userId && m.IsRead == false);
         }
     }
