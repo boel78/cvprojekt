@@ -191,8 +191,8 @@ namespace cvprojekt.Controllers
             List<Skill> skills = await _dbContext.Skills.ToListAsync();
             //nya skills som behöver läggas till i databasen
             var skillsToDb = skillnames
-                .Select(skillname => skillname.TrimStart(' '))
-                .Where(skillName => !skills.Any(existingSkill => existingSkill.Name == skillName))
+                .Select(skillname => skillname.TrimStart(' ').ToLower())
+                .Where(skillName => !skills.Any(existingSkill => existingSkill.Name.ToLower() == skillName))
                 .Distinct()
                 .ToList();
             List<Skill> newSkills = new List<Skill>();
