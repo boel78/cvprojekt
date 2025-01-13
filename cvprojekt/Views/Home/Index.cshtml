@@ -50,6 +50,15 @@
 
                 <h4 class="card-header">@project.Title</h4>
                 <p>@project.Description</p>
+                <div class="card-body">
+                    <h5>Deltagare</h5>
+                    <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
+                        @foreach (var user in project.Users)
+                        {
+                            <li style="text-align: left">@user.Name</li>
+                        }
+                    </ul>
+                </div>
                 @if (User.Identity.IsAuthenticated)
                 {
                     string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
