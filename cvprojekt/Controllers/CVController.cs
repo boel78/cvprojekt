@@ -263,8 +263,21 @@ namespace cvprojekt.Controllers
                         {
                             
                             Cv cv = vm.User.Cvs.FirstOrDefault();
-                            CvView cvv = _dbContext.CvViews.Where(cvv => cvv.Cvid == cv.Cvid).FirstOrDefault();
-                            cvv.ViewCount = cvv.ViewCount + 1;
+                            CvView cvv = _dbContext.CvViews.FirstOrDefault(cvv => cvv.Cvid == cv.Cvid);
+                            if (cvv == null)
+                            {
+                                // Skapa en ny CvView-post om den inte finns
+                                cvv = new CvView
+                                {
+                                    Cvid = cv.Cvid,
+                                    ViewCount = 1 // Börjar med 1 eftersom detta är första visningen
+                                };
+                                _dbContext.CvViews.Add(cvv);
+                            }
+                            else
+                            {
+                                cvv.ViewCount = cvv.ViewCount + 1;
+                            }
                             _dbContext.SaveChanges();
                         }
                         else

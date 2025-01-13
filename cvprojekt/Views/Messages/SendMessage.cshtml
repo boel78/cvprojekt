@@ -10,9 +10,10 @@
     <h2 class="text-center mb-4">Skicka meddelande</h2>
 
     <form id="sendMessageForm" asp-controller="Messages" asp-action="SendMessage" method="post">
-        <div class="form-group mb-3">
-            <label>Skicka meddelande till:</label>
-            <input name="reciever" class="form-control"/>
+        <div class="form-group">
+            <label for="reciever">Skicka meddelande till:</label>
+            <input type="text" class="form-control" id="reciever" name="reciever"
+                   value="@ViewData["Username"]" readonly />
         </div>
 
         @if (User.Identity.IsAuthenticated)
