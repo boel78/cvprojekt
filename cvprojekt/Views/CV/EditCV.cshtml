@@ -11,6 +11,7 @@
         <input type="hidden" name="Cvid" value="@Model.Cvid" />
         <label for="Description"><h4>Beskrivning</h4></label>
         <textarea id="Description" name="Description" class="form-control">@Model.Description</textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
     <h4>Erfarenheter</h4>
@@ -21,16 +22,20 @@
                 <p class="card-header">Erfarenhet @i</p>
                 <input type="hidden" name="Educations[@i].Eid" value="@Model.Educations[i].Eid" />
                 <div>
-                    <label for="Educations_@(i)__Title">Titel</label>
-                    <input id="Educations_@(i)__Title" name="Educations[@i].Title" class="form-control" value="@Model.Educations[i].Title" />
+                    <label asp-for="@Model.Educations[@i].Title">Titel</label>
+                    <input asp-for="@Model.Educations[@i].Title" class="form-control" />
+                    <span asp-validation-for="@Model.Educations[@i].Title" class="text-danger"></span>
                 </div>
                 <div>
-                    <label for="Educations_@(i)__Description">Beskrivning</label>
-                    <textarea id="Educations_@(i)__Description" name="Educations[@i].Description" class="form-control">@Model.Educations[i].Description</textarea>
+
+                    <label asp-for="@Model.Educations[@i].Description">Beskrivning</label>
+                    <textarea asp-for="@Model.Educations[@i].Description" class="form-control"></textarea>
+                    <span asp-validation-for="@Model.Educations[@i].Description" class="text-danger"></span>
                 </div>
                 <div>
-                    <label for="Educations_@(i)__Skills">Kompetenser (flera kompetenser separeras med "," ex: "Sql, C#")</label>
-                    <input id="Educations_@(i)__Skills" name="Educations[@i].Skills" class="form-control" value="@Model.Educations[i].Skills" />
+                    <label asp-for="@Model.Educations[@i].Skills">Kompetenser (flera kompetenser separeras med "," ex: "Sql, C#")</label>
+                    <input asp-for="@Model.Educations[@i].Skills" class="form-control" />
+                    <span asp-validation-for="@Model.Educations[@i].Skills" class="text-danger"></span>
                 </div>
                 <button type="button" class="btn btn-danger w-50 align-self-center" onclick="removeExperience(@i)">Ta bort</button>
             </div>
