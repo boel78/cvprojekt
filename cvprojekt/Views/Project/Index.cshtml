@@ -13,7 +13,7 @@
         <td>Titel</td>
         <td>Skapat</td>
         <td>Beskrivning</td>
-        <td>Skapad av</td>
+        <td>Skapare</td>
         <td>Deltagare</td>
     </thead>
     <tbody>
@@ -25,7 +25,15 @@
                 <td>@project.Title</td>
                 <td>@project.CreatedDate</td>
                 <td>@project.Description</td>
-                <td>@project.CreatedByNavigation?.Name</td>
+                <td>@if (!User.Identity.IsAuthenticated && project.CreatedByNavigation?.IsPrivate == true)
+                    {
+                        <span>Privat</span>
+                    }
+                    else
+                    {
+                        @project.CreatedByNavigation?.Name
+                    }
+                    </td>
                 <td>
                     @foreach (var user in project.Users)
                     {
@@ -37,7 +45,7 @@
                     {
                         <div>
                         <a asp-action="Edit" asp-route-id="@project.ProjectId" class="btn btn-secondary btn-sm mb-2">Redigera</a>
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-id="@project.ProjectId">
+                        <button type="button" class="btn btn-danger btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-id="@project.ProjectId">
                             Radera
                         </button>
                         </div>
