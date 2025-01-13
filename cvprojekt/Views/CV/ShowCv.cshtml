@@ -5,10 +5,9 @@
 }
 
 
-@if (Model.User == null || Model.User.Cvs == null || Model.User.Cvs.Count == 0)
+@if (Model.User == null)
 {
-    <h2>Det finns ingen användare som har det användarnamnet, eller så finns det inget cv på denna användare.</h2>
-    <p>@Model.IsWriter</p>
+    <h2>Det finns ingen användare som har det användarnamnet</h2>
 }
 @if (Model.User?.Cvs?.Count == 0 && !Model.IsWriter)
 {
@@ -28,10 +27,14 @@ else
                     <input type="hidden" name="username" value=@Model.User.UserName/>
                     <button type="submit" class="btn btn-primary mb-2">Skriv ut profil</button>
                 </form>
-                <form asp-controller="Messages" asp-action="SendMessage" method="get">
-                    <input type="hidden" name="username" value=@Model.User.UserName/>
-                    <button type="submit" class="btn btn-primary">Skicka meddelande</button>
-                </form>
+                @if (!Model.IsWriter)
+                {
+                    <form asp-controller="Messages" asp-action="SendMessage" method="get">
+                        <input type="hidden" name="username" value=@Model.User.UserName/>
+                        <button type="submit" class="btn btn-primary">Skicka meddelande</button>
+                    </form>
+                }
+                
             </div>
             <div class="col-2">
                 @if (Model.User.ProfilePicture != null && Model.User.ProfilePicture.Length > 0)
