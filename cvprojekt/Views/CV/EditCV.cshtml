@@ -70,6 +70,28 @@
             var experiencesDiv = document.getElementById('experiences');
             var experienceToRemove = experiencesDiv.children[index];
             experiencesDiv.removeChild(experienceToRemove);
-        }
+
+            // Uppdatera index för återstående element
+            var experiences = experiencesDiv.children;
+            for (var i = 0; i < experiences.length; i++) {
+                var cardHeader = experiences[i].querySelector('.card-header');
+                cardHeader.textContent = `Erfarenhet ${i}`;
+
+                // Uppdatera id och name-attribut för input och textarea
+                experiences[i].querySelectorAll('[id], [name]').forEach(function (input) {
+                    if (input.id) {
+                        input.id = input.id.replace(/\d+/, i);
+                    }
+                    if (input.name) {
+                        input.name = input.name.replace(/\[\d+\]/, `[${i}]`);
+                    }
+                });
+
+                // Uppdatera onclick för knappen
+                var button = experiences[i].querySelector('button');
+                button.setAttribute('onclick', `removeExperience(${i})`);
+            }
+}
+
     </script>
 }
