@@ -72,11 +72,16 @@ namespace cvprojekt.Controllers
         }
 
         [HttpPost]
-        public IActionResult Remove(int id)
+        public async Task<IActionResult> Remove(int id)
         {
-            Project project = _context.Projects.Find(id);
+            Project project = await _context.Projects.Include(p => p.Users).FirstOrDefaultAsync(p => p.ProjectId == id);
+            
+            foreach (var user in project.Users.ToList())
+            {
+                user.Projects.Remove(project); // Tar bort projektet från användarens lista
+            }
             _context.Projects.Remove(project); //tar bort projektet från databasen
-            _context.SaveChanges();
+            _context.SaveChangesAsync();
             return RedirectToAction("Index", "Project");
 
         }
