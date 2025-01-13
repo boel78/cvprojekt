@@ -63,6 +63,7 @@ namespace cvprojekt.Controllers
                 user.UserName = rm.UserName;
                 user.Name = rm.Name;
                 user.IsPrivate = false;
+                user.IsActive = true;
                 user.ProfilePicture = [];
                 user.Email = rm.Email;
                 user.CreatedDate = DateTime.Now;
