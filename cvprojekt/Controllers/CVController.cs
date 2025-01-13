@@ -240,15 +240,23 @@ namespace cvprojekt.Controllers
             //Väljer rätt user
             List<User> users = await _dbContext.Users.ToListAsync();
                 //Hämtar usern och projects som den deltar i. Inkluderar de models som är viktiga. Fyller Viewmodel.
-                if (User.Identity.IsAuthenticated)
+                if (User.Identity.IsAuthenticated && username == null)
                 {
                     string id = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
                     vm.User = _dbContext.Users.Where(u => u.Id == id).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefault();
+                    vm.IsWriter = true;
+                    
                 }
 
                 if (username != null)
                 {
-                    vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
+                    string id = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                        var loggedInUser = _dbContext.Users.Where(u => u.Id == id).FirstOrDefault();
+                        vm.User = await _dbContext.Users.Where(u => u.UserName == username).Include(u => u.Cvs).ThenInclude(c => c.Educations).ThenInclude(e => e.Skills).FirstOrDefaultAsync();
+                        if (username == loggedInUser.UserName)
+                        {
+                            vm.IsWriter = true;
+                        }
 
                 }
                 vm.Projects = await _dbContext.Projects.Where(p => p.Users.Contains(vm.User)).Include(p => p.CreatedByNavigation).Include(p => p.Users).ToListAsync();
@@ -270,7 +278,6 @@ namespace cvprojekt.Controllers
                         else
                         {
                             Cv cv = vm.User.Cvs.FirstOrDefault();
-                            vm.IsWriter = true;
                             vm.ViewCount = _dbContext.CvViews.Where(cvv => cvv.Cvid == cv.Cvid).Select(cvv => cvv.ViewCount).FirstOrDefault();
                         }
 

@@ -8,8 +8,9 @@
 @if (Model.User == null || Model.User.Cvs == null || Model.User.Cvs.Count == 0)
 {
     <h2>Det finns ingen användare som har det användarnamnet, eller så finns det inget cv på denna användare.</h2>
+    <p>@Model.IsWriter</p>
 }
-@if (Model.User.Cvs.Count == 0 || Model.IsWriter)
+@if (Model.User.Cvs.Count == 0 && Model.IsWriter)
 {
     <a asp-action="EditCV"><button class="btn btn-primary btn-sm">Skapa ditt cv!</button></a>
 }
