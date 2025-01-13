@@ -119,6 +119,14 @@ namespace cvprojekt.Controllers
                         Owner = userId
                     };
                     _dbContext.Cvs.Add(cv);
+                    _dbContext.SaveChanges();
+                    var cvv = new CvView
+                    {
+                        Cvid = cv.Cvid,
+                        ViewCount = 0,
+                        Cv = cv
+                    };
+                    _dbContext.CvViews.Add(cvv);
                 }
                 else
                 {
