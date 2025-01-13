@@ -1,43 +1,50 @@
 @{
-    ViewData["Title"] = "Skicka meddelande";
+    ViewData["Title"] = "Skicka meddelande"; 
 }
 @model Models.Message
 
 <div class="container mt-5">
     <div class="align-content-lg-start">
-        <a asp-action="Index" class="btn btn-secondary">Inkorg</a>
+        <a asp-action="Index" class="btn btn-secondary">Inkorg</a> 
     </div>
     <h2 class="text-center mb-4">Skicka meddelande</h2>
 
     <form id="sendMessageForm" asp-controller="Messages" asp-action="SendMessage" method="post">
-        <div class="form-group mb-3">
-            <label>Skicka meddelande till:</label>
-            <input name="reciever" class="form-control"/>
+        <!-- Mottagare (readonly eftersom det fylls i automatiskt) -->
+        <div class="form-group">
+            <label for="reciever">Skicka meddelande till:</label>
+            <input type="text" class="form-control" id="reciever" name="reciever"
+                   value="@ViewData["Username"]" readonly />
         </div>
 
+        <!-- Visa avsändare om användaren är inloggad -->
         @if (User.Identity.IsAuthenticated)
         {
             <p>Avsändare: @User.Identity.Name</p>
         }
         else
         {
+            <!-- Fält för avsändarnamn om användaren inte är inloggad -->
             <div class="form-group mb-3">
                 <label for="sender" class="form-label">Ditt namn:</label>
                 <input type="text" name="sender" class="form-control"/>
             </div>
         }
+        
         <div class="form-group mb-3">
             <label for="Content" class="form-label">Meddelande:</label>
             <textarea name="Content" rows="3" class="form-control" placeholder="Ditt meddelande här.."></textarea>
         </div>
+        
         <div class="text-end">
             <button type="submit" class="btn btn-primary">Skicka</button>
         </div>
     </form>
 </div>
+
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-@* Modal för bekräftelse att meddelandet skickats *@
+<!-- Modal för bekräftelse att meddelandet skickats -->
 <div class="modal fade" id="messageSentModal" tabindex="-1" aria-labelledby="messageSentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -51,12 +58,12 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stäng</button>
             </div>
-
         </div>
     </div>
 </div>
 
 <script>
+    // Visa modal när meddelandet skickats
     document.addEventListener('DOMContentLoaded', function () {
         @if (ViewData["MessageSent"] != null && (bool)ViewData["MessageSent"])
         {

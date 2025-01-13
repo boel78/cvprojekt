@@ -23,7 +23,7 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var message in Model)
+        @foreach (var message in Model)// Loopa igenom alla meddelanden i modellen
         {
             <tr class="@((bool)!message.IsRead ? "table-warning" : "")">
                 <td>@message.SenderNavigation?.UserName</td>
@@ -46,9 +46,9 @@ else
         }
         </tbody>
     </table>
-    <a asp-action="SendMessage" class="btn btn-primary">Skicka nytt meddelande</a>
+ 
             
-   @* <!-- Delete Confirmation Modal --> *@
+// delete modal för borttagning av meddelanden
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
