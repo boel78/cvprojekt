@@ -36,7 +36,7 @@ namespace cvprojekt.Controllers
             
             //Hämtar tre senaste projekten
             IQueryable<Project> projectList = (from Project in _context.Projects select Project)
-                .OrderBy(p => p.CreatedDate).Include(p => p.Users).Take(3);
+                .OrderByDescending(p => p.CreatedDate).Include(p => p.Users).Take(1);
             
             im.projects = projectList;
             im.isActive = false;

@@ -28,7 +28,7 @@ else
                 <div class="col-8">
                     <h2> @Model.User.Name </h2>
                     <p> @Model.User.Email </p>
-                    <form asp - controller="User" asp - action="SerializeProfile" method="post">
+                    <form asp-controller="User" asp-action="SerializeProfile" method="post">
                         <input type="hidden" name="username" value=@Model.User.UserName/>
                         <button type="submit" class="btn btn-primary mb-2"> Skriv ut profil</button>
                     </form>

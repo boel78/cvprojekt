@@ -180,7 +180,7 @@ namespace cvprojekt.Controllers
 
         private async Task AddEducation(EducationSkillViewModel viewmodel)
         {
-            string revampedstring = viewmodel.Skills.Replace("\"", "").Replace("[", "").Replace("]", "");
+            string revampedstring = viewmodel.Skills.Replace("\"", "").Replace("[", "").Replace("]", "").TrimEnd(',');
             string[] skillnames = revampedstring.Split(',');
 
             Education education = new Education()
