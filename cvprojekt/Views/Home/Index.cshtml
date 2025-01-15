@@ -55,7 +55,10 @@
                     <ul style="list-style-type: none; padding-left: 0; margin-left: 0;">
                         @foreach (var user in project.Users)
                         {
-                            <li style="text-align: left">@user.Name</li>
+                            if (!user.IsPrivate || User.Identity.IsAuthenticated)
+                            {
+                                <li style="text-align: left">@user.Name</li>
+                            }
                         }
                     </ul>
                 </div>
