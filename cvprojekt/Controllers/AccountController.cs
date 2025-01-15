@@ -109,11 +109,14 @@ namespace cvprojekt.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(EditUserChangePasswordViewModel vm)
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel evm)
         {
-            ChangePasswordViewModel evm = vm.changePasswordViewModel;
+            ModelState.Remove("EditUserViewModel.Name");
+            ModelState.Remove("EditUserViewModel.Email");
+            
             var user = await userManager.GetUserAsync(User);
 
+            Console.WriteLine(evm.CurrentPassword);
             if (!string.IsNullOrEmpty(evm.NewPassword) &&
                 !string.IsNullOrEmpty(evm.CurrentPassword))
             {
@@ -129,8 +132,12 @@ namespace cvprojekt.Controllers
                     return View(evm); // Returnera formuläret med felmeddelanden
                 }
             }
-
-            return RedirectToAction("Index", "Home");
+            else
+            {
+                return RedirectToAction("Edit", "User");
+            }
+            
+            return View();
         }
     }
 }

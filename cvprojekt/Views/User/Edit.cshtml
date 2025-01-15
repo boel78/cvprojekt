@@ -9,6 +9,7 @@
 <div class="container mt-5">
 	<h2 class="text-center mb-4">Redigera profil</h2>
 	<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+	
 	@if (TempData["SuccessMessage"] != null)
 	{
 		<div class="alert alert-success">
@@ -36,22 +37,22 @@
 		</div>
 		<button type="submit" class="btn btn-primary">Spara ändringar</button>
 	</form>
-	@*<h3>Byt lösenord</h3>
-	<form asp-controller="Account" asp-action="ChangePassword">
+	<h3>Byt lösenord</h3>
+	<form asp-controller="Account" asp-action="ChangePassword" method="post">
 		<div class="mb-3">
 			<label for="CurrentPassword" class="form-label">Nuvarande Lösenord: </label>
 			<input type="password" class="form-control" asp-for="changePasswordViewModel.CurrentPassword"/>
 		</div>
 		<div class="mb-3">
 			<label for="NewPassword" class="form-label">Nytt Lösenord:</label>
-			<input type="password" class="form-control" asp-for="changePasswordViewModel.NewPassword"/>
+			<input type="password" class="form-control" asp-validation-for="changePasswordViewModel.NewPassword"/>
 		</div>
 		<div class="mb-3">
 			<label for="ConfirmNewPassword" class="form-label">Bekfräfta Nytt Lösenord:</label>
-			<input type="password" class="form-control" asp-for="changePasswordViewModel.ConfirmNewPassword"/>
+			<input type="password" class="form-control" asp-validation-for="changePasswordViewModel.ConfirmNewPassword"/>
 		</div>
 		<button type="submit">Byt lösenord</button>
-	</form>*@
+	</form>
 	
 	<form asp-action="Logout" asp-controller="Account" method="post" class="mt-4">
 		<button type="submit" class="btn btn-danger">Logga ut</button>
