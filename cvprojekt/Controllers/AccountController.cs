@@ -14,7 +14,8 @@ namespace cvprojekt.Controllers
         private SignInManager<User> signInManager;
         private MessageService messageService;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, MessageService messageService)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager,
+            MessageService messageService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -35,13 +36,16 @@ namespace cvprojekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(lm.UserName, lm.Password, isPersistent: lm.RememberMe, lockoutOnFailure: false);
+                var result = await signInManager.PasswordSignInAsync(lm.UserName, lm.Password,
+                    isPersistent: lm.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index", "Home");
                 }
+
                 ModelState.AddModelError(string.Empty, "Felaktigt användarnamn eller lösenord.");
             }
+
             return View(lm);
         }
 
@@ -90,6 +94,7 @@ namespace cvprojekt.Controllers
                     Debug.WriteLine("FEL " + error.ErrorMessage);
                 }
             }
+
             return View(rm);
         }
 
@@ -102,5 +107,30 @@ namespace cvprojekt.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(EditUserChangePasswordViewModel vm)
+        {
+            ChangePasswordViewModel evm = vm.changePasswordViewModel;
+            var user = await userManager.GetUserAsync(User);
+
+            if (!string.IsNullOrEmpty(evm.NewPassword) &&
+                !string.IsNullOrEmpty(evm.CurrentPassword))
+            {
+                var result = await userManager.ChangePasswordAsync(user, evm.CurrentPassword,
+                    evm.NewPassword);
+                if (!result.Succeeded)
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return View(evm); // Returnera formuläret med felmeddelanden
+                }
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

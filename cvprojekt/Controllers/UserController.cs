@@ -54,32 +54,25 @@ namespace cvprojekt.Controllers
                 IsActive = user.IsActive,
             };
 
-
-            return View(model);
+            EditUserChangePasswordViewModel em = new EditUserChangePasswordViewModel();
+            em.editUserViewModel = model;
+                
+            return View(em);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(EditUserViewModel evm)
+        public async Task<IActionResult> Edit(EditUserChangePasswordViewModel model)
         {
+            ModelState.Remove("changePasswordViewModel.CurrentPassword");
+            ModelState.Remove("changePasswordViewModel.NewPassword");
+            ModelState.Remove("changePasswordViewModel.ConfirmNewPassword");
+            EditUserViewModel evm = model.editUserViewModel;
             if (!ModelState.IsValid)
             {
-                return View(evm);
+                return View(model);
             }
-
             var user = await _userManager.GetUserAsync(User);
-
-            if (!string.IsNullOrEmpty(evm.NewPassword) && !string.IsNullOrEmpty(evm.CurrentPassword))
-            {
-                var result = await _userManager.ChangePasswordAsync(user, evm.CurrentPassword, evm.NewPassword);
-                if (!result.Succeeded)
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                    return View(evm); // Returnera formuläret med felmeddelanden
-                }
-            }
+            
 
             // Uppdatera användarens andra uppgifter
             user.Name = evm.Name;
