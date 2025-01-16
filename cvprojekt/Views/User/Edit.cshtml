@@ -24,7 +24,8 @@
 		</div>
 		<div class="mb-3">
 			<label for="Email" class="form-label">Email: </label>
-			<input type="text" class="form-control" asp-for="editUserViewModel.Email" value=@Model.editUserViewModel.Email/>
+			<input type="email" class="form-control" asp-for="editUserViewModel.Email" value="@Model.editUserViewModel.Email" />
+			<span class="text-danger" asp-validation-for="editUserViewModel.Email"></span>
 		</div>
 		
 		<div class="mb-3 form-check">

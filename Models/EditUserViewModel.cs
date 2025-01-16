@@ -10,9 +10,8 @@ namespace Models
         [StringLength(100)]
         public string Name { get; set; }
 
-        [Required]
-        [DataType(DataType.EmailAddress)]
-        [StringLength(256)]
+        [Required(ErrorMessage = "E-post är obligatoriskt.")]
+        [EmailAddress(ErrorMessage = "Ange en giltig e-postadress.")]
         public string Email { get; set; }
 
         public bool IsActive { get; set; }

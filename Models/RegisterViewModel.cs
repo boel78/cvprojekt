@@ -21,7 +21,8 @@ namespace Models
 
         public string Name { get; set; }
 
-        [DataType(DataType.EmailAddress)]
+        [Required(ErrorMessage = "E-post är obligatoriskt.")]
+        [EmailAddress(ErrorMessage = "Ange en giltig e-postadress.")]
         public string Email { get; set; }
 
     }

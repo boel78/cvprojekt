@@ -16,8 +16,9 @@
 					<input type="text" class="form-control" asp-for="UserName" id="UserName"/>
 				</div>
 				<div class="mb-3">
-					<label for="Email" class="form-label">E-post</label>
-					<input type="text" class="form-control" asp-for="Email" id="Email"/>
+					<label for="Email" class="form-label">Email</label>
+					<input type="email" class="form-control" asp-for="Email" id="Email"/>
+					<span class="text-danger" asp-validation-for="Email"></span>
 				</div>
 				<div class="mb-3">
 					<label for="Name" class="form-label">Namn</label>
