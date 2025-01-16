@@ -45,11 +45,11 @@
 		</div>
 		<div class="mb-3">
 			<label for="NewPassword" class="form-label">Nytt Lösenord:</label>
-			<input type="password" class="form-control" asp-validation-for="changePasswordViewModel.NewPassword"/>
+			<input type="password" class="form-control" asp-for="changePasswordViewModel.NewPassword"/>
 		</div>
 		<div class="mb-3">
 			<label for="ConfirmNewPassword" class="form-label">Bekfräfta Nytt Lösenord:</label>
-			<input type="password" class="form-control" asp-validation-for="changePasswordViewModel.ConfirmNewPassword"/>
+			<input type="password" class="form-control" asp-for="changePasswordViewModel.ConfirmNewPassword"/>
 		</div>
 		<button type="submit">Byt lösenord</button>
 	</form>
